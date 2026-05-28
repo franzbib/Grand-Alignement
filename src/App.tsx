@@ -192,7 +192,15 @@ function App() {
         />
       )}
 
-      {activeView === "blocks" && <BlocksGrid blocks={gameState.blocks} previousBlocks={gameState.previousBlocks} />}
+      {activeView === "blocks" && (
+        <BlocksGrid
+          blocks={gameState.blocks}
+          onSelectBlock={setSelectedBlockId}
+          previousBlocks={gameState.previousBlocks}
+          relations={gameState.relations}
+          selectedBlockId={selectedBlockId}
+        />
+      )}
 
       {activeView === "relations" && <RelationsPanel blocks={gameState.blocks} relations={gameState.relations} />}
 

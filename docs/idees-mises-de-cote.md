@@ -23,3 +23,4 @@ Ces idées peuvent être intéressantes plus tard, mais elles ne doivent pas êt
 - IA générative pour bilans de fin.
 - Éditeur d'événements.
 - Passe littéraire complète des rapports, du journal, des événements, des diagnostics, des textes de branches et de la signature de ton.
+- Carte saturée d'icônes, labels relationnels permanents et signaux visuels concurrents.

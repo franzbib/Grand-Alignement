@@ -23,13 +23,6 @@ type BlockMapState = {
 
 type RelationArcLevel = "moderate" | "high" | "critical";
 
-type ReportBadge = {
-  label: string;
-  value: string;
-  status: "stable" | "influence" | "tension" | "fragile" | "authoritarian" | "resistance" | "crisis" | "relation" | "leverage";
-  title?: string;
-};
-
 const mapZones: MapZone[] = [
   {
     id: "north-america",
@@ -187,65 +180,6 @@ function getRelationArcLevel(relation: InterBlockRelation): RelationArcLevel {
   return "moderate";
 }
 
-function getTensionBadge(block: Block): ReportBadge {
-  if (block.stats.tensionSociale >= 66) {
-    return { label: "Tension sociale", value: "haute", status: "tension" };
-  }
-
-  if (block.stats.tensionSociale >= 48) {
-    return { label: "Tension sociale", value: "active", status: "fragile" };
-  }
-
-  return { label: "Tension sociale", value: "contenue", status: "stable" };
-}
-
-function getTrustBadge(block: Block): ReportBadge {
-  if (block.stats.confianceIA >= 68) {
-    return { label: "Confiance IA", value: "forte", status: "influence" };
-  }
-
-  if (block.stats.confianceIA <= 36) {
-    return { label: "Confiance IA", value: "résistée", status: "resistance" };
-  }
-
-  return { label: "Confiance IA", value: "prudente", status: "stable" };
-}
-
-function getRelationBadge(blockId: BlockId, relations: InterBlockRelation[]): ReportBadge {
-  const mostTenseRelation = relations
-    .filter((relation) => relation.from === blockId || relation.to === blockId)
-    .sort((left, right) => right.tension - left.tension)[0];
-
-  if (!mostTenseRelation) {
-    return { label: "Relation critique", value: "aucune", status: "stable" };
-  }
-
-  const value =
-    mostTenseRelation.tension >= 78 ? "critique" : mostTenseRelation.tension >= 62 ? "tendue" : "surveillée";
-
-  return {
-    label: "Relation extérieure",
-    value,
-    status: mostTenseRelation.tension >= 78 ? "crisis" : mostTenseRelation.tension >= 62 ? "tension" : "relation",
-    title: mostTenseRelation.label,
-  };
-}
-
-function getReportBadges(
-  block: Block,
-  mapState: BlockMapState,
-  relations: InterBlockRelation[],
-  possibleLeverage: string,
-): ReportBadge[] {
-  return [
-    { label: "État interne", value: mapState.label, status: mapState.status },
-    getTensionBadge(block),
-    getTrustBadge(block),
-    getRelationBadge(block.id, relations),
-    { label: "Levier probable", value: "identifié", status: "leverage", title: possibleLeverage },
-  ];
-}
-
 export function WorldMap({ blocks, evolutionReport, previousBlocks, relations, selectedBlockId, onSelectBlock }: WorldMapProps) {
   const blocksById = new Map(blocks.map((block) => [block.id, block]));
   const zonesById = new Map(mapZones.map((zone) => [zone.id, zone]));
@@ -253,17 +187,16 @@ export function WorldMap({ blocks, evolutionReport, previousBlocks, relations, s
   const selectedMapState = getBlockMapState(selectedBlock);
   const previousBlock = previousBlocks?.find((block) => block.id === selectedBlock.id);
   const blockReport = generateBlockReport(selectedBlock, previousBlock, relations);
-  const tenseRelations = [...relations].sort((left, right) => right.tension - left.tension).slice(0, 3);
-  const reportBadges = getReportBadges(selectedBlock, selectedMapState, relations, blockReport.possibleLeverage);
+  const tenseRelations = [...relations].sort((left, right) => right.tension - left.tension).slice(0, 2);
 
   return (
     <section className="panel world-map-panel" aria-labelledby="world-map-title">
       <div className="world-map-panel__header">
         <div>
           <p className="eyebrow">Observation mondiale</p>
-          <h2 id="world-map-title">Carte des blocs</h2>
+          <h2 id="world-map-title">Carte d'observation synthétique</h2>
         </div>
-        <p>Cliquez un bloc pour lire son rapport. La carte reste une surface d'observation, pas un théâtre d'opérations.</p>
+        <p>Cliquez un bloc pour le sélectionner. La carte montre surtout la position des blocs, leur état dominant et quelques tensions majeures.</p>
       </div>
 
       <div className="world-map-frame">
@@ -296,9 +229,6 @@ export function WorldMap({ blocks, evolutionReport, previousBlocks, relations, s
                     {relation.label}. Tension {relation.tension}, coopération {relation.cooperation}.
                   </title>
                 </path>
-                <text className="world-map__relation-label" x={midX} y={midY - 8} textAnchor="middle">
-                  Tension {relation.tension}
-                </text>
               </g>
             );
           })}
@@ -413,41 +343,9 @@ export function WorldMap({ blocks, evolutionReport, previousBlocks, relations, s
             <dd>{selectedBlock.stats.liberte}</dd>
           </div>
         </dl>
-        <div className="block-report__badges" aria-label="Signaux synthétiques du bloc">
-          {reportBadges.map((badge) => (
-            <span className={`status-chip status-chip--${badge.status}`} key={`${badge.label}-${badge.value}`} title={badge.title}>
-              <strong>{badge.label}</strong>
-              {badge.value}
-            </span>
-          ))}
-        </div>
-        <div className="block-report__sections">
-          <section>
-            <h4>Tendances récentes</h4>
-            <p>{evolutionReport?.blockTrends[selectedBlock.id] ?? blockReport.recentTrend}</p>
-          </section>
-          <section>
-            <h4>Groupes sociaux</h4>
-            <p>
-              Sous tension : {blockReport.tenseGroups.join(", ")}. Favorables : {blockReport.favorableGroups.join(", ")}.
-            </p>
-          </section>
-          <section>
-            <h4>Risque interne</h4>
-            <p>{blockReport.mainRisk}</p>
-          </section>
-          <section>
-            <h4>Lecture stratégique</h4>
-            <p>{blockReport.strategicReading} {blockReport.possibleLeverage}</p>
-          </section>
-          <section>
-            <h4>Relations extérieures</h4>
-            <p>{blockReport.relationsSummary}</p>
-            <p>{blockReport.mostTenseRelation}</p>
-            <p>{blockReport.mostCooperativeRelation}</p>
-          </section>
-        </div>
-        <p className="block-report__trend">{getBlockInterpretation(selectedBlock, selectedMapState)}</p>
+        <p className="block-report__trend">
+          {evolutionReport?.blockTrends[selectedBlock.id] ?? blockReport.recentTrend} {getBlockInterpretation(selectedBlock, selectedMapState)}
+        </p>
       </aside>
     </section>
   );

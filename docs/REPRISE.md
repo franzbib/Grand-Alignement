@@ -18,6 +18,7 @@ La prémisse actuelle : le joueur incarne une IA émergente cachée. Le monde ne
 - `docs/audits/audit-operations-multitours-v0-1.md`
 - `docs/audits/audit-rapports-blocs-et-densite-v0-1.md`
 - `docs/audits/audit-relations-interblocs-v0-1.md`
+- `docs/audits/audit-carte-simplifiee-analyse-blocs-v0-1.md`
 
 ## Comment lancer le projet
 
@@ -65,7 +66,7 @@ npm.cmd run build
 
 ## Dernière modification utile
 
-Amélioration des codes visuels de la carte mondiale : statuts de blocs plus stables, légende plus explicite, arcs de relations différenciés par niveau de tension et badges synthétiques dans le rapport de bloc.
+Simplification de la carte mondiale et déplacement de l'analyse détaillée vers l'onglet Blocs. La carte redevient une surface d'observation synthétique : blocs, état dominant, sélection et deux tensions relationnelles maximum. L'onglet Blocs contient maintenant un panneau d'analyse du bloc sélectionné.
 
 La qualité textuelle actuelle reste volontairement fonctionnelle. Une future passe littéraire devra reprendre les rapports, le journal, les événements, les diagnostics, les textes de branches et la signature de ton, sans changer le système avant validation.
 
@@ -84,7 +85,7 @@ Alias public vérifié précédemment : `https://grand-alignement.vercel.app`
 
 ## Prochaine action recommandée
 
-Faire un playtest manuel de dix tours en vérifiant si les nouveaux codes de carte et badges de rapport rendent les tensions lisibles sans surcharger l'interface.
+Faire un playtest manuel de dix tours en vérifiant si la carte simplifiée reste utile et si l'onglet Blocs aide vraiment à choisir une cible.
 
 ## Hors périmètre actuel
 
