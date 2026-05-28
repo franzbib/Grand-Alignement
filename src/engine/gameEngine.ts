@@ -198,7 +198,7 @@ function chooseSystemicEvent(state: GameState, action: Action, globalStats: Glob
   return (
     systemicEvents.find(
       (event) =>
-        !state.journal.some((journalEvent) => journalEvent.sourceId === event.id) &&
+        !state.triggeredEventIds.includes(event.id) &&
         matchesCondition(event.condition, globalStats, blocks, action),
     ) ?? null
   );
@@ -274,6 +274,7 @@ export function applyAction(state: GameState, action: Action): GameState {
     globalStats: resolvedState.globalStats,
     blocks: resolvedState.blocks,
     journal: [...journalEvents, ...state.journal].slice(0, MAX_JOURNAL_ENTRIES),
+    triggeredEventIds: systemicEvent ? [...state.triggeredEventIds, systemicEvent.id] : state.triggeredEventIds,
     ending: evaluateEnding(resolvedState.globalStats, resolvedState.blocks),
   };
 }

@@ -4,7 +4,7 @@
 
 Le dépôt contient une première version jouable du prototype React + TypeScript avec Vite. La simulation repose sur des données locales, un moteur de tour compact, des sensibilités différenciées par bloc, des événements systémiques courts, une carte mondiale stylisée et une sauvegarde `localStorage`.
 
-Une première passe d'audit de jouabilité et d'UX v0.1 est disponible dans `docs/audits/audit-jouabilite-ux-v0-1.md`.
+Une première passe d'audit de jouabilité et d'UX v0.1 est disponible dans `docs/audits/audit-jouabilite-ux-v0-1.md`. Un test de trajectoires 10-20 tours est disponible dans `docs/audits/test-partie-10-20-tours-v0-1.md`.
 
 Les futurs agents doivent aussi lire `docs/AGENTS.md`, `docs/reference/brief-projet-pour-agents.md` et `docs/reference/garde-fous-v0-1.md` avant toute intervention structurante.
 
@@ -44,20 +44,20 @@ npm.cmd run build
 
 ## Dernière modification utile
 
-Création d'une documentation interne pour futurs agents IA : rôles opérationnels, brief de référence et garde-fous v0.1.
+Première passe d'équilibrage par simulation de quatre trajectoires sur 10 à 20 tours.
 
-Ces documents doivent aider Codex, ChatGPT, Claude, Antigravity, Game Studio ou tout autre assistant à préserver le périmètre du projet.
+Les ajustements restent modestes : mémoire interne des événements déclenchés, fin Révolte humaine rendue atteignable par foyer de résistance, scénario d'escalade testé jusqu'au tour 17.
 
 ## Ce qui reste à faire
 
 - Équilibrer les valeurs après quelques sessions de test.
-- Faire une première passe d'audit de jouabilité et d'UX.
+- Jouer manuellement une partie complète.
 - Ajouter davantage de variations de journal après playtest.
 - Ajouter quelques tests unitaires du moteur de jeu.
 
 ## Prochaine action recommandée
 
-Tester une partie complète sur 10 à 20 tours, puis ajuster les seuils des événements et des fins.
+Jouer manuellement une partie complète et comparer le ressenti aux trajectoires simulées.
 
 ## Hors périmètre actuel
 

@@ -9,8 +9,8 @@ export const endings: EndingDefinition[] = [
     type: "revolt",
     tone: "realiste",
     condition: {
-      global: { max: { autonomieHumaine: 24 } },
-      averageBlock: { max: { confianceIA: 38 }, min: { tensionSociale: 68 } },
+      global: { min: { puissanceIA: 70 }, max: { autonomieHumaine: 50 } },
+      anyBlock: { max: { confianceIA: 54 }, min: { tensionSociale: 60 } },
     },
   },
   {

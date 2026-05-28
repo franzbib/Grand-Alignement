@@ -11,7 +11,13 @@ export function loadGameState(): GameState {
   }
 
   try {
-    return JSON.parse(savedState) as GameState;
+    const parsedState = JSON.parse(savedState) as GameState;
+
+    return {
+      ...parsedState,
+      triggeredEventIds:
+        parsedState.triggeredEventIds ?? parsedState.journal.flatMap((event) => (event.sourceId ? [event.sourceId] : [])),
+    };
   } catch {
     window.localStorage.removeItem(STORAGE_KEY);
     return createInitialState();

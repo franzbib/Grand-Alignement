@@ -77,6 +77,7 @@ export type GameState = {
   globalStats: GlobalStats;
   blocks: Block[];
   journal: Event[];
+  triggeredEventIds: string[];
   ending: Ending | null;
 };
 

@@ -14,6 +14,7 @@ export function createInitialState(): GameState {
     turn: 1,
     globalStats: { ...initialGlobalStats },
     blocks: structuredClone(initialBlocks),
+    triggeredEventIds: [],
     journal: [
       {
         id: "opening",
