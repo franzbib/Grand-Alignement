@@ -7,6 +7,10 @@ Ces idées peuvent être intéressantes plus tard, mais elles ne doivent pas êt
 - IA générative temps réel.
 - Éditeur de scénarios.
 - Carte détaillée à 190 États.
+- Projection géographique réaliste.
+- Animations cartographiques avancées.
+- Assets graphiques élaborés pour la carte.
+- Cartes alternatives par scénario.
 - Sous-systèmes sociaux détaillés.
 - Sous-systèmes militaires détaillés.
 - Moteur d'opinion publique détaillé.

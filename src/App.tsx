@@ -7,6 +7,7 @@ import { ActionsPanel } from "./components/ActionsPanel";
 import { BlocksGrid } from "./components/BlocksGrid";
 import { GlobalPanel } from "./components/GlobalPanel";
 import { Journal } from "./components/Journal";
+import { WorldMap } from "./components/WorldMap";
 import type { Action, GameState } from "./types/game";
 
 function App() {
@@ -53,6 +54,7 @@ function App() {
 
       <div className="main-layout">
         <div className="main-layout__wide">
+          <WorldMap blocks={gameState.blocks} />
           <BlocksGrid blocks={gameState.blocks} />
         </div>
         <aside className="main-layout__side">

@@ -175,6 +175,167 @@ button {
   align-items: start;
 }
 
+.world-map-panel__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.world-map-panel__header h2 {
+  margin-bottom: 0;
+}
+
+.world-map-panel__header p:last-child {
+  max-width: 440px;
+  margin: 0;
+  color: #536158;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.world-map-frame {
+  margin-top: 16px;
+  overflow: hidden;
+  border: 1px solid #2b3933;
+  border-radius: 8px;
+  background: #17211c;
+}
+
+.world-map {
+  display: block;
+  width: 100%;
+  min-height: 280px;
+}
+
+.world-map__ocean {
+  fill: #17211c;
+}
+
+.world-map__grid,
+.world-map__arc {
+  fill: none;
+  stroke: rgba(245, 243, 237, 0.12);
+  stroke-width: 1;
+}
+
+.world-map__arc {
+  stroke-dasharray: 8 10;
+}
+
+.world-map__block {
+  outline: none;
+}
+
+.world-map__zone {
+  fill: #66756c;
+  stroke: #d8d2c2;
+  stroke-width: 2;
+  transition:
+    fill 160ms ease,
+    stroke-width 160ms ease,
+    filter 160ms ease;
+}
+
+.world-map__block:hover .world-map__zone,
+.world-map__block:focus .world-map__zone {
+  stroke-width: 4;
+  filter: brightness(1.14);
+}
+
+.world-map__zone--stable {
+  fill: #56665d;
+}
+
+.world-map__zone--influence {
+  fill: #2f766a;
+  filter: drop-shadow(0 0 10px rgba(92, 197, 178, 0.35));
+}
+
+.world-map__zone--tension {
+  fill: #9f5d28;
+  filter: drop-shadow(0 0 10px rgba(183, 121, 31, 0.32));
+}
+
+.world-map__zone--fragile {
+  fill: #837b58;
+  stroke-dasharray: 8 6;
+}
+
+.world-map__zone--authoritarian {
+  fill: #5b6170;
+  stroke-dasharray: 3 5;
+}
+
+.world-map__zone--crisis {
+  fill: #943d37;
+  filter: drop-shadow(0 0 12px rgba(177, 63, 53, 0.42));
+}
+
+.world-map__label,
+.world-map__status {
+  pointer-events: none;
+  fill: #fffdf7;
+  paint-order: stroke;
+  stroke: rgba(23, 33, 28, 0.78);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+.world-map__label {
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.world-map__status {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.world-map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  margin-top: 14px;
+  color: #405047;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.world-map-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.legend-dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 1px solid #17211c;
+  border-radius: 999px;
+}
+
+.legend-dot--influence {
+  background: #2f766a;
+}
+
+.legend-dot--tension {
+  background: #9f5d28;
+}
+
+.legend-dot--fragile {
+  background: #837b58;
+}
+
+.legend-dot--crisis {
+  background: #943d37;
+}
+
+.legend-dot--authoritarian {
+  background: #5b6170;
+}
+
 .blocks-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -300,6 +461,10 @@ button {
 
   .gauge-grid {
     grid-template-columns: repeat(2, minmax(160px, 1fr));
+  }
+
+  .world-map-panel__header {
+    display: grid;
   }
 }
 
