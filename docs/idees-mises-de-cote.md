@@ -22,3 +22,4 @@ Ces idées peuvent être intéressantes plus tard, mais elles ne doivent pas êt
 - Fins secrètes.
 - IA générative pour bilans de fin.
 - Éditeur d'événements.
+- Passe littéraire complète des rapports, du journal, des événements, des diagnostics, des textes de branches et de la signature de ton.

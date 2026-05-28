@@ -319,23 +319,53 @@ button {
 
 .world-map__relation {
   fill: none;
-  stroke: rgba(255, 253, 247, 0.65);
-  stroke-width: 3;
+  stroke: #d8b36a;
+  stroke-width: 2;
+  stroke-dasharray: 8 8;
   stroke-linecap: round;
   pointer-events: none;
 }
 
+.world-map__relation--moderate {
+  stroke: #d8b36a;
+  stroke-width: 2;
+  stroke-dasharray: 8 8;
+}
+
+.world-map__relation--high {
+  stroke: #e58b3a;
+  stroke-width: 3.25;
+  stroke-dasharray: 12 6;
+}
+
+.world-map__relation--critical {
+  stroke: #ff6b5f;
+  stroke-width: 4.5;
+  stroke-dasharray: 0;
+  filter: drop-shadow(0 0 8px rgba(255, 107, 95, 0.38));
+}
+
 .world-map__relation--tendue {
-  stroke: #d98c36;
+  stroke: #e58b3a;
 }
 
 .world-map__relation--critique {
   stroke: #ff6b5f;
-  stroke-width: 4;
 }
 
 .world-map__relation--apaisée {
   stroke: #6fc4a2;
+}
+
+.world-map__relation-label {
+  pointer-events: none;
+  fill: #fffdf7;
+  font-size: 11px;
+  font-weight: 900;
+  paint-order: stroke;
+  stroke: rgba(23, 33, 28, 0.82);
+  stroke-width: 3px;
+  stroke-linejoin: round;
 }
 
 .world-map__block {
@@ -359,37 +389,37 @@ button {
 }
 
 .world-map__zone--stable {
-  fill: #56665d;
+  fill: #596a60;
 }
 
 .world-map__zone--influence {
-  fill: #2f766a;
-  filter: drop-shadow(0 0 10px rgba(92, 197, 178, 0.35));
+  fill: #247b6d;
+  filter: drop-shadow(0 0 12px rgba(92, 197, 178, 0.38));
 }
 
 .world-map__zone--tension {
-  fill: #9f5d28;
-  filter: drop-shadow(0 0 10px rgba(183, 121, 31, 0.32));
+  fill: #b6652d;
+  filter: drop-shadow(0 0 10px rgba(229, 139, 58, 0.32));
 }
 
 .world-map__zone--fragile {
-  fill: #837b58;
+  fill: #8a8150;
   stroke-dasharray: 8 6;
 }
 
 .world-map__zone--authoritarian {
-  fill: #5b6170;
+  fill: #536274;
   stroke-dasharray: 3 5;
 }
 
 .world-map__zone--resistance {
-  fill: #6f4d82;
+  fill: #75518a;
   stroke-dasharray: 10 4 2 4;
 }
 
 .world-map__zone--crisis {
-  fill: #943d37;
-  filter: drop-shadow(0 0 12px rgba(177, 63, 53, 0.42));
+  fill: #a63f3a;
+  filter: drop-shadow(0 0 14px rgba(255, 107, 95, 0.46));
 }
 
 .world-map__zone--selected {
@@ -433,6 +463,17 @@ button {
   gap: 7px;
 }
 
+.legend-line {
+  display: inline-block;
+  width: 24px;
+  height: 0;
+  border-top: 3px solid #e58b3a;
+}
+
+.legend-line--relation {
+  border-top-style: dashed;
+}
+
 .block-report {
   display: grid;
   grid-template-columns: minmax(220px, 1fr) minmax(300px, 1.3fr);
@@ -457,6 +498,72 @@ button {
   grid-template-columns: repeat(2, minmax(120px, 1fr));
   gap: 10px;
   margin: 0;
+}
+
+.block-report__badges {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 5px 9px;
+  border: 1px solid #cfc6b3;
+  border-left-width: 4px;
+  border-radius: 999px;
+  background: #fffdf7;
+  color: #405047;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.status-chip strong {
+  color: #17211c;
+}
+
+.status-chip--stable {
+  border-left-color: #596a60;
+}
+
+.status-chip--influence {
+  border-left-color: #247b6d;
+  background: #edf7f2;
+}
+
+.status-chip--tension {
+  border-left-color: #b6652d;
+  background: #fff4e6;
+}
+
+.status-chip--fragile,
+.status-chip--relation {
+  border-left-color: #8a8150;
+  background: #fbf6df;
+}
+
+.status-chip--authoritarian {
+  border-left-color: #536274;
+  background: #eef1f3;
+}
+
+.status-chip--resistance {
+  border-left-color: #75518a;
+  background: #f3edf7;
+}
+
+.status-chip--crisis {
+  border-left-color: #a63f3a;
+  background: #fff0ed;
+}
+
+.status-chip--leverage {
+  border-left-color: #7c3626;
+  background: #fff8ed;
 }
 
 .block-report dl div {
@@ -515,27 +622,31 @@ button {
 }
 
 .legend-dot--influence {
-  background: #2f766a;
+  background: #247b6d;
 }
 
 .legend-dot--tension {
-  background: #9f5d28;
+  background: #b6652d;
 }
 
 .legend-dot--fragile {
-  background: #837b58;
+  background: #8a8150;
 }
 
 .legend-dot--crisis {
-  background: #943d37;
+  background: #a63f3a;
 }
 
 .legend-dot--authoritarian {
-  background: #5b6170;
+  background: #536274;
 }
 
 .legend-dot--resistance {
-  background: #6f4d82;
+  background: #75518a;
+}
+
+.legend-dot--stable {
+  background: #596a60;
 }
 
 .blocks-grid {

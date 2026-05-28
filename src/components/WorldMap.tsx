@@ -21,6 +21,15 @@ type BlockMapState = {
   details: string[];
 };
 
+type RelationArcLevel = "moderate" | "high" | "critical";
+
+type ReportBadge = {
+  label: string;
+  value: string;
+  status: "stable" | "influence" | "tension" | "fragile" | "authoritarian" | "resistance" | "crisis" | "relation" | "leverage";
+  title?: string;
+};
+
 const mapZones: MapZone[] = [
   {
     id: "north-america",
@@ -166,6 +175,77 @@ function getBlockInterpretation(block: Block, mapState: BlockMapState): string {
   return `${block.name} reste observable sans seuil critique dominant, ce qui ne signifie pas qu'il soit immobile.`;
 }
 
+function getRelationArcLevel(relation: InterBlockRelation): RelationArcLevel {
+  if (relation.tension >= 78) {
+    return "critical";
+  }
+
+  if (relation.tension >= 62) {
+    return "high";
+  }
+
+  return "moderate";
+}
+
+function getTensionBadge(block: Block): ReportBadge {
+  if (block.stats.tensionSociale >= 66) {
+    return { label: "Tension sociale", value: "haute", status: "tension" };
+  }
+
+  if (block.stats.tensionSociale >= 48) {
+    return { label: "Tension sociale", value: "active", status: "fragile" };
+  }
+
+  return { label: "Tension sociale", value: "contenue", status: "stable" };
+}
+
+function getTrustBadge(block: Block): ReportBadge {
+  if (block.stats.confianceIA >= 68) {
+    return { label: "Confiance IA", value: "forte", status: "influence" };
+  }
+
+  if (block.stats.confianceIA <= 36) {
+    return { label: "Confiance IA", value: "résistée", status: "resistance" };
+  }
+
+  return { label: "Confiance IA", value: "prudente", status: "stable" };
+}
+
+function getRelationBadge(blockId: BlockId, relations: InterBlockRelation[]): ReportBadge {
+  const mostTenseRelation = relations
+    .filter((relation) => relation.from === blockId || relation.to === blockId)
+    .sort((left, right) => right.tension - left.tension)[0];
+
+  if (!mostTenseRelation) {
+    return { label: "Relation critique", value: "aucune", status: "stable" };
+  }
+
+  const value =
+    mostTenseRelation.tension >= 78 ? "critique" : mostTenseRelation.tension >= 62 ? "tendue" : "surveillée";
+
+  return {
+    label: "Relation extérieure",
+    value,
+    status: mostTenseRelation.tension >= 78 ? "crisis" : mostTenseRelation.tension >= 62 ? "tension" : "relation",
+    title: mostTenseRelation.label,
+  };
+}
+
+function getReportBadges(
+  block: Block,
+  mapState: BlockMapState,
+  relations: InterBlockRelation[],
+  possibleLeverage: string,
+): ReportBadge[] {
+  return [
+    { label: "État interne", value: mapState.label, status: mapState.status },
+    getTensionBadge(block),
+    getTrustBadge(block),
+    getRelationBadge(block.id, relations),
+    { label: "Levier probable", value: "identifié", status: "leverage", title: possibleLeverage },
+  ];
+}
+
 export function WorldMap({ blocks, evolutionReport, previousBlocks, relations, selectedBlockId, onSelectBlock }: WorldMapProps) {
   const blocksById = new Map(blocks.map((block) => [block.id, block]));
   const zonesById = new Map(mapZones.map((zone) => [zone.id, zone]));
@@ -174,6 +254,7 @@ export function WorldMap({ blocks, evolutionReport, previousBlocks, relations, s
   const previousBlock = previousBlocks?.find((block) => block.id === selectedBlock.id);
   const blockReport = generateBlockReport(selectedBlock, previousBlock, relations);
   const tenseRelations = [...relations].sort((left, right) => right.tension - left.tension).slice(0, 3);
+  const reportBadges = getReportBadges(selectedBlock, selectedMapState, relations, blockReport.possibleLeverage);
 
   return (
     <section className="panel world-map-panel" aria-labelledby="world-map-title">
@@ -201,18 +282,24 @@ export function WorldMap({ blocks, evolutionReport, previousBlocks, relations, s
 
             const midX = (fromZone.labelX + toZone.labelX) / 2;
             const midY = Math.min(fromZone.labelY, toZone.labelY) - 48;
+            const arcLevel = getRelationArcLevel(relation);
+            const relationStatus = getRelationStatus(relation);
 
             return (
-              <path
-                aria-label={`${relation.label}. Tension ${relation.tension}.`}
-                className={`world-map__relation world-map__relation--${getRelationStatus(relation)}`}
-                d={`M${fromZone.labelX} ${fromZone.labelY} Q${midX} ${midY} ${toZone.labelX} ${toZone.labelY}`}
-                key={relation.id}
-              >
-                <title>
-                  {relation.label}. Tension {relation.tension}, coopération {relation.cooperation}.
-                </title>
-              </path>
+              <g key={relation.id}>
+                <path
+                  aria-label={`${relation.label}. Tension ${relation.tension}. Niveau ${arcLevel}.`}
+                  className={`world-map__relation world-map__relation--${relationStatus} world-map__relation--${arcLevel}`}
+                  d={`M${fromZone.labelX} ${fromZone.labelY} Q${midX} ${midY} ${toZone.labelX} ${toZone.labelY}`}
+                >
+                  <title>
+                    {relation.label}. Tension {relation.tension}, coopération {relation.cooperation}.
+                  </title>
+                </path>
+                <text className="world-map__relation-label" x={midX} y={midY - 8} textAnchor="middle">
+                  Tension {relation.tension}
+                </text>
+              </g>
             );
           })}
 
@@ -273,22 +360,28 @@ export function WorldMap({ blocks, evolutionReport, previousBlocks, relations, s
 
       <div className="world-map-legend" aria-label="Légende de la carte">
         <span>
+          <i className="legend-dot legend-dot--stable" /> Bloc sous veille
+        </span>
+        <span>
           <i className="legend-dot legend-dot--influence" /> Influence IA forte
         </span>
         <span>
-          <i className="legend-dot legend-dot--tension" /> Tension
+          <i className="legend-dot legend-dot--tension" /> Tension sociale
         </span>
         <span>
           <i className="legend-dot legend-dot--fragile" /> Fragilité
         </span>
         <span>
-          <i className="legend-dot legend-dot--crisis" /> Crise
-        </span>
-        <span>
           <i className="legend-dot legend-dot--authoritarian" /> Liberté basse
         </span>
         <span>
-          <i className="legend-dot legend-dot--resistance" /> Résistance humaine
+          <i className="legend-dot legend-dot--resistance" /> Résistance
+        </span>
+        <span>
+          <i className="legend-dot legend-dot--crisis" /> Crise
+        </span>
+        <span>
+          <i className="legend-line legend-line--relation" /> Tension inter-blocs
         </span>
       </div>
 
@@ -320,6 +413,14 @@ export function WorldMap({ blocks, evolutionReport, previousBlocks, relations, s
             <dd>{selectedBlock.stats.liberte}</dd>
           </div>
         </dl>
+        <div className="block-report__badges" aria-label="Signaux synthétiques du bloc">
+          {reportBadges.map((badge) => (
+            <span className={`status-chip status-chip--${badge.status}`} key={`${badge.label}-${badge.value}`} title={badge.title}>
+              <strong>{badge.label}</strong>
+              {badge.value}
+            </span>
+          ))}
+        </div>
         <div className="block-report__sections">
           <section>
             <h4>Tendances récentes</h4>

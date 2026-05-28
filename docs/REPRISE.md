@@ -65,7 +65,9 @@ npm.cmd run build
 
 ## Dernière modification utile
 
-Ajout d'une couche de relations inter-blocs et de dynamique autonome. Le monde évolue maintenant chaque tour par rivalités, dépendances, tensions climatiques, sécurité, technologie et inertie institutionnelle. La carte affiche les trois relations les plus tendues et une vue Relations liste les relations suivies.
+Amélioration des codes visuels de la carte mondiale : statuts de blocs plus stables, légende plus explicite, arcs de relations différenciés par niveau de tension et badges synthétiques dans le rapport de bloc.
+
+La qualité textuelle actuelle reste volontairement fonctionnelle. Une future passe littéraire devra reprendre les rapports, le journal, les événements, les diagnostics, les textes de branches et la signature de ton, sans changer le système avant validation.
 
 Preview Vercel précédente : `https://grand-alignement-bd34k6p10-franzbib-6925s-projects.vercel.app`
 
@@ -82,7 +84,7 @@ Alias public vérifié précédemment : `https://grand-alignement.vercel.app`
 
 ## Prochaine action recommandée
 
-Faire un playtest manuel de dix tours en vérifiant si les relations inter-blocs rendent le monde plus autonome sans surcharger l'interface.
+Faire un playtest manuel de dix tours en vérifiant si les nouveaux codes de carte et badges de rapport rendent les tensions lisibles sans surcharger l'interface.
 
 ## Hors périmètre actuel
 
