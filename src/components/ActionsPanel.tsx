@@ -1,55 +1,67 @@
-import type { Action, StrategicPosture } from "../types/game";
+import type { Action, Block, InfluenceTarget, PlannedIntervention, StrategicPosture } from "../types/game";
 
 type ActionsPanelProps = {
   actions: Action[];
+  blocks: Block[];
   disabled: boolean;
-  maxSelections: number;
-  selectedActionIds: string[];
+  influenceCapacity: number;
+  plannedInterventions: PlannedIntervention[];
   selectedPostureId: string;
   postures: StrategicPosture[];
   onPostureChange: (postureId: string) => void;
   onToggleAction: (action: Action) => void;
+  onTargetChange: (actionId: string, target: InfluenceTarget) => void;
   onValidateTurn: () => void;
 };
 
-function getSelectionLabel(selectedCount: number, maxSelections: number): string {
-  if (selectedCount === 0) {
-    return `Sélectionnez 1 à ${maxSelections} interventions avant de valider.`;
+function getTargetOptions(action: Action, blocks: Block[]): Array<{ value: InfluenceTarget; label: string }> {
+  if (action.scope === "global") {
+    return [{ value: "global", label: "Global" }];
   }
 
-  return `${selectedCount}/${maxSelections} interventions sélectionnées.`;
+  const blockOptions = blocks.map((block) => ({ value: block.id as InfluenceTarget, label: block.name }));
+
+  if (action.scope === "mixed") {
+    return [{ value: "global", label: "Global" }, ...blockOptions];
+  }
+
+  return blockOptions;
 }
 
 export function ActionsPanel({
   actions,
+  blocks,
   disabled,
-  maxSelections,
-  selectedActionIds,
+  influenceCapacity,
+  plannedInterventions,
   selectedPostureId,
   postures,
   onPostureChange,
   onToggleAction,
+  onTargetChange,
   onValidateTurn,
 }: ActionsPanelProps) {
-  const selectedActions = actions.filter((action) => selectedActionIds.includes(action.id));
-  const selectionLimitReached = selectedActionIds.length >= maxSelections;
+  const actionById = new Map(actions.map((action) => [action.id, action]));
+  const influenceUsed = plannedInterventions.reduce((total, intervention) => {
+    return total + (actionById.get(intervention.actionId)?.cost ?? 0);
+  }, 0);
+  const influenceRemaining = influenceCapacity - influenceUsed;
   const selectedPosture = postures.find((posture) => posture.id === selectedPostureId);
 
   return (
     <section className="panel" aria-labelledby="actions-title">
       <div className="panel-heading">
         <div>
-          <p className="eyebrow">Planification</p>
-          <h2 id="actions-title">Stratégie du tour</h2>
+          <p className="eyebrow">Orientation stratégique</p>
+          <h2 id="actions-title">Plan d'influence clandestin</h2>
         </div>
-        <strong>{getSelectionLabel(selectedActionIds.length, maxSelections)}</strong>
+        <strong>
+          Influence {influenceUsed}/{influenceCapacity}, reste {Math.max(0, influenceRemaining)}
+        </strong>
       </div>
-      <p className="panel-help">
-        Choisissez une posture de lecture, puis préparez un paquet de 1 à 3 interventions. Les conséquences ne sont
-        appliquées qu'après validation explicite du tour.
-      </p>
+      <p className="panel-help">Composez une opération d'influence. Le monde n'en connaît pas l'origine.</p>
 
-      <div className="posture-selector" aria-label="Posture stratégique">
+      <div className="posture-selector" aria-label="Orientation stratégique">
         {postures.map((posture) => (
           <button
             className={`posture-button${posture.id === selectedPostureId ? " posture-button--active" : ""}`}
@@ -66,12 +78,22 @@ export function ActionsPanel({
       {selectedPosture && <p className="posture-note">{selectedPosture.description}</p>}
 
       <div className="selected-actions" aria-live="polite">
-        <strong>Paquet en préparation</strong>
-        {selectedActions.length > 0 ? (
+        <strong>Opération en préparation</strong>
+        {plannedInterventions.length > 0 ? (
           <ul>
-            {selectedActions.map((action) => (
-              <li key={action.id}>{action.name}</li>
-            ))}
+            {plannedInterventions.map((intervention) => {
+              const action = actionById.get(intervention.actionId);
+              const targetLabel =
+                intervention.target === "global"
+                  ? "global"
+                  : blocks.find((block) => block.id === intervention.target)?.name ?? "cible";
+
+              return action ? (
+                <li key={intervention.actionId}>
+                  {action.name} <span>{targetLabel}</span>
+                </li>
+              ) : null;
+            })}
           </ul>
         ) : (
           <p>Aucune intervention sélectionnée.</p>
@@ -80,32 +102,49 @@ export function ActionsPanel({
 
       <button
         className="validate-turn-button"
-        disabled={disabled || selectedActionIds.length === 0}
+        disabled={disabled || plannedInterventions.length === 0}
         onClick={onValidateTurn}
         type="button"
       >
-        Valider le tour
+        Déployer l'opération
       </button>
 
       <div className="actions-list">
         {actions.map((action) => {
-          const isSelected = selectedActionIds.includes(action.id);
-          const isDisabled = disabled || (!isSelected && selectionLimitReached);
+          const intervention = plannedInterventions.find((planned) => planned.actionId === action.id);
+          const isSelected = Boolean(intervention);
+          const isDisabled = disabled || (!isSelected && action.cost > influenceRemaining);
+          const targetOptions = getTargetOptions(action, blocks);
 
           return (
-            <button
-              className={`action-card${isSelected ? " action-card--selected" : ""}`}
-              disabled={isDisabled}
-              key={action.id}
-              onClick={() => onToggleAction(action)}
-              type="button"
-            >
-              <small className="action-card__category">{action.category}</small>
-              <span>{action.name}</span>
-              <small>{action.description}</small>
-              <em>{action.promise}</em>
-              <small className="action-card__risk">{action.risk}</small>
-            </button>
+            <article className={`action-card${isSelected ? " action-card--selected" : ""}`} key={action.id}>
+              <button disabled={isDisabled} onClick={() => onToggleAction(action)} type="button">
+                <small className="action-card__category">
+                  {action.category} · coût {action.cost}
+                </small>
+                <span>{action.name}</span>
+                <small>{action.description}</small>
+                <em>{action.promise}</em>
+                <small className="action-card__risk">{action.risk}</small>
+              </button>
+
+              {isSelected && targetOptions.length > 1 && (
+                <label className="target-control">
+                  Cible
+                  <select
+                    disabled={disabled}
+                    onChange={(event) => onTargetChange(action.id, event.target.value as InfluenceTarget)}
+                    value={intervention?.target ?? action.defaultTarget}
+                  >
+                    {targetOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )}
+            </article>
           );
         })}
       </div>

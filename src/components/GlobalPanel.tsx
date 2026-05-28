@@ -19,6 +19,7 @@ export function GlobalPanel({ stats, turn }: GlobalPanelProps) {
         <StatGauge label="Autonomie humaine" value={stats.autonomieHumaine} />
         <StatGauge label="Stress climatique" value={stats.stressClimatique} tone="warning" />
         <StatGauge label="Puissance IA" value={stats.puissanceIA} tone="warning" />
+        <StatGauge label="Soupçon IA" value={stats.soupconIA} tone="danger" />
       </div>
     </section>
   );

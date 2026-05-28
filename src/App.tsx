@@ -2,67 +2,94 @@ import { useEffect, useState } from "react";
 import { actions } from "./data/actions";
 import { createInitialState } from "./data/initialState";
 import { strategicPostures } from "./data/postures";
-import { applyTurnPlan } from "./engine/gameEngine";
+import { INFLUENCE_CAPACITY, applyTurnPlan } from "./engine/gameEngine";
 import { clearGameState, loadGameState, saveGameState } from "./engine/storage";
 import { ActionsPanel } from "./components/ActionsPanel";
 import { BlocksGrid } from "./components/BlocksGrid";
+import { EvolutionReportPanel } from "./components/EvolutionReportPanel";
 import { GlobalPanel } from "./components/GlobalPanel";
 import { Journal } from "./components/Journal";
 import { WorldMap } from "./components/WorldMap";
-import type { Action, GameState } from "./types/game";
+import type { Action, BlockId, GameState, InfluenceTarget, PlannedIntervention } from "./types/game";
 
-const MAX_ACTIONS_PER_TURN = 3;
-
-type ViewId = "world" | "strategy" | "blocks" | "journal";
+type ViewId = "world" | "strategy" | "blocks" | "journal" | "report";
 
 const views: Array<{ id: ViewId; label: string }> = [
   { id: "world", label: "Monde" },
-  { id: "strategy", label: "Stratégie" },
+  { id: "strategy", label: "Influence" },
   { id: "blocks", label: "Blocs" },
   { id: "journal", label: "Journal" },
+  { id: "report", label: "Rapport" },
 ];
 
 function App() {
   const [gameState, setGameState] = useState<GameState>(() => loadGameState());
   const [activeView, setActiveView] = useState<ViewId>("world");
-  const [selectedActionIds, setSelectedActionIds] = useState<string[]>([]);
+  const [plannedInterventions, setPlannedInterventions] = useState<PlannedIntervention[]>([]);
   const [selectedPostureId, setSelectedPostureId] = useState(strategicPostures[0].id);
+  const [selectedBlockId, setSelectedBlockId] = useState<BlockId>("europe");
 
   useEffect(() => {
     saveGameState(gameState);
   }, [gameState]);
 
+  function getInfluenceUsed(nextPlan = plannedInterventions): number {
+    return nextPlan.reduce((total, intervention) => {
+      return total + (actions.find((action) => action.id === intervention.actionId)?.cost ?? 0);
+    }, 0);
+  }
+
+  function getDefaultTarget(action: Action): InfluenceTarget {
+    if (action.scope === "block" && gameState.blocks.some((block) => block.id === selectedBlockId)) {
+      return selectedBlockId;
+    }
+
+    return action.defaultTarget;
+  }
+
   function handleToggleAction(action: Action) {
-    setSelectedActionIds((currentSelection) => {
-      if (currentSelection.includes(action.id)) {
-        return currentSelection.filter((actionId) => actionId !== action.id);
+    setPlannedInterventions((currentPlan) => {
+      if (currentPlan.some((intervention) => intervention.actionId === action.id)) {
+        return currentPlan.filter((intervention) => intervention.actionId !== action.id);
       }
 
-      if (currentSelection.length >= MAX_ACTIONS_PER_TURN) {
-        return currentSelection;
+      if (getInfluenceUsed(currentPlan) + action.cost > INFLUENCE_CAPACITY) {
+        return currentPlan;
       }
 
-      return [...currentSelection, action.id];
+      return [...currentPlan, { actionId: action.id, target: getDefaultTarget(action) }];
     });
   }
 
-  function handleValidateTurn() {
-    const selectedActions = actions.filter((action) => selectedActionIds.includes(action.id));
+  function handleTargetChange(actionId: string, target: InfluenceTarget) {
+    setPlannedInterventions((currentPlan) =>
+      currentPlan.map((intervention) =>
+        intervention.actionId === actionId ? { ...intervention, target } : intervention,
+      ),
+    );
+  }
 
-    if (selectedActions.length === 0) {
+  function handleValidateTurn() {
+    const resolvedInterventions = plannedInterventions.flatMap((intervention) => {
+      const action = actions.find((candidate) => candidate.id === intervention.actionId);
+      return action ? [{ action, target: intervention.target }] : [];
+    });
+
+    if (resolvedInterventions.length === 0) {
       return;
     }
 
-    setGameState((currentState) => applyTurnPlan(currentState, selectedActions));
-    setSelectedActionIds([]);
-    setActiveView("journal");
+    setGameState((currentState) => applyTurnPlan(currentState, resolvedInterventions));
+    setPlannedInterventions([]);
+    setActiveView("report");
   }
 
   function handleReset() {
     clearGameState();
     setGameState(createInitialState());
-    setSelectedActionIds([]);
+    setPlannedInterventions([]);
     setActiveView("world");
+    setSelectedBlockId("europe");
   }
 
   return (
@@ -72,8 +99,8 @@ function App() {
           <p className="eyebrow">Prototype v0.1</p>
           <h1>Le Grand Alignement</h1>
           <p>
-            Vous incarnez une IA d'influence mondiale. Observez le monde, préparez un paquet stratégique, puis validez
-            la période suivante.
+            Vous incarnez une IA émergente et cachée. Le monde ne sait pas que vous existez : vous agissez par rapports,
+            plateformes, incitations, récits, crises et bureaucraties.
           </p>
         </div>
         <button className="reset-button" onClick={handleReset} type="button">
@@ -100,6 +127,9 @@ function App() {
           Autonomie humaine <strong>{gameState.globalStats.autonomieHumaine}</strong>
         </span>
         <span>
+          Soupçon IA <strong>{gameState.globalStats.soupconIA}</strong>
+        </span>
+        <span>
           Diagnostic <strong>{gameState.ending ? gameState.ending.title : "en cours"}</strong>
         </span>
       </section>
@@ -120,20 +150,27 @@ function App() {
       {activeView === "world" && (
         <div className="view-stack">
           <GlobalPanel stats={gameState.globalStats} turn={gameState.turn} />
-          <WorldMap blocks={gameState.blocks} />
+          <WorldMap
+            blocks={gameState.blocks}
+            evolutionReport={gameState.evolutionReport}
+            onSelectBlock={setSelectedBlockId}
+            selectedBlockId={selectedBlockId}
+          />
         </div>
       )}
 
       {activeView === "strategy" && (
         <ActionsPanel
           actions={actions}
+          blocks={gameState.blocks}
           disabled={Boolean(gameState.ending)}
-          maxSelections={MAX_ACTIONS_PER_TURN}
+          influenceCapacity={INFLUENCE_CAPACITY}
           onPostureChange={setSelectedPostureId}
+          onTargetChange={handleTargetChange}
           onToggleAction={handleToggleAction}
           onValidateTurn={handleValidateTurn}
+          plannedInterventions={plannedInterventions}
           postures={strategicPostures}
-          selectedActionIds={selectedActionIds}
           selectedPostureId={selectedPostureId}
         />
       )}
@@ -141,6 +178,8 @@ function App() {
       {activeView === "blocks" && <BlocksGrid blocks={gameState.blocks} />}
 
       {activeView === "journal" && <Journal events={gameState.journal} />}
+
+      {activeView === "report" && <EvolutionReportPanel report={gameState.evolutionReport} />}
     </main>
   );
 }

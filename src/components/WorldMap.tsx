@@ -1,4 +1,4 @@
-import type { Block, BlockId } from "../types/game";
+import type { Block, BlockId, EvolutionReport } from "../types/game";
 
 type MapZone = {
   id: BlockId;
@@ -137,10 +137,35 @@ export function getBlockMapState(block: Block): BlockMapState {
 
 type WorldMapProps = {
   blocks: Block[];
+  evolutionReport: EvolutionReport | null;
+  selectedBlockId: BlockId;
+  onSelectBlock: (blockId: BlockId) => void;
 };
 
-export function WorldMap({ blocks }: WorldMapProps) {
+function getBlockInterpretation(block: Block, mapState: BlockMapState): string {
+  if (mapState.status === "crisis") {
+    return `${block.name} concentre plusieurs fragilités visibles. L'influence indirecte risque d'y produire des effets plus brusques.`;
+  }
+
+  if (block.stats.confianceIA >= 65) {
+    return `${block.name} absorbe facilement les signaux algorithmiques, mais cette confiance peut devenir une dépendance.`;
+  }
+
+  if (block.stats.liberte <= 40) {
+    return `${block.name} paraît stable en surface, avec une marge civique déjà réduite.`;
+  }
+
+  if (block.stats.tensionSociale >= 60) {
+    return `${block.name} réagit fortement aux arbitrages perçus comme imposés ou capturés.`;
+  }
+
+  return `${block.name} reste observable sans seuil critique dominant, ce qui ne signifie pas qu'il soit immobile.`;
+}
+
+export function WorldMap({ blocks, evolutionReport, selectedBlockId, onSelectBlock }: WorldMapProps) {
   const blocksById = new Map(blocks.map((block) => [block.id, block]));
+  const selectedBlock = blocksById.get(selectedBlockId) ?? blocks[0];
+  const selectedMapState = getBlockMapState(selectedBlock);
 
   return (
     <section className="panel world-map-panel" aria-labelledby="world-map-title">
@@ -149,7 +174,7 @@ export function WorldMap({ blocks }: WorldMapProps) {
           <p className="eyebrow">Observation mondiale</p>
           <h2 id="world-map-title">Carte des blocs</h2>
         </div>
-        <p>Une projection simplifiée des blocs, de l'influence IA et des zones de friction.</p>
+        <p>Cliquez un bloc pour lire son rapport. La carte reste une surface d'observation, pas un théâtre d'opérations.</p>
       </div>
 
       <div className="world-map-frame">
@@ -166,11 +191,28 @@ export function WorldMap({ blocks }: WorldMapProps) {
             }
 
             const mapState = getBlockMapState(block);
-            const className = `world-map__zone world-map__zone--${mapState.status}`;
+            const isSelected = selectedBlockId === block.id;
+            const className = `world-map__zone world-map__zone--${mapState.status}${
+              isSelected ? " world-map__zone--selected" : ""
+            }`;
             const summary = `${block.name}. ${mapState.label}. Stabilité ${block.stats.stabilite}, confiance IA ${block.stats.confianceIA}, tension sociale ${block.stats.tensionSociale}, liberté ${block.stats.liberte}.`;
 
             return (
-              <g className="world-map__block" key={zone.id} tabIndex={0} aria-label={summary}>
+              <g
+                aria-label={summary}
+                aria-pressed={isSelected}
+                className="world-map__block"
+                key={zone.id}
+                onClick={() => onSelectBlock(zone.id)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    onSelectBlock(zone.id);
+                  }
+                }}
+                role="button"
+                tabIndex={0}
+              >
                 <title>{summary}</title>
                 {zone.shape === "path" ? (
                   <path className={className} d={zone.d} />
@@ -216,6 +258,40 @@ export function WorldMap({ blocks }: WorldMapProps) {
           <i className="legend-dot legend-dot--resistance" /> Résistance humaine
         </span>
       </div>
+
+      <aside className="block-report" aria-labelledby="block-report-title">
+        <div>
+          <p className="eyebrow">Rapport de bloc</p>
+          <h3 id="block-report-title">{selectedBlock.name}</h3>
+          <p>{selectedBlock.description}</p>
+        </div>
+        <dl>
+          <div>
+            <dt>État carte</dt>
+            <dd>{selectedMapState.label}</dd>
+          </div>
+          <div>
+            <dt>Stabilité</dt>
+            <dd>{selectedBlock.stats.stabilite}</dd>
+          </div>
+          <div>
+            <dt>Confiance IA</dt>
+            <dd>{selectedBlock.stats.confianceIA}</dd>
+          </div>
+          <div>
+            <dt>Tension sociale</dt>
+            <dd>{selectedBlock.stats.tensionSociale}</dd>
+          </div>
+          <div>
+            <dt>Liberté</dt>
+            <dd>{selectedBlock.stats.liberte}</dd>
+          </div>
+        </dl>
+        <p className="block-report__trend">
+          {evolutionReport?.blockTrends[selectedBlock.id] ?? "Aucune tendance récente enregistrée."}
+        </p>
+        <p>{getBlockInterpretation(selectedBlock, selectedMapState)}</p>
+      </aside>
     </section>
   );
 }

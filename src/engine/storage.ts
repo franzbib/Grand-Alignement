@@ -12,11 +12,17 @@ export function loadGameState(): GameState {
 
   try {
     const parsedState = JSON.parse(savedState) as GameState;
+    const initialState = createInitialState();
 
     return {
       ...parsedState,
+      globalStats: {
+        ...initialState.globalStats,
+        ...parsedState.globalStats,
+      },
       triggeredEventIds:
         parsedState.triggeredEventIds ?? parsedState.journal.flatMap((event) => (event.sourceId ? [event.sourceId] : [])),
+      evolutionReport: parsedState.evolutionReport ?? null,
     };
   } catch {
     window.localStorage.removeItem(STORAGE_KEY);

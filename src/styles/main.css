@@ -61,7 +61,7 @@ button {
 }
 
 .reset-button,
-.action-card {
+.action-card > button {
   cursor: pointer;
   transition:
     transform 160ms ease,
@@ -80,7 +80,7 @@ button {
 }
 
 .reset-button:hover,
-.action-card:hover:not(:disabled) {
+.action-card > button:hover:not(:disabled) {
   transform: translateY(-1px);
 }
 
@@ -216,7 +216,7 @@ button {
 
 .gauge-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(150px, 1fr));
+  grid-template-columns: repeat(6, minmax(140px, 1fr));
   gap: 14px;
 }
 
@@ -371,6 +371,11 @@ button {
   filter: drop-shadow(0 0 12px rgba(177, 63, 53, 0.42));
 }
 
+.world-map__zone--selected {
+  stroke: #fffdf7;
+  stroke-width: 5;
+}
+
 .world-map__label,
 .world-map__status {
   pointer-events: none;
@@ -405,6 +410,59 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 7px;
+}
+
+.block-report {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(300px, 1.3fr);
+  gap: 18px;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid #ebe5d8;
+}
+
+.block-report h3 {
+  margin: 0 0 8px;
+}
+
+.block-report p {
+  margin: 0;
+  color: #536158;
+  line-height: 1.45;
+}
+
+.block-report dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+
+.block-report dl div {
+  padding: 10px;
+  border: 1px solid #ded8c9;
+  border-radius: 8px;
+  background: #f8f6ef;
+}
+
+.block-report dt {
+  color: #536158;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.block-report dd {
+  margin: 3px 0 0;
+  color: #17211c;
+  font-weight: 900;
+}
+
+.block-report__trend {
+  grid-column: 1 / -1;
+  padding: 10px;
+  border-left: 3px solid #7c3626;
+  background: #fff8ed;
+  font-weight: 800;
 }
 
 .legend-dot {
@@ -558,11 +616,21 @@ button {
 
 .action-card {
   width: 100%;
-  padding: 13px;
+  padding: 0;
   border: 1px solid #d6d1c3;
   border-radius: 8px;
   color: #17211c;
   background: #f7f2e8;
+  text-align: left;
+  overflow: hidden;
+}
+
+.action-card > button {
+  width: 100%;
+  padding: 13px;
+  border: 0;
+  color: inherit;
+  background: transparent;
   text-align: left;
 }
 
@@ -600,7 +668,7 @@ button {
   color: #7c3626 !important;
 }
 
-.action-card:hover:not(:disabled) {
+.action-card:has(> button:hover:not(:disabled)) {
   border-color: #8f7d52;
   background: #efe5ce;
 }
@@ -610,9 +678,80 @@ button {
   background: #e4efe5;
 }
 
-.action-card:disabled {
+.action-card > button:disabled {
   cursor: not-allowed;
   opacity: 0.55;
+}
+
+.target-control {
+  display: grid;
+  gap: 6px;
+  padding: 0 13px 13px;
+  color: #536158;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.target-control select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #c8c0ac;
+  border-radius: 6px;
+  color: #17211c;
+  background: #fffdf7;
+  font: inherit;
+}
+
+.selected-actions li span {
+  display: inline-block;
+  margin-left: 6px;
+  color: #536158;
+  font-weight: 700;
+}
+
+.evolution-report > p {
+  margin: 0 0 16px;
+  color: #536158;
+  line-height: 1.5;
+}
+
+.report-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.report-grid > div {
+  padding: 14px;
+  border: 1px solid #ded8c9;
+  border-radius: 8px;
+  background: #f8f6ef;
+}
+
+.report-grid h3 {
+  margin: 0 0 8px;
+  font-size: 0.92rem;
+}
+
+.report-grid p,
+.report-grid ul {
+  margin: 0;
+  color: #536158;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.report-grid ul {
+  padding-left: 18px;
+}
+
+.report-suspicion {
+  margin-top: 14px !important;
+  padding: 10px;
+  border-left: 3px solid #7c3626;
+  background: #fff8ed;
+  color: #17211c !important;
+  font-weight: 800;
 }
 
 .journal ol {
@@ -673,6 +812,11 @@ button {
 
   .world-map-panel__header {
     display: grid;
+  }
+
+  .block-report,
+  .report-grid {
+    grid-template-columns: 1fr;
   }
 }
 

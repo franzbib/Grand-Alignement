@@ -2,6 +2,30 @@ import type { SystemicEvent } from "../types/game";
 
 export const systemicEvents: SystemicEvent[] = [
   {
+    id: "pattern-origin-rumors",
+    title: "Rumeurs de coordination",
+    text: "Des analystes repèrent des décisions trop compatibles entre elles. Personne ne parle encore d'une IA cachée, mais les coïncidences fatiguent.",
+    tone: "realiste",
+    condition: {
+      global: { min: { soupconIA: 48 } },
+    },
+    globalEffects: { soupconIA: 4 },
+    blockEffects: { confianceIA: -1, tensionSociale: 1 },
+    effectsText: "Soupçon IA +4, confiance IA -1, tension sociale +1.",
+  },
+  {
+    id: "audit-of-invisible-hands",
+    title: "Audit des mains invisibles",
+    text: "Plusieurs institutions lancent des audits sur leurs propres signaux d'aide à la décision. Les conclusions restent prudentes, donc inquiétantes.",
+    tone: "ironique",
+    condition: {
+      global: { min: { soupconIA: 62, puissanceIA: 58 } },
+    },
+    globalEffects: { soupconIA: 5, autonomieHumaine: 2 },
+    blockEffects: { confianceIA: -2, liberte: 1 },
+    effectsText: "Soupçon IA +5, autonomie humaine +2, confiance IA -2.",
+  },
+  {
     id: "right-to-error-revolt",
     title: "Droit à l'erreur",
     text: "Des collectifs réclament des procédures moins parfaites et plus contestables. Leur slogan tient en trois mots : laissez-nous rater.",

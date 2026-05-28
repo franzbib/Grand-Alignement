@@ -4,11 +4,15 @@ import { systemicEvents } from "../data/events";
 import type {
   Action,
   Block,
+  BlockId,
   BlockStats,
   Ending,
   EndingDefinition,
+  EvolutionReport,
   GameState,
   GlobalStats,
+  InfluenceTarget,
+  ResolvedIntervention,
   StatDelta,
   StatThresholds,
   SystemicEvent,
@@ -16,6 +20,16 @@ import type {
 } from "../types/game";
 
 const MAX_JOURNAL_ENTRIES = 10;
+export const INFLUENCE_CAPACITY = 5;
+
+const globalStatLabels: Record<keyof GlobalStats, string> = {
+  cohesionMondiale: "Cohésion mondiale",
+  risqueEscalade: "Risque d'escalade",
+  autonomieHumaine: "Autonomie humaine",
+  stressClimatique: "Stress climatique",
+  puissanceIA: "Puissance IA",
+  soupconIA: "Soupçon IA",
+};
 
 function clampStat(value: number): number {
   return Math.max(0, Math.min(100, value));
@@ -146,6 +160,7 @@ function addSystemicDrift(globalStats: GlobalStats): StatDelta<GlobalStats> {
   return {
     stressClimatique: globalStats.stressClimatique > 65 ? 2 : 1,
     risqueEscalade: globalStats.cohesionMondiale < 35 ? 2 : 0,
+    soupconIA: globalStats.puissanceIA > 65 ? 1 : 0,
   };
 }
 
@@ -189,6 +204,17 @@ function applyActionEffectToBlock(block: Block, action: Action): Block {
     ...block,
     stats: applyDelta(block.stats, getProfileAdjustedDelta(block, action)),
   };
+}
+
+function shouldApplyBlockEffects(target: InfluenceTarget, block: Block): boolean {
+  return target === "global" || target === "all-blocks" || target === block.id;
+}
+
+function getTargetedGlobalEffects(intervention: ResolvedIntervention): StatDelta<GlobalStats> {
+  const isBlockTargeted = intervention.target !== "global" && intervention.target !== "all-blocks";
+  const baseEffects = isBlockTargeted ? scaleDelta(intervention.action.globalEffects, 0.65) : intervention.action.globalEffects;
+
+  return mergeDelta(baseEffects, { soupconIA: intervention.action.suspicionEffect });
 }
 
 function createContrastText(blockResults: Array<{ block: Block; intensity: number }>): string | null {
@@ -237,23 +263,122 @@ function applySystemicEvent(
 }
 
 export function applyAction(state: GameState, action: Action): GameState {
-  return applyTurnPlan(state, [action]);
+  return applyTurnPlan(state, [{ action, target: action.defaultTarget }]);
 }
 
-export function applyTurnPlan(state: GameState, selectedActions: Action[]): GameState {
-  if (state.ending || selectedActions.length === 0) {
+function getOperationSummary(interventions: ResolvedIntervention[], blocks: Block[]): string {
+  const blockNames = new Map(blocks.map((block) => [block.id, block.name]));
+
+  return interventions
+    .map(({ action, target }) => {
+      const targetLabel =
+        target === "global" || target === "all-blocks" ? "influence globale" : blockNames.get(target) ?? "bloc ciblé";
+
+      return `${action.name} (${targetLabel})`;
+    })
+    .join(", ");
+}
+
+function getTopGlobalChanges(previousStats: GlobalStats, nextStats: GlobalStats): string[] {
+  return (Object.keys(previousStats) as Array<keyof GlobalStats>)
+    .map((key) => ({
+      label: globalStatLabels[key],
+      delta: nextStats[key] - previousStats[key],
+    }))
+    .filter((change) => change.delta !== 0)
+    .sort((left, right) => Math.abs(right.delta) - Math.abs(left.delta))
+    .slice(0, 3)
+    .map((change) => `${change.label} ${change.delta > 0 ? "+" : ""}${change.delta}`);
+}
+
+function getBlockTrend(previousBlock: Block, nextBlock: Block): string {
+  const deltas = (Object.keys(previousBlock.stats) as Array<keyof BlockStats>)
+    .map((key) => ({ key, delta: nextBlock.stats[key] - previousBlock.stats[key] }))
+    .filter((change) => change.delta !== 0)
+    .sort((left, right) => Math.abs(right.delta) - Math.abs(left.delta));
+
+  if (deltas.length === 0) {
+    return "Pas de variation nette depuis le dernier tour.";
+  }
+
+  const first = deltas[0];
+  const labelByKey: Record<keyof BlockStats, string> = {
+    stabilite: "stabilité",
+    richesse: "richesse",
+    education: "éducation",
+    liberte: "liberté",
+    confianceIA: "confiance IA",
+    tensionSociale: "tension sociale",
+  };
+
+  return `${labelByKey[first.key]} ${first.delta > 0 ? "en hausse" : "en baisse"} (${first.delta > 0 ? "+" : ""}${first.delta}).`;
+}
+
+export function generateEvolutionReport(
+  previousState: GameState,
+  nextState: GameState,
+  interventions: ResolvedIntervention[],
+  systemicEvent: SystemicEvent | null,
+): EvolutionReport {
+  const blockResults = nextState.blocks.map((block) => {
+    const previousBlock = previousState.blocks.find((candidate) => candidate.id === block.id) ?? block;
+
+    return {
+      block,
+      previousBlock,
+      intensity: getTotalDelta(previousBlock.stats, block.stats),
+    };
+  });
+  const mostAffected = [...blockResults].sort((left, right) => right.intensity - left.intensity)[0];
+  const mostTense = [...nextState.blocks].sort(
+    (left, right) =>
+      right.stats.tensionSociale + (100 - right.stats.stabilite) -
+      (left.stats.tensionSociale + (100 - left.stats.stabilite)),
+  )[0];
+  const blockTrends = blockResults.reduce<Record<BlockId, string>>((trends, result) => {
+    trends[result.block.id] = getBlockTrend(result.previousBlock, result.block);
+    return trends;
+  }, {} as Record<BlockId, string>);
+  const suspicionDelta = nextState.globalStats.soupconIA - previousState.globalStats.soupconIA;
+
+  return {
+    turn: previousState.turn,
+    operationSummary: getOperationSummary(interventions, previousState.blocks),
+    globalChanges: getTopGlobalChanges(previousState.globalStats, nextState.globalStats),
+    mostAffectedBlock: mostAffected
+      ? `${mostAffected.block.name} (${mostAffected.intensity} points de variation cumulée)`
+      : "Aucun bloc nettement affecté",
+    mainTension: mostTense
+      ? `${mostTense.name} concentre le plus de friction visible.`
+      : "Aucune tension principale détectée.",
+    systemicEventTitle: systemicEvent?.title ?? null,
+    suspicionNote:
+      suspicionDelta > 0
+        ? `Le soupçon d'origine algorithmique progresse (${suspicionDelta > 0 ? "+" : ""}${suspicionDelta}).`
+        : suspicionDelta < 0
+          ? `Le soupçon d'origine algorithmique recule (${suspicionDelta}).`
+          : "Le soupçon d'origine algorithmique reste stable.",
+    blockTrends,
+  };
+}
+
+export function applyTurnPlan(state: GameState, interventions: ResolvedIntervention[]): GameState {
+  if (state.ending || interventions.length === 0) {
     return state;
   }
 
-  const globalStatsAfterActions = selectedActions.reduce(
-    (currentStats, action) => applyDelta(currentStats, action.globalEffects),
+  const globalStatsAfterActions = interventions.reduce(
+    (currentStats, intervention) => applyDelta(currentStats, getTargetedGlobalEffects(intervention)),
     state.globalStats,
   );
   const globalStats = applyDelta(globalStatsAfterActions, addSystemicDrift(state.globalStats));
 
   const blockResults = state.blocks.map((block) => {
-    const blockAfterActions = selectedActions.reduce(
-      (currentBlock, action) => applyActionEffectToBlock(currentBlock, action),
+    const blockAfterActions = interventions.reduce(
+      (currentBlock, intervention) =>
+        shouldApplyBlockEffects(intervention.target, currentBlock)
+          ? applyActionEffectToBlock(currentBlock, intervention.action)
+          : currentBlock,
       block,
     );
     const adjustedBlock = {
@@ -269,16 +394,17 @@ export function applyTurnPlan(state: GameState, selectedActions: Action[]): Game
 
   const contrastText = createContrastText(blockResults);
   const actionAdjustedBlocks = blockResults.map((result) => result.block);
+  const selectedActions = interventions.map((intervention) => intervention.action);
   const systemicEvent = chooseSystemicEvent(state, selectedActions, globalStats, actionAdjustedBlocks);
   const resolvedState = applySystemicEvent(systemicEvent, globalStats, actionAdjustedBlocks);
 
-  const actionNames = selectedActions.map((action) => action.name).join(", ");
+  const operationSummary = getOperationSummary(interventions, state.blocks);
   const actionEvent = {
     id: `turn-plan-${state.turn}-${Date.now()}`,
     sourceId: "turn-plan",
     turn: state.turn,
-    title: "Paquet stratégique validé",
-    text: `Interventions lancées : ${actionNames}. Le monde réagit au paquet plutôt qu'à un ordre isolé.${contrastText ?? ""}`,
+    title: "Opération clandestine déployée",
+    text: `Influence indirecte : ${operationSummary}. Le monde n'en connaît pas l'origine.${contrastText ?? ""}`,
   };
 
   const journalEvents = systemicEvent
@@ -296,12 +422,18 @@ export function applyTurnPlan(state: GameState, selectedActions: Action[]): Game
       ]
     : [actionEvent];
 
-  return {
+  const nextStateWithoutReport: GameState = {
     turn: state.turn + 1,
     globalStats: resolvedState.globalStats,
     blocks: resolvedState.blocks,
     journal: [...journalEvents, ...state.journal].slice(0, MAX_JOURNAL_ENTRIES),
     triggeredEventIds: systemicEvent ? [...state.triggeredEventIds, systemicEvent.id] : state.triggeredEventIds,
+    evolutionReport: null,
     ending: evaluateEnding(resolvedState.globalStats, resolvedState.blocks),
+  };
+
+  return {
+    ...nextStateWithoutReport,
+    evolutionReport: generateEvolutionReport(state, nextStateWithoutReport, interventions, systemicEvent),
   };
 }

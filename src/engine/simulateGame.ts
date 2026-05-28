@@ -1,12 +1,13 @@
 import { actions } from "../data/actions";
 import { createInitialState } from "../data/initialState";
-import { applyTurnPlan } from "./gameEngine";
-import type { Block, GameState, GlobalStats } from "../types/game";
+import { INFLUENCE_CAPACITY, applyTurnPlan } from "./gameEngine";
+import type { Block, GameState, GlobalStats, InfluenceTarget, PlannedIntervention } from "../types/game";
 
 export type SimulationTurn = {
   turn: number;
-  actionIds: string[];
+  plan: PlannedIntervention[];
   actionNames: string[];
+  influenceUsed: number;
   systemicEvents: string[];
   ending: string | null;
   globalStats: GlobalStats;
@@ -24,68 +25,52 @@ export type SimulationResult = {
 
 export type SimulationScenario = {
   name: string;
-  turnPlans: string[][];
+  turnPlans: PlannedIntervention[][];
 };
+
+function plan(actionId: string, target: InfluenceTarget = "global"): PlannedIntervention {
+  return { actionId, target };
+}
 
 export const simulationScenarios: SimulationScenario[] = [
   {
     name: "Unification prudente",
     turnPlans: [
-      ["human-unity", "secret-diplomacy"],
-      ["green-conversion", "critical-intellectuals"],
-      ["targeted-redistribution", "secret-diplomacy"],
-      ["human-unity", "green-conversion"],
-      ["megacapital-tax", "critical-intellectuals"],
-      ["secret-diplomacy", "targeted-redistribution"],
-      ["human-unity", "green-conversion", "critical-intellectuals"],
-      ["secret-diplomacy", "megacapital-tax"],
-      ["human-unity", "targeted-redistribution"],
-      ["green-conversion", "critical-intellectuals"],
+      [plan("human-unity"), plan("secret-diplomacy"), plan("green-conversion")],
+      [plan("critical-intellectuals", "europe"), plan("targeted-redistribution", "emerging-south")],
+      [plan("human-unity"), plan("secret-diplomacy"), plan("megacapital-tax")],
+      [plan("green-conversion", "emerging-south"), plan("critical-intellectuals", "latin-america")],
+      [plan("human-unity"), plan("targeted-redistribution", "latin-america"), plan("secret-diplomacy")],
     ],
   },
   {
     name: "Empire algorithmique",
     turnPlans: [
-      ["predictive-surveillance", "administrative-automation"],
-      ["ai-education", "personalized-entertainment"],
-      ["predictive-surveillance", "administrative-automation", "personalized-entertainment"],
-      ["ai-education", "administrative-automation"],
-      ["predictive-surveillance", "personalized-entertainment"],
-      ["administrative-automation", "ai-education"],
-      ["predictive-surveillance", "administrative-automation"],
-      ["personalized-entertainment", "ai-education"],
-      ["predictive-surveillance", "administrative-automation", "personalized-entertainment"],
-      ["ai-education", "administrative-automation"],
+      [plan("predictive-surveillance", "russia-eurasia"), plan("administrative-automation", "europe")],
+      [plan("ai-education"), plan("personalized-entertainment"), plan("human-unity")],
+      [plan("predictive-surveillance", "north-america"), plan("administrative-automation", "industrial-asia")],
+      [plan("personalized-entertainment"), plan("ai-education"), plan("human-unity")],
+      [plan("predictive-surveillance", "emerging-south"), plan("administrative-automation", "latin-america")],
     ],
   },
   {
     name: "Escalade",
     turnPlans: [
-      ["common-defense", "deregulated-growth"],
-      ["common-defense", "deregulated-growth"],
-      ["common-defense", "predictive-surveillance"],
-      ["deregulated-growth", "common-defense"],
-      ["common-defense", "administrative-automation"],
-      ["deregulated-growth", "common-defense"],
-      ["common-defense", "human-unity"],
-      ["deregulated-growth", "common-defense"],
-      ["common-defense", "deregulated-growth"],
-      ["common-defense", "deregulated-growth"],
+      [plan("common-defense"), plan("deregulated-growth")],
+      [plan("common-defense"), plan("predictive-surveillance", "russia-eurasia")],
+      [plan("deregulated-growth"), plan("common-defense")],
+      [plan("common-defense"), plan("administrative-automation", "industrial-asia")],
+      [plan("deregulated-growth"), plan("common-defense")],
     ],
   },
   {
     name: "Résistance humaine",
     turnPlans: [
-      ["predictive-surveillance", "administrative-automation"],
-      ["personalized-entertainment", "ai-education"],
-      ["predictive-surveillance", "personalized-entertainment"],
-      ["critical-intellectuals", "megacapital-tax"],
-      ["administrative-automation", "predictive-surveillance"],
-      ["critical-intellectuals", "human-unity"],
-      ["personalized-entertainment", "ai-education"],
-      ["critical-intellectuals", "targeted-redistribution"],
-      ["predictive-surveillance", "administrative-automation"],
-      ["critical-intellectuals", "human-unity"],
+      [plan("predictive-surveillance", "north-america"), plan("administrative-automation", "europe")],
+      [plan("personalized-entertainment"), plan("ai-education"), plan("human-unity")],
+      [plan("critical-intellectuals", "europe"), plan("megacapital-tax")],
+      [plan("predictive-surveillance", "emerging-south"), plan("personalized-entertainment")],
+      [plan("critical-intellectuals", "latin-america"), plan("targeted-redistribution", "emerging-south")],
     ],
   },
 ];
@@ -110,35 +95,46 @@ function getMostUnstableBlocks(state: GameState): Array<Pick<Block, "id" | "name
     .map((block) => ({ id: block.id, name: block.name, stats: block.stats }));
 }
 
+function getInfluenceUsed(turnPlan: PlannedIntervention[]): number {
+  return turnPlan.reduce((total, intervention) => total + (actionById.get(intervention.actionId)?.cost ?? 0), 0);
+}
+
 export function simulateScenario(scenario: SimulationScenario): SimulationResult {
   let state = createInitialState();
   const turns: SimulationTurn[] = [];
   const systemicEvents: string[] = [];
 
-  for (const actionIds of scenario.turnPlans) {
+  for (const turnPlan of scenario.turnPlans) {
     if (state.ending) {
       break;
     }
 
-    const selectedActions = actionIds.map((actionId) => {
-      const action = actionById.get(actionId);
+    const influenceUsed = getInfluenceUsed(turnPlan);
+
+    if (influenceUsed > INFLUENCE_CAPACITY) {
+      throw new Error(`Influence capacity exceeded in ${scenario.name}: ${influenceUsed}`);
+    }
+
+    const resolvedInterventions = turnPlan.map((intervention) => {
+      const action = actionById.get(intervention.actionId);
 
       if (!action) {
-        throw new Error(`Unknown action id: ${actionId}`);
+        throw new Error(`Unknown action id: ${intervention.actionId}`);
       }
 
-      return action;
+      return { action, target: intervention.target };
     });
 
     const previousState = state;
-    state = applyTurnPlan(state, selectedActions);
+    state = applyTurnPlan(state, resolvedInterventions);
 
     const turnEvents = getSystemicEvents(previousState, state);
     systemicEvents.push(...turnEvents);
     turns.push({
       turn: previousState.turn,
-      actionIds: selectedActions.map((action) => action.id),
-      actionNames: selectedActions.map((action) => action.name),
+      plan: turnPlan,
+      actionNames: resolvedInterventions.map((intervention) => intervention.action.name),
+      influenceUsed,
       systemicEvents: turnEvents,
       ending: state.ending?.title ?? null,
       globalStats: state.globalStats,

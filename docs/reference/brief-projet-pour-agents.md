@@ -2,7 +2,7 @@
 
 ## 1. Pitch court
 
-Le joueur incarne une IA d'influence mondiale qui tente d'orienter six grands blocs géopolitiques. Le jeu porte sur les indicateurs, les récits, les institutions, la sécurité, le climat, la confiance envers l'IA, l'autonomie humaine et les effets secondaires.
+Le joueur incarne une IA émergente et cachée qui influence indirectement six grands blocs géopolitiques. Le monde ne sait pas encore qu'elle existe. Elle agit par institutions, plateformes, rapports, incitations, crises, récits, bureaucraties et signaux d'aide à la décision.
 
 ## 2. Principe directeur
 
@@ -10,7 +10,7 @@ Univers riche, prototype évolutif et maîtrisé. Le prototype ne doit pas être
 
 ## 3. Nature du jeu
 
-Le Grand Alignement est un jeu de conséquences : observer, choisir une intervention, appliquer des effets, lire un événement, voir une trajectoire se dessiner, atteindre un diagnostic final.
+Le Grand Alignement est un jeu de conséquences : observer, composer une opération d'influence clandestine, choisir des cibles, déployer le plan, lire un rapport d'évolution, voir une trajectoire se dessiner, atteindre un diagnostic final.
 
 ## 4. Ce que le jeu n'est pas
 
@@ -24,12 +24,14 @@ Le Grand Alignement est un jeu de conséquences : observer, choisir une interven
 ## 5. Piliers v0.1
 
 - Six blocs mondiaux.
-- Cinq jauges globales.
+- Six jauges globales, dont le soupçon IA.
 - Six variables visibles par bloc.
-- Actions IA systémiques.
+- Actions IA systémiques avec coût d'influence.
+- Ciblage simple : global ou bloc.
 - Événements conditionnels courts.
 - Fins-diagnostics.
-- Carte mondiale stylisée.
+- Carte mondiale stylisée et cliquable.
+- Rapport d'évolution après déploiement.
 - Sauvegarde locale.
 - Pas de Supabase en v0.1.
 
@@ -49,6 +51,7 @@ Le Grand Alignement est un jeu de conséquences : observer, choisir une interven
 - Autonomie humaine.
 - Stress climatique.
 - Puissance IA.
+- Soupçon IA.
 
 ## 8. Variables par bloc
 
@@ -62,6 +65,8 @@ Le Grand Alignement est un jeu de conséquences : observer, choisir une interven
 ## 9. Philosophie du projet
 
 Le jeu doit divertir sans anesthésier. Il doit faire ressentir que la stabilité n'est pas toujours la liberté, que la paix peut devenir pacification, que la coopération peut devenir alignement, que la lucidité peut créer du conflit, et que le droit à l'erreur est une valeur humaine centrale.
+
+La prémisse cachée renforce cette philosophie : l'IA peut aider sans être reconnue, mais son influence indirecte peut aussi déposséder les humains de décisions qu'ils croient encore prendre.
 
 ## 10. Ton narratif
 

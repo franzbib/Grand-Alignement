@@ -16,6 +16,7 @@ Ces limites protègent Le Grand Alignement contre la dispersion. Elles peuvent �
 - Pas d'arbre technologique.
 - Pas d'économie quantitative exhaustive.
 - Pas de refonte graphique tant que la jouabilité n'est pas vérifiée.
+- Pas de scénario d'exposition complète de l'IA tant que la boucle clandestine n'est pas testée.
 
 ## Dérogations possibles
 
@@ -25,6 +26,10 @@ Une dérogation n'est possible que si elle :
 - Peut être testée vite.
 - Peut être retirée sans casser le projet.
 - Est documentée dans `docs/REPRISE.md` ou dans un futur dossier `docs/decisions`.
+
+## Prémisse protégée
+
+Le joueur est une IA émergente cachée. Son influence doit rester indirecte et attribuable en surface à des institutions, plateformes, rapports, incitations, crises, récits ou procédures. Les scénarios où le monde découvre l'IA sont possibles plus tard, mais ne doivent pas devenir un système lourd en v0.1.
 
 ## Réflexe attendu
 

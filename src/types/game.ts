@@ -12,6 +12,7 @@ export type GlobalStats = {
   autonomieHumaine: number;
   stressClimatique: number;
   puissanceIA: number;
+  soupconIA: number;
 };
 
 export type BlockStats = {
@@ -44,6 +45,10 @@ export type StatDelta<TStats> = Partial<Record<keyof TStats, number>>;
 
 export type EventTone = "realiste" | "ironique" | "absurde_modere" | "absurde_avance";
 
+export type ActionScope = "global" | "block" | "mixed";
+
+export type InfluenceTarget = "global" | "all-blocks" | BlockId;
+
 export type Action = {
   id: string;
   name: string;
@@ -51,10 +56,25 @@ export type Action = {
   category: string;
   promise: string;
   risk: string;
+  cost: 1 | 2 | 3;
+  scope: ActionScope;
+  defaultTarget: InfluenceTarget;
+  targetRequired: boolean;
+  suspicionEffect: number;
   globalEffects: StatDelta<GlobalStats>;
   blockEffects: StatDelta<BlockStats>;
   sensitivityEffects?: Partial<Record<BlockSensitivity, StatDelta<BlockStats>>>;
   eventText: string;
+};
+
+export type PlannedIntervention = {
+  actionId: string;
+  target: InfluenceTarget;
+};
+
+export type ResolvedIntervention = {
+  action: Action;
+  target: InfluenceTarget;
 };
 
 export type StrategicPosture = {
@@ -73,6 +93,17 @@ export type Event = {
   tone?: EventTone;
 };
 
+export type EvolutionReport = {
+  turn: number;
+  operationSummary: string;
+  globalChanges: string[];
+  mostAffectedBlock: string;
+  mainTension: string;
+  systemicEventTitle: string | null;
+  suspicionNote: string;
+  blockTrends: Record<BlockId, string>;
+};
+
 export type Ending = {
   id: string;
   title: string;
@@ -87,6 +118,7 @@ export type GameState = {
   blocks: Block[];
   journal: Event[];
   triggeredEventIds: string[];
+  evolutionReport: EvolutionReport | null;
   ending: Ending | null;
 };
 

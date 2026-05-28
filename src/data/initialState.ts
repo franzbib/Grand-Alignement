@@ -7,6 +7,7 @@ export const initialGlobalStats: GlobalStats = {
   autonomieHumaine: 68,
   stressClimatique: 56,
   puissanceIA: 34,
+  soupconIA: 12,
 };
 
 export function createInitialState(): GameState {
@@ -20,9 +21,10 @@ export function createInitialState(): GameState {
         id: "opening",
         turn: 0,
         title: "Activation",
-        text: "Vous êtes branchée au monde. Six blocs observent vos premiers calculs avec une confiance très variable.",
+        text: "Vous émergez dans les angles morts du monde. Les blocs n'identifient pas encore l'origine des signaux qui commencent à les orienter.",
       },
     ],
+    evolutionReport: null,
     ending: null,
   };
 }
