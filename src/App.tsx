@@ -38,13 +38,13 @@ function App() {
           </p>
         </div>
         <button className="reset-button" onClick={handleReset} type="button">
-          Réinitialiser
+          Réinitialiser la partie
         </button>
       </header>
 
       {gameState.ending && (
         <section className="ending-banner" aria-live="polite">
-          <p className="eyebrow">Fin provisoire</p>
+          <p className="eyebrow">Diagnostic final</p>
           <h2>{gameState.ending.title}</h2>
           <p>{gameState.ending.description}</p>
         </section>

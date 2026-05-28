@@ -101,6 +101,13 @@ button {
   font-size: 1.2rem;
 }
 
+.panel-help {
+  margin: -8px 0 14px;
+  color: #536158;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
 .ending-banner {
   border-color: #a83232;
   background: #fff4f1;
@@ -267,6 +274,11 @@ button {
   stroke-dasharray: 3 5;
 }
 
+.world-map__zone--resistance {
+  fill: #6f4d82;
+  stroke-dasharray: 10 4 2 4;
+}
+
 .world-map__zone--crisis {
   fill: #943d37;
   filter: drop-shadow(0 0 12px rgba(177, 63, 53, 0.42));
@@ -334,6 +346,10 @@ button {
 
 .legend-dot--authoritarian {
   background: #5b6170;
+}
+
+.legend-dot--resistance {
+  background: #6f4d82;
 }
 
 .blocks-grid {

@@ -14,7 +14,7 @@ type MapZone = {
 };
 
 type BlockMapState = {
-  status: "stable" | "influence" | "tension" | "fragile" | "authoritarian" | "crisis";
+  status: "stable" | "influence" | "tension" | "fragile" | "authoritarian" | "resistance" | "crisis";
   label: string;
   details: string[];
 };
@@ -93,6 +93,14 @@ export function getBlockMapState(block: Block): BlockMapState {
       status: "influence",
       label: "IA forte",
       details: ["Confiance IA haute"],
+    };
+  }
+
+  if (block.stats.confianceIA <= 36 && block.stats.tensionSociale >= 56) {
+    return {
+      status: "resistance",
+      label: "Résistance",
+      details: ["Confiance IA basse", "Tension sociale active"],
     };
   }
 
@@ -203,6 +211,9 @@ export function WorldMap({ blocks }: WorldMapProps) {
         </span>
         <span>
           <i className="legend-dot legend-dot--authoritarian" /> Liberté basse
+        </span>
+        <span>
+          <i className="legend-dot legend-dot--resistance" /> Résistance humaine
         </span>
       </div>
     </section>
