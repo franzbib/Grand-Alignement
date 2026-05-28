@@ -14,3 +14,7 @@ Ces idées peuvent être intéressantes plus tard, mais elles ne doivent pas êt
 - Multijoueur.
 - Scénarios absurdes avancés.
 - Statistiques de parties.
+- Événements rares à embranchements multiples.
+- Fins secrètes.
+- IA générative pour bilans de fin.
+- Éditeur d'événements.

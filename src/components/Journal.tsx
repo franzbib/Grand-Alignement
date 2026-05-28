@@ -14,6 +14,7 @@ export function Journal({ events }: JournalProps) {
             <span>Tour {event.turn}</span>
             <strong>{event.title}</strong>
             <p>{event.text}</p>
+            {event.effectsText && <small>{event.effectsText}</small>}
           </li>
         ))}
       </ol>
