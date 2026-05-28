@@ -44,9 +44,11 @@ npm.cmd run build
 
 ## Dernière modification utile
 
-Première passe d'équilibrage par simulation de quatre trajectoires sur 10 à 20 tours.
+Préparation d'un déploiement Vercel de démo. Le build local et le build Vercel sont verts.
 
-Les ajustements restent modestes : mémoire interne des événements déclenchés, fin Révolte humaine rendue atteignable par foyer de résistance, scénario d'escalade testé jusqu'au tour 17.
+Preview Vercel : `https://grand-alignement-bd34k6p10-franzbib-6925s-projects.vercel.app`
+
+Alias public vérifié : `https://grand-alignement.vercel.app`
 
 ## Ce qui reste à faire
 
@@ -57,7 +59,7 @@ Les ajustements restent modestes : mémoire interne des événements déclenché
 
 ## Prochaine action recommandée
 
-Jouer manuellement une partie complète et comparer le ressenti aux trajectoires simulées.
+Jouer manuellement une partie complète sur la démo Vercel et comparer le ressenti aux trajectoires simulées.
 
 ## Hors périmètre actuel
 

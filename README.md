@@ -42,6 +42,16 @@ Sous PowerShell :
 npm.cmd run build
 ```
 
+## Déploiement de prévisualisation
+
+Une prévisualisation Vercel peut être créée depuis la racine du projet avec :
+
+```bash
+npx vercel deploy --target preview
+```
+
+Le projet est une app Vite statique : build `npm run build`, sortie `dist`.
+
 ## Principes de v0.1
 
 - Univers riche, prototype volontairement simple.
