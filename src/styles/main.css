@@ -1033,6 +1033,41 @@ button {
   padding-left: 18px;
 }
 
+.report-sub-section {
+  margin-top: 14px;
+}
+
+.report-sub-section h4 {
+  margin: 0 0 6px 0;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #7c3626;
+  letter-spacing: 0.5px;
+}
+
+.report-event-alert {
+  margin-bottom: 16px;
+  padding: 14px;
+  border: 1px solid #a83232;
+  border-left: 5px solid #a83232;
+  border-radius: 8px;
+  background: #fff4f1;
+}
+
+.report-event-alert h3 {
+  margin: 4px 0 0;
+  color: #17211c;
+  font-size: 1.05rem;
+}
+
+.report-event-alert p {
+  margin: 6px 0 0;
+  color: #5f2c25;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
 .relations-list {
   display: grid;
   gap: 12px;

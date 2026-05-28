@@ -66,13 +66,7 @@ npm.cmd run build
 
 ## Dernière modification utile
 
-Simplification de la carte mondiale et déplacement de l'analyse détaillée vers l'onglet Blocs. La carte redevient une surface d'observation synthétique : blocs, état dominant, sélection et deux tensions relationnelles maximum. L'onglet Blocs contient maintenant un panneau d'analyse du bloc sélectionné.
-
-La qualité textuelle actuelle reste volontairement fonctionnelle. Une future passe littéraire devra reprendre les rapports, le journal, les événements, les diagnostics, les textes de branches et la signature de ton, sans changer le système avant validation.
-
-Preview Vercel précédente : `https://grand-alignement-bd34k6p10-franzbib-6925s-projects.vercel.app`
-
-Alias public vérifié précédemment : `https://grand-alignement.vercel.app`
+Simplification du Rapport d'évolution post-tour (`EvolutionReportPanel.tsx`) : filtrage des sections vides, masquage des signaux sociaux non modifiés, masquage des risques par défaut dans les signaux faibles, élimination des doublons de hausse/baisse de tension (déjà présents dans la liste de frictions globale), ordonnancement optimal des sections (Synthèse, Effets majeurs, Blocs affectés, Relations inter-blocs, Opérations préparées, Événement systémique, Signaux faibles), raccourcissement des sous-titres et gestion d'un statut par défaut "aucun changement notable ce tour-ci".
 
 ## Ce qui reste à faire
 
@@ -80,12 +74,11 @@ Alias public vérifié précédemment : `https://grand-alignement.vercel.app`
 - Vérifier si les rapports sociaux et relationnels aident à choisir des cibles.
 - Vérifier si la capacité d'influence donne assez de choix sans devenir calculatoire.
 - Vérifier si les rapports de bloc aident vraiment la décision.
-- Ajuster le rapport d'évolution si les changements ou opérations prêtes restent trop abstraits.
 - Évaluer plus tard une fin ou un scénario d'exposition de l'IA.
 
 ## Prochaine action recommandée
 
-Faire un playtest manuel de dix tours en vérifiant si la carte simplifiée reste utile et si l'onglet Blocs aide vraiment à choisir une cible.
+Étape 2 de l'audit UX : Amélioration du ciblage dans le menu d'influence (`ActionsPanel.tsx`) pour rendre les listes déroulantes de cibles visibles en permanence sur les cartes d'actions disponibles, facilitant ainsi la planification rapide par le joueur.
 
 ## Hors périmètre actuel
 
