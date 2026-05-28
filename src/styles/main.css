@@ -605,6 +605,12 @@ button {
   font-size: 0.9rem;
 }
 
+.selected-actions__ready {
+  margin-top: 10px !important;
+  color: #2f6654 !important;
+  font-weight: 800;
+}
+
 .validate-turn-button {
   width: 100%;
   margin: 0 0 16px;
@@ -612,6 +618,18 @@ button {
   color: #fffdf7;
   background: #7c3626;
   font-weight: 900;
+}
+
+.actions-section {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.actions-section h3 {
+  margin: 0;
+  color: #17211c;
+  font-size: 0.95rem;
 }
 
 .action-card {
@@ -666,6 +684,12 @@ button {
 
 .action-card__risk {
   color: #7c3626 !important;
+}
+
+.action-card__recommendation,
+.action-card__ready {
+  color: #2f6654 !important;
+  font-weight: 900;
 }
 
 .action-card:has(> button:hover:not(:disabled)) {

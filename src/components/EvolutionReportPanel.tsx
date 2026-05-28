@@ -5,6 +5,10 @@ type EvolutionReportPanelProps = {
 };
 
 export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
+  const immediateInterventions = report?.immediateInterventions ?? [];
+  const preparedOperations = report?.preparedOperations ?? [];
+  const unlockedOperations = report?.unlockedOperations ?? [];
+
   return (
     <section className="panel evolution-report" aria-labelledby="evolution-report-title">
       <p className="eyebrow">Après déploiement</p>
@@ -17,6 +21,36 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
             <strong>Tour {report.turn}.</strong> {report.operationSummary}
           </p>
           <div className="report-grid">
+            <div>
+              <h3>Interventions immédiates</h3>
+              <ul>
+                {immediateInterventions.length > 0 ? (
+                  immediateInterventions.map((intervention) => <li key={intervention}>{intervention}</li>)
+                ) : (
+                  <li>Aucune intervention immédiate dominante.</li>
+                )}
+              </ul>
+            </div>
+            <div>
+              <h3>Préparations</h3>
+              <ul>
+                {preparedOperations.length > 0 ? (
+                  preparedOperations.map((operation) => <li key={operation}>{operation}</li>)
+                ) : (
+                  <li>Aucune opération préparée ce tour.</li>
+                )}
+              </ul>
+            </div>
+            <div>
+              <h3>Débloqué pour la suite</h3>
+              <ul>
+                {unlockedOperations.length > 0 ? (
+                  unlockedOperations.map((operation) => <li key={operation}>{operation}</li>)
+                ) : (
+                  <li>Aucune opération nouvelle.</li>
+                )}
+              </ul>
+            </div>
             <div>
               <h3>Changements globaux</h3>
               <ul>
@@ -40,7 +74,7 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
               <p>{report.systemicEventTitle ?? "Aucun événement systémique déclenché."}</p>
             </div>
           </div>
-          <p className="report-suspicion">{report.suspicionNote}</p>
+          {report.suspicionNote && <p className="report-suspicion">{report.suspicionNote}</p>}
         </>
       )}
     </section>

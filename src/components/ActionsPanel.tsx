@@ -1,7 +1,15 @@
-import type { Action, Block, InfluenceTarget, PlannedIntervention, StrategicPosture } from "../types/game";
+import type {
+  Action,
+  Block,
+  InfluenceTarget,
+  PlannedIntervention,
+  PreparedOperation,
+  StrategicPosture,
+} from "../types/game";
 
 type ActionsPanelProps = {
   actions: Action[];
+  availablePreparedOperations: PreparedOperation[];
   blocks: Block[];
   disabled: boolean;
   influenceCapacity: number;
@@ -9,7 +17,7 @@ type ActionsPanelProps = {
   selectedPostureId: string;
   postures: StrategicPosture[];
   onPostureChange: (postureId: string) => void;
-  onToggleAction: (action: Action) => void;
+  onToggleAction: (action: Action, preparedOperation?: PreparedOperation) => void;
   onTargetChange: (actionId: string, target: InfluenceTarget) => void;
   onValidateTurn: () => void;
 };
@@ -28,8 +36,17 @@ function getTargetOptions(action: Action, blocks: Block[]): Array<{ value: Influ
   return blockOptions;
 }
 
+function getTargetLabel(target: InfluenceTarget, blocks: Block[]): string {
+  if (target === "global" || target === "all-blocks") {
+    return "global";
+  }
+
+  return blocks.find((block) => block.id === target)?.name ?? "cible";
+}
+
 export function ActionsPanel({
   actions,
+  availablePreparedOperations,
   blocks,
   disabled,
   influenceCapacity,
@@ -42,11 +59,55 @@ export function ActionsPanel({
   onValidateTurn,
 }: ActionsPanelProps) {
   const actionById = new Map(actions.map((action) => [action.id, action]));
+  const baseActions = actions.filter((action) => action.availability !== "prepared");
   const influenceUsed = plannedInterventions.reduce((total, intervention) => {
     return total + (actionById.get(intervention.actionId)?.cost ?? 0);
   }, 0);
   const influenceRemaining = influenceCapacity - influenceUsed;
   const selectedPosture = postures.find((posture) => posture.id === selectedPostureId);
+
+  function renderActionCard(action: Action, preparedOperation?: PreparedOperation) {
+    const intervention = plannedInterventions.find(
+      (planned) => (planned.preparedOperationId ?? planned.actionId) === (preparedOperation?.id ?? action.id),
+    );
+    const isSelected = Boolean(intervention);
+    const isDisabled = disabled || (!isSelected && action.cost > influenceRemaining);
+    const targetOptions = getTargetOptions(action, blocks);
+    const recommended = action.recommendedPostures?.includes(selectedPostureId);
+
+    return (
+      <article className={`action-card${isSelected ? " action-card--selected" : ""}`} key={preparedOperation?.id ?? action.id}>
+        <button disabled={isDisabled} onClick={() => onToggleAction(action, preparedOperation)} type="button">
+          <small className="action-card__category">
+            {action.category} · coût {action.cost}
+          </small>
+          <span>{action.name}</span>
+          <small>{action.description}</small>
+          <em>{action.promise}</em>
+          <small className="action-card__risk">{action.risk}</small>
+          {recommended && <small className="action-card__recommendation">Recommandé pour cette orientation</small>}
+          {preparedOperation && <small className="action-card__ready">{preparedOperation.readyText}</small>}
+        </button>
+
+        {isSelected && targetOptions.length > 1 && !preparedOperation && (
+          <label className="target-control">
+            Cible
+            <select
+              disabled={disabled}
+              onChange={(event) => onTargetChange(action.id, event.target.value as InfluenceTarget)}
+              value={intervention?.target ?? action.defaultTarget}
+            >
+              {targetOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
+      </article>
+    );
+  }
 
   return (
     <section className="panel" aria-labelledby="actions-title">
@@ -59,7 +120,9 @@ export function ActionsPanel({
           Influence {influenceUsed}/{influenceCapacity}, reste {Math.max(0, influenceRemaining)}
         </strong>
       </div>
-      <p className="panel-help">Composez une opération d'influence. Le monde n'en connaît pas l'origine.</p>
+      <p className="panel-help">
+        Préparez une opération. Certaines actions créent des possibilités pour les tours suivants.
+      </p>
 
       <div className="posture-selector" aria-label="Orientation stratégique">
         {postures.map((posture) => (
@@ -75,7 +138,11 @@ export function ActionsPanel({
         ))}
       </div>
 
-      {selectedPosture && <p className="posture-note">{selectedPosture.description}</p>}
+      {selectedPosture && (
+        <p className="posture-note">
+          {selectedPosture.description} Elle ne décide pas à votre place : elle organise votre lecture du tour.
+        </p>
+      )}
 
       <div className="selected-actions" aria-live="polite">
         <strong>Opération en préparation</strong>
@@ -83,13 +150,10 @@ export function ActionsPanel({
           <ul>
             {plannedInterventions.map((intervention) => {
               const action = actionById.get(intervention.actionId);
-              const targetLabel =
-                intervention.target === "global"
-                  ? "global"
-                  : blocks.find((block) => block.id === intervention.target)?.name ?? "cible";
+              const targetLabel = getTargetLabel(intervention.target, blocks);
 
               return action ? (
-                <li key={intervention.actionId}>
+                <li key={intervention.preparedOperationId ?? intervention.actionId}>
                   {action.name} <span>{targetLabel}</span>
                 </li>
               ) : null;
@@ -97,6 +161,15 @@ export function ActionsPanel({
           </ul>
         ) : (
           <p>Aucune intervention sélectionnée.</p>
+        )}
+        {availablePreparedOperations.length > 0 && (
+          <p className="selected-actions__ready">
+            Opérations prêtes :{" "}
+            {availablePreparedOperations
+              .map((operation) => actionById.get(operation.actionId)?.name)
+              .filter(Boolean)
+              .join(", ")}
+          </p>
         )}
       </div>
 
@@ -109,44 +182,21 @@ export function ActionsPanel({
         Déployer l'opération
       </button>
 
-      <div className="actions-list">
-        {actions.map((action) => {
-          const intervention = plannedInterventions.find((planned) => planned.actionId === action.id);
-          const isSelected = Boolean(intervention);
-          const isDisabled = disabled || (!isSelected && action.cost > influenceRemaining);
-          const targetOptions = getTargetOptions(action, blocks);
+      {availablePreparedOperations.length > 0 && (
+        <div className="actions-section">
+          <h3>Opérations prêtes</h3>
+          <div className="actions-list">
+            {availablePreparedOperations.map((operation) => {
+              const action = actionById.get(operation.actionId);
+              return action ? renderActionCard(action, operation) : null;
+            })}
+          </div>
+        </div>
+      )}
 
-          return (
-            <article className={`action-card${isSelected ? " action-card--selected" : ""}`} key={action.id}>
-              <button disabled={isDisabled} onClick={() => onToggleAction(action)} type="button">
-                <small className="action-card__category">
-                  {action.category} · coût {action.cost}
-                </small>
-                <span>{action.name}</span>
-                <small>{action.description}</small>
-                <em>{action.promise}</em>
-                <small className="action-card__risk">{action.risk}</small>
-              </button>
-
-              {isSelected && targetOptions.length > 1 && (
-                <label className="target-control">
-                  Cible
-                  <select
-                    disabled={disabled}
-                    onChange={(event) => onTargetChange(action.id, event.target.value as InfluenceTarget)}
-                    value={intervention?.target ?? action.defaultTarget}
-                  >
-                    {targetOptions.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              )}
-            </article>
-          );
-        })}
+      <div className="actions-section">
+        <h3>Interventions disponibles</h3>
+        <div className="actions-list">{baseActions.map((action) => renderActionCard(action))}</div>
       </div>
     </section>
   );

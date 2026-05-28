@@ -49,6 +49,8 @@ export type ActionScope = "global" | "block" | "mixed";
 
 export type InfluenceTarget = "global" | "all-blocks" | BlockId;
 
+export type ActionAvailability = "base" | "prepared";
+
 export type Action = {
   id: string;
   name: string;
@@ -61,6 +63,13 @@ export type Action = {
   defaultTarget: InfluenceTarget;
   targetRequired: boolean;
   suspicionEffect: number;
+  availability?: ActionAvailability;
+  recommendedPostures?: string[];
+  preparesActionIds?: string[];
+  preparationTurns?: number;
+  expiresAfter?: number;
+  preparationText?: string;
+  readyText?: string;
   globalEffects: StatDelta<GlobalStats>;
   blockEffects: StatDelta<BlockStats>;
   sensitivityEffects?: Partial<Record<BlockSensitivity, StatDelta<BlockStats>>>;
@@ -70,11 +79,23 @@ export type Action = {
 export type PlannedIntervention = {
   actionId: string;
   target: InfluenceTarget;
+  preparedOperationId?: string;
 };
 
 export type ResolvedIntervention = {
   action: Action;
   target: InfluenceTarget;
+  preparedOperationId?: string;
+};
+
+export type PreparedOperation = {
+  id: string;
+  sourceActionId: string;
+  actionId: string;
+  target: InfluenceTarget;
+  availableTurn: number;
+  expiresTurn?: number;
+  readyText: string;
 };
 
 export type StrategicPosture = {
@@ -96,11 +117,14 @@ export type Event = {
 export type EvolutionReport = {
   turn: number;
   operationSummary: string;
+  immediateInterventions: string[];
+  preparedOperations: string[];
+  unlockedOperations: string[];
   globalChanges: string[];
   mostAffectedBlock: string;
   mainTension: string;
   systemicEventTitle: string | null;
-  suspicionNote: string;
+  suspicionNote: string | null;
   blockTrends: Record<BlockId, string>;
 };
 
@@ -118,6 +142,7 @@ export type GameState = {
   blocks: Block[];
   journal: Event[];
   triggeredEventIds: string[];
+  preparedOperations: PreparedOperation[];
   evolutionReport: EvolutionReport | null;
   ending: Ending | null;
 };

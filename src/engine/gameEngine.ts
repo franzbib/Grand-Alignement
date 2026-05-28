@@ -12,6 +12,7 @@ import type {
   GameState,
   GlobalStats,
   InfluenceTarget,
+  PreparedOperation,
   ResolvedIntervention,
   StatDelta,
   StatThresholds,
@@ -30,6 +31,8 @@ const globalStatLabels: Record<keyof GlobalStats, string> = {
   puissanceIA: "Puissance IA",
   soupconIA: "Soupçon IA",
 };
+
+const suspicionThresholds = [30, 60, 80];
 
 function clampStat(value: number): number {
   return Math.max(0, Math.min(100, value));
@@ -217,6 +220,50 @@ function getTargetedGlobalEffects(intervention: ResolvedIntervention): StatDelta
   return mergeDelta(baseEffects, { soupconIA: intervention.action.suspicionEffect });
 }
 
+function isPreparationAction(action: Action): boolean {
+  return Boolean(action.preparesActionIds?.length);
+}
+
+function getActivePreparedOperations(state: GameState): PreparedOperation[] {
+  return state.preparedOperations.filter(
+    (operation) => operation.availableTurn <= state.turn && (!operation.expiresTurn || operation.expiresTurn >= state.turn),
+  );
+}
+
+function createPreparedOperations(state: GameState, interventions: ResolvedIntervention[]): PreparedOperation[] {
+  return interventions.flatMap((intervention) => {
+    const preparedActionIds = intervention.action.preparesActionIds ?? [];
+    const availableTurn = state.turn + (intervention.action.preparationTurns ?? 1);
+
+    return preparedActionIds.map((actionId) => ({
+      id: `${intervention.action.id}-${actionId}-${state.turn}-${intervention.target}`,
+      sourceActionId: intervention.action.id,
+      actionId,
+      target: intervention.target,
+      availableTurn,
+      expiresTurn: intervention.action.expiresAfter ? availableTurn + intervention.action.expiresAfter : undefined,
+      readyText: intervention.action.readyText ?? "Une opération préparée est disponible.",
+    }));
+  });
+}
+
+function resolvePreparedOperations(
+  state: GameState,
+  interventions: ResolvedIntervention[],
+  createdOperations: PreparedOperation[],
+): PreparedOperation[] {
+  const usedPreparedOperationIds = interventions.flatMap((intervention) =>
+    intervention.preparedOperationId ? [intervention.preparedOperationId] : [],
+  );
+  const stillValidOperations = state.preparedOperations.filter((operation) => {
+    const isUsed = usedPreparedOperationIds.includes(operation.id);
+    const isExpired = operation.expiresTurn !== undefined && operation.expiresTurn < state.turn + 1;
+    return !isUsed && !isExpired;
+  });
+
+  return [...stillValidOperations, ...createdOperations];
+}
+
 function createContrastText(blockResults: Array<{ block: Block; intensity: number }>): string | null {
   const sortedResults = [...blockResults].sort((left, right) => right.intensity - left.intensity);
   const mostChanged = sortedResults[0];
@@ -279,6 +326,10 @@ function getOperationSummary(interventions: ResolvedIntervention[], blocks: Bloc
     .join(", ");
 }
 
+function getInterventionLabels(interventions: ResolvedIntervention[], blocks: Block[]): string[] {
+  return interventions.map((intervention) => getOperationSummary([intervention], blocks));
+}
+
 function getTopGlobalChanges(previousStats: GlobalStats, nextStats: GlobalStats): string[] {
   return (Object.keys(previousStats) as Array<keyof GlobalStats>)
     .map((key) => ({
@@ -286,9 +337,62 @@ function getTopGlobalChanges(previousStats: GlobalStats, nextStats: GlobalStats)
       delta: nextStats[key] - previousStats[key],
     }))
     .filter((change) => change.delta !== 0)
+    .filter((change) => change.label !== globalStatLabels.soupconIA || Math.abs(change.delta) >= 4)
     .sort((left, right) => Math.abs(right.delta) - Math.abs(left.delta))
     .slice(0, 3)
     .map((change) => `${change.label} ${change.delta > 0 ? "+" : ""}${change.delta}`);
+}
+
+function crossedSuspicionThreshold(previousSuspicion: number, nextSuspicion: number): number | null {
+  return (
+    suspicionThresholds.find(
+      (threshold) =>
+        (previousSuspicion < threshold && nextSuspicion >= threshold) ||
+        (previousSuspicion >= threshold && nextSuspicion < threshold),
+    ) ?? null
+  );
+}
+
+function getSuspicionNote(
+  previousState: GameState,
+  nextState: GameState,
+  systemicEvent: SystemicEvent | null,
+): string | null {
+  const previousSuspicion = previousState.globalStats.soupconIA;
+  const nextSuspicion = nextState.globalStats.soupconIA;
+  const suspicionDelta = nextSuspicion - previousSuspicion;
+  const crossedThreshold = crossedSuspicionThreshold(previousSuspicion, nextSuspicion);
+  const suspicionEventTriggered = systemicEvent?.id === "pattern-origin-rumors" || systemicEvent?.id === "audit-of-invisible-hands";
+
+  if (suspicionEventTriggered) {
+    return "Des signaux publics commencent à relier plusieurs décisions entre elles.";
+  }
+
+  if (crossedThreshold !== null) {
+    if (nextSuspicion >= 80) {
+      return "Le soupçon atteint une zone critique. Une branche d'exposition pourra exister plus tard.";
+    }
+
+    if (nextSuspicion >= 60) {
+      return "Le soupçon entre en zone d'enquête latente.";
+    }
+
+    if (nextSuspicion >= 30) {
+      return "Le soupçon devient perceptible, sans dominer encore le récit.";
+    }
+
+    return "Le soupçon repasse en bruit de fond.";
+  }
+
+  if (suspicionDelta >= 4) {
+    return `Le soupçon d'origine algorithmique augmente nettement (+${suspicionDelta}).`;
+  }
+
+  if (suspicionDelta <= -3) {
+    return `Le soupçon d'origine algorithmique recule (${suspicionDelta}).`;
+  }
+
+  return null;
 }
 
 function getBlockTrend(previousBlock: Block, nextBlock: Block): string {
@@ -319,6 +423,7 @@ export function generateEvolutionReport(
   nextState: GameState,
   interventions: ResolvedIntervention[],
   systemicEvent: SystemicEvent | null,
+  createdOperations: PreparedOperation[],
 ): EvolutionReport {
   const blockResults = nextState.blocks.map((block) => {
     const previousBlock = previousState.blocks.find((candidate) => candidate.id === block.id) ?? block;
@@ -339,11 +444,17 @@ export function generateEvolutionReport(
     trends[result.block.id] = getBlockTrend(result.previousBlock, result.block);
     return trends;
   }, {} as Record<BlockId, string>);
-  const suspicionDelta = nextState.globalStats.soupconIA - previousState.globalStats.soupconIA;
+  const immediateInterventions = interventions.filter((intervention) => !isPreparationAction(intervention.action));
+  const preparationInterventions = interventions.filter((intervention) => isPreparationAction(intervention.action));
 
   return {
     turn: previousState.turn,
     operationSummary: getOperationSummary(interventions, previousState.blocks),
+    immediateInterventions: getInterventionLabels(immediateInterventions, previousState.blocks),
+    preparedOperations: preparationInterventions.map(
+      (intervention) => intervention.action.preparationText ?? `${intervention.action.name} préparée.`,
+    ),
+    unlockedOperations: createdOperations.map((operation) => operation.readyText),
     globalChanges: getTopGlobalChanges(previousState.globalStats, nextState.globalStats),
     mostAffectedBlock: mostAffected
       ? `${mostAffected.block.name} (${mostAffected.intensity} points de variation cumulée)`
@@ -352,12 +463,7 @@ export function generateEvolutionReport(
       ? `${mostTense.name} concentre le plus de friction visible.`
       : "Aucune tension principale détectée.",
     systemicEventTitle: systemicEvent?.title ?? null,
-    suspicionNote:
-      suspicionDelta > 0
-        ? `Le soupçon d'origine algorithmique progresse (${suspicionDelta > 0 ? "+" : ""}${suspicionDelta}).`
-        : suspicionDelta < 0
-          ? `Le soupçon d'origine algorithmique recule (${suspicionDelta}).`
-          : "Le soupçon d'origine algorithmique reste stable.",
+    suspicionNote: getSuspicionNote(previousState, nextState, systemicEvent),
     blockTrends,
   };
 }
@@ -397,6 +503,8 @@ export function applyTurnPlan(state: GameState, interventions: ResolvedIntervent
   const selectedActions = interventions.map((intervention) => intervention.action);
   const systemicEvent = chooseSystemicEvent(state, selectedActions, globalStats, actionAdjustedBlocks);
   const resolvedState = applySystemicEvent(systemicEvent, globalStats, actionAdjustedBlocks);
+  const createdOperations = createPreparedOperations(state, interventions);
+  const preparedOperations = resolvePreparedOperations(state, interventions, createdOperations);
 
   const operationSummary = getOperationSummary(interventions, state.blocks);
   const actionEvent = {
@@ -428,12 +536,17 @@ export function applyTurnPlan(state: GameState, interventions: ResolvedIntervent
     blocks: resolvedState.blocks,
     journal: [...journalEvents, ...state.journal].slice(0, MAX_JOURNAL_ENTRIES),
     triggeredEventIds: systemicEvent ? [...state.triggeredEventIds, systemicEvent.id] : state.triggeredEventIds,
+    preparedOperations,
     evolutionReport: null,
     ending: evaluateEnding(resolvedState.globalStats, resolvedState.blocks),
   };
 
   return {
     ...nextStateWithoutReport,
-    evolutionReport: generateEvolutionReport(state, nextStateWithoutReport, interventions, systemicEvent),
+    evolutionReport: generateEvolutionReport(state, nextStateWithoutReport, interventions, systemicEvent, createdOperations),
   };
+}
+
+export function getAvailablePreparedOperations(state: GameState): PreparedOperation[] {
+  return getActivePreparedOperations(state);
 }

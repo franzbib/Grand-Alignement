@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { actions } from "./data/actions";
 import { createInitialState } from "./data/initialState";
 import { strategicPostures } from "./data/postures";
-import { INFLUENCE_CAPACITY, applyTurnPlan } from "./engine/gameEngine";
+import { INFLUENCE_CAPACITY, applyTurnPlan, getAvailablePreparedOperations } from "./engine/gameEngine";
 import { clearGameState, loadGameState, saveGameState } from "./engine/storage";
 import { ActionsPanel } from "./components/ActionsPanel";
 import { BlocksGrid } from "./components/BlocksGrid";
@@ -10,7 +10,7 @@ import { EvolutionReportPanel } from "./components/EvolutionReportPanel";
 import { GlobalPanel } from "./components/GlobalPanel";
 import { Journal } from "./components/Journal";
 import { WorldMap } from "./components/WorldMap";
-import type { Action, BlockId, GameState, InfluenceTarget, PlannedIntervention } from "./types/game";
+import type { Action, BlockId, GameState, InfluenceTarget, PlannedIntervention, PreparedOperation } from "./types/game";
 
 type ViewId = "world" | "strategy" | "blocks" | "journal" | "report";
 
@@ -47,17 +47,29 @@ function App() {
     return action.defaultTarget;
   }
 
-  function handleToggleAction(action: Action) {
+  function handleToggleAction(action: Action, preparedOperation?: PreparedOperation) {
     setPlannedInterventions((currentPlan) => {
-      if (currentPlan.some((intervention) => intervention.actionId === action.id)) {
-        return currentPlan.filter((intervention) => intervention.actionId !== action.id);
+      const planKey = preparedOperation?.id ?? action.id;
+      const isAlreadyPlanned = currentPlan.some(
+        (intervention) => (intervention.preparedOperationId ?? intervention.actionId) === planKey,
+      );
+
+      if (isAlreadyPlanned) {
+        return currentPlan.filter((intervention) => (intervention.preparedOperationId ?? intervention.actionId) !== planKey);
       }
 
       if (getInfluenceUsed(currentPlan) + action.cost > INFLUENCE_CAPACITY) {
         return currentPlan;
       }
 
-      return [...currentPlan, { actionId: action.id, target: getDefaultTarget(action) }];
+      return [
+        ...currentPlan,
+        {
+          actionId: action.id,
+          target: preparedOperation?.target ?? getDefaultTarget(action),
+          preparedOperationId: preparedOperation?.id,
+        },
+      ];
     });
   }
 
@@ -162,6 +174,7 @@ function App() {
       {activeView === "strategy" && (
         <ActionsPanel
           actions={actions}
+          availablePreparedOperations={getAvailablePreparedOperations(gameState)}
           blocks={gameState.blocks}
           disabled={Boolean(gameState.ending)}
           influenceCapacity={INFLUENCE_CAPACITY}

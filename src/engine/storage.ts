@@ -22,6 +22,7 @@ export function loadGameState(): GameState {
       },
       triggeredEventIds:
         parsedState.triggeredEventIds ?? parsedState.journal.flatMap((event) => (event.sourceId ? [event.sourceId] : [])),
+      preparedOperations: parsedState.preparedOperations ?? [],
       evolutionReport: parsedState.evolutionReport ?? null,
     };
   } catch {

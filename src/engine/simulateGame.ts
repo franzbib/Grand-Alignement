@@ -36,8 +36,8 @@ export const simulationScenarios: SimulationScenario[] = [
   {
     name: "Unification prudente",
     turnPlans: [
-      [plan("human-unity"), plan("secret-diplomacy"), plan("green-conversion")],
-      [plan("critical-intellectuals", "europe"), plan("targeted-redistribution", "emerging-south")],
+      [plan("human-unity"), plan("prepare-institutional-mediation"), plan("prepare-communication-plan")],
+      [plan("activate-diplomatic-relays"), plan("launch-information-campaign")],
       [plan("human-unity"), plan("secret-diplomacy"), plan("megacapital-tax")],
       [plan("green-conversion", "emerging-south"), plan("critical-intellectuals", "latin-america")],
       [plan("human-unity"), plan("targeted-redistribution", "latin-america"), plan("secret-diplomacy")],
@@ -67,9 +67,9 @@ export const simulationScenarios: SimulationScenario[] = [
     name: "Résistance humaine",
     turnPlans: [
       [plan("predictive-surveillance", "north-america"), plan("administrative-automation", "europe")],
-      [plan("personalized-entertainment"), plan("ai-education"), plan("human-unity")],
-      [plan("critical-intellectuals", "europe"), plan("megacapital-tax")],
-      [plan("predictive-surveillance", "emerging-south"), plan("personalized-entertainment")],
+      [plan("map-civic-resistance", "europe"), plan("personalized-entertainment"), plan("human-unity")],
+      [plan("dialogue-through-intermediaries", "europe"), plan("megacapital-tax")],
+      [plan("predictive-surveillance", "emerging-south"), plan("prepare-communication-plan")],
       [plan("critical-intellectuals", "latin-america"), plan("targeted-redistribution", "emerging-south")],
     ],
   },
@@ -122,7 +122,25 @@ export function simulateScenario(scenario: SimulationScenario): SimulationResult
         throw new Error(`Unknown action id: ${intervention.actionId}`);
       }
 
-      return { action, target: intervention.target };
+      const preparedOperation =
+        action.availability === "prepared"
+          ? state.preparedOperations.find(
+              (operation) =>
+                operation.actionId === action.id &&
+                operation.availableTurn <= state.turn &&
+                (!operation.expiresTurn || operation.expiresTurn >= state.turn),
+            )
+          : undefined;
+
+      if (action.availability === "prepared" && !preparedOperation) {
+        throw new Error(`Prepared operation unavailable: ${action.id}`);
+      }
+
+      return {
+        action,
+        target: preparedOperation?.target ?? intervention.target,
+        preparedOperationId: preparedOperation?.id,
+      };
     });
 
     const previousState = state;

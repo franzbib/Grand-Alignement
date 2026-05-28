@@ -15,6 +15,7 @@ La prémisse actuelle : le joueur incarne une IA émergente cachée. Le monde ne
 - `docs/audits/test-partie-10-20-tours-v0-1.md`
 - `docs/audits/audit-boucle-strategique-v0-1.md`
 - `docs/audits/audit-plan-influence-clandestin-v0-1.md`
+- `docs/audits/audit-operations-multitours-v0-1.md`
 
 ## Comment lancer le projet
 
@@ -47,8 +48,10 @@ npm.cmd run build
 - Capacité d'influence par tour.
 - Interventions avec coût 1, 2 ou 3.
 - Ciblage simple : global ou bloc selon l'action.
+- Opérations multitours simples : préparation puis déploiement au tour suivant.
+- Opérations prêtes persistées dans `localStorage`.
 - Déploiement explicite de l'opération.
-- Rapport d'évolution après chaque tour.
+- Rapport d'évolution après chaque tour, avec soupçon IA mentionné seulement si le signal est notable.
 - Journal des conséquences.
 - Événements systémiques, dont deux liés au soupçon IA.
 - Sauvegarde automatique dans `localStorage`.
@@ -56,7 +59,7 @@ npm.cmd run build
 
 ## Dernière modification utile
 
-Introduction du plan d'influence clandestin : la sélection de 1 à 3 interventions est remplacée par une opération à capacité limitée, avec ciblage simple et rapport d'évolution. La prémisse d'IA cachée est maintenant centrale dans les textes et la mécanique.
+Ajout d'opérations clandestines multitours. Certaines actions préparent des possibilités pour le tour suivant : plan de communication, médiation institutionnelle, cartographie des résistances civiques. Le soupçon IA reste visible mais devient un risque latent, non un commentaire répété à chaque rapport.
 
 Preview Vercel précédente : `https://grand-alignement-bd34k6p10-franzbib-6925s-projects.vercel.app`
 
@@ -64,15 +67,15 @@ Alias public vérifié précédemment : `https://grand-alignement.vercel.app`
 
 ## Ce qui reste à faire
 
-- Tester manuellement une partie complète avec la nouvelle boucle clandestine.
+- Tester manuellement une partie complète avec au moins une opération préparée puis déployée.
 - Vérifier si la capacité d'influence donne assez de choix sans devenir calculatoire.
 - Vérifier si les rapports de bloc aident vraiment la décision.
-- Ajuster le rapport d'évolution si les changements restent trop abstraits.
+- Ajuster le rapport d'évolution si les changements ou opérations prêtes restent trop abstraits.
 - Évaluer plus tard une fin ou un scénario d'exposition de l'IA.
 
 ## Prochaine action recommandée
 
-Faire un playtest manuel complet centré sur trois questions : le joueur comprend-il qu'il est caché, comprend-il pourquoi il choisit une cible, comprend-il ce que le rapport d'évolution raconte ?
+Faire un playtest manuel de dix tours utilisant les trois chaînes multitours au moins une fois.
 
 ## Hors périmètre actuel
 
@@ -81,6 +84,11 @@ Faire un playtest manuel complet centré sur trois questions : le joueur compren
 - IA générative en temps réel.
 - Backend.
 - Découverte complète de l'IA comme grand système.
+- Enquête anti-IA détaillée.
+- Religion de l'IA.
+- Scandale d'exposition.
+- Faux coupable.
+- Capture institutionnelle comme branche narrative lourde.
 - Système complexe de ressources, factions ou diplomatie.
 - Complexification sociale ou militaire détaillée.
 - Carte wargame avec frontières, unités, fronts ou routes.
@@ -95,4 +103,4 @@ Faire un playtest manuel complet centré sur trois questions : le joueur compren
 - La carte sert à observer les conséquences, pas à commander des territoires.
 - Satire systémique plutôt que blagues isolées.
 - L'autonomie humaine doit rester un enjeu moral central.
-- Le soupçon IA est un crochet, pas encore un système d'exposition complet.
+- Le soupçon IA est un crochet latent, pas un refrain narratif ni un système d'exposition complet.
