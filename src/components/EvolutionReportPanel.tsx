@@ -10,6 +10,8 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
   const unlockedOperations = report?.unlockedOperations ?? [];
   const affectedBlocks = report?.affectedBlocks ?? [];
   const socialSignals = report?.socialSignals ?? [];
+  const worldSignals = report?.worldSignals ?? [];
+  const relationChanges = report?.relationChanges ?? [];
   const weakSignals = report?.weakSignals ?? [];
 
   return (
@@ -84,6 +86,34 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
                   <li>Signal social encore diffus.</li>
                 )}
               </ul>
+            </div>
+            <div>
+              <h3>Dynamique autonome</h3>
+              <ul>
+                {worldSignals.length > 0 ? (
+                  worldSignals.map((signal) => <li key={signal}>{signal}</li>)
+                ) : (
+                  <li>Le monde ne signale pas de mouvement autonome majeur.</li>
+                )}
+              </ul>
+            </div>
+            <div>
+              <h3>Relations inter-blocs</h3>
+              <ul>
+                {relationChanges.length > 0 ? (
+                  relationChanges.map((change) => <li key={change}>{change}</li>)
+                ) : (
+                  <li>Aucune relation suivie ne change fortement.</li>
+                )}
+              </ul>
+            </div>
+            <div>
+              <h3>Hausse de tension</h3>
+              <p>{report.relationTensionIncrease ?? "Aucune hausse relationnelle dominante."}</p>
+            </div>
+            <div>
+              <h3>Apaisement</h3>
+              <p>{report.relationTensionDecrease ?? "Aucun apaisement relationnel dominant."}</p>
             </div>
             <div>
               <h3>Bloc le plus affecté</h3>

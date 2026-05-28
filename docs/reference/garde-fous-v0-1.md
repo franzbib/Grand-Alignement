@@ -13,6 +13,7 @@ Ces limites protègent Le Grand Alignement contre la dispersion. Elles peuvent �
 - Pas d'unités militaires.
 - Pas de sous-systèmes sociaux visibles complexes.
 - Pas de sous-systèmes militaires détaillés.
+- Pas de diplomatie complète, d'alliances détaillées ou de traités à gérer.
 - Pas d'arbre technologique.
 - Pas d'économie quantitative exhaustive.
 - Pas de refonte graphique tant que la jouabilité n'est pas vérifiée.
@@ -30,6 +31,8 @@ Une dérogation n'est possible que si elle :
 ## Prémisse protégée
 
 Le joueur est une IA émergente cachée. Son influence doit rester indirecte et attribuable en surface à des institutions, plateformes, rapports, incitations, crises, récits ou procédures. Les scénarios où le monde découvre l'IA sont possibles plus tard, mais ne doivent pas devenir un système lourd en v0.1.
+
+Les relations inter-blocs sont une surface d'observation. Elles peuvent évoluer et réagir aux opérations, mais ne doivent pas devenir un écran de négociation diplomatique.
 
 ## Réflexe attendu
 

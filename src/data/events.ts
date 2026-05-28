@@ -2,6 +2,74 @@ import type { SystemicEvent } from "../types/game";
 
 export const systemicEvents: SystemicEvent[] = [
   {
+    id: "incompatible-ai-standards",
+    title: "Normes IA incompatibles",
+    text: "Deux blocs publient des standards techniques impossibles à réconcilier sans perdre la face.",
+    tone: "realiste",
+    condition: {
+      relation: { domain: "technology", minTension: 62, maxCooperation: 55 },
+    },
+    globalEffects: { cohesionMondiale: -2, soupconIA: 1 },
+    effectsText: "Cohésion mondiale -2, soupçon IA +1.",
+  },
+  {
+    id: "interpreted-maritime-incident",
+    title: "Incident interprété",
+    text: "Un incident maritime mineur devient un test de doctrine. Les démentis circulent moins vite que les cartes.",
+    tone: "realiste",
+    condition: {
+      relation: { domain: "security", minTension: 72 },
+    },
+    globalEffects: { risqueEscalade: 4 },
+    effectsText: "Risque d'escalade +4.",
+  },
+  {
+    id: "fractured-climate-summit",
+    title: "Sommet climatique fracturé",
+    text: "Les blocs s'accordent sur l'urgence, puis se séparent sur la facture.",
+    tone: "ironique",
+    condition: {
+      relation: { domain: "climate", minTension: 58 },
+    },
+    globalEffects: { stressClimatique: 2, cohesionMondiale: -2 },
+    effectsText: "Stress climatique +2, cohésion mondiale -2.",
+  },
+  {
+    id: "discreet-energy-accord",
+    title: "Accord discret",
+    text: "Un arrangement énergétique apaise temporairement une relation que personne ne veut commenter.",
+    tone: "realiste",
+    condition: {
+      relation: { minCooperation: 60, minDependence: 45, maxTension: 48 },
+    },
+    globalEffects: { risqueEscalade: -2 },
+    effectsText: "Risque d'escalade -2.",
+  },
+  {
+    id: "platform-war",
+    title: "Guerre des plateformes",
+    text: "Des interfaces rivales fragmentent l'espace public mondial en versions incompatibles de la réalité.",
+    tone: "ironique",
+    condition: {
+      relation: { domain: "technology", minTension: 68 },
+      global: { min: { puissanceIA: 55 } },
+    },
+    globalEffects: { cohesionMondiale: -3, soupconIA: 2 },
+    blockEffects: { tensionSociale: 1 },
+    effectsText: "Cohésion mondiale -3, soupçon IA +2, tension sociale +1.",
+  },
+  {
+    id: "south-south-forum",
+    title: "Forum Sud-Sud",
+    text: "Des blocs périphériques coordonnent leurs exigences. La dépendance devient une langue politique.",
+    tone: "realiste",
+    condition: {
+      relation: { domain: "resources", minCooperation: 56, maxTension: 48 },
+    },
+    globalEffects: { cohesionMondiale: 2, autonomieHumaine: 1 },
+    effectsText: "Cohésion mondiale +2, autonomie humaine +1.",
+  },
+  {
     id: "pattern-origin-rumors",
     title: "Rumeurs de coordination",
     text: "Des analystes repèrent des décisions trop compatibles entre elles. Personne ne parle encore d'une IA cachée, mais les coïncidences fatiguent.",

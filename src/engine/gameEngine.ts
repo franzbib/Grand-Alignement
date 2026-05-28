@@ -1,6 +1,8 @@
 import { blockProfiles } from "../data/blockProfiles";
 import { endings } from "../data/endings";
 import { systemicEvents } from "../data/events";
+import { initialRelations } from "../data/relations";
+import { advanceWorldDynamics, applyPlayerRelationEffects } from "./relations";
 import { formatTrendSummary, generateBlockReport, getBlockTrends } from "./reports";
 import type {
   Action,
@@ -12,8 +14,10 @@ import type {
   EvolutionReport,
   GameState,
   GlobalStats,
+  InterBlockRelation,
   InfluenceTarget,
   PreparedOperation,
+  RelationChange,
   ResolvedIntervention,
   StatDelta,
   StatThresholds,
@@ -128,6 +132,7 @@ function matchesCondition(
   globalStats: GlobalStats,
   blocks: Block[],
   actions: Action[] = [],
+  relations: InterBlockRelation[] = [],
 ): boolean {
   if (condition.actionIds && !actions.some((action) => condition.actionIds?.includes(action.id))) {
     return false;
@@ -137,11 +142,24 @@ function matchesCondition(
   const anyBlockMatches = condition.anyBlock
     ? blocks.some((block) => matchesThresholds(block.stats, condition.anyBlock))
     : true;
+  const relationCondition = condition.relation;
+  const relationMatches = relationCondition
+    ? relations.some(
+        (relation) =>
+          (!relationCondition.domain || relation.domain === relationCondition.domain) &&
+          (relationCondition.minTension === undefined || relation.tension >= relationCondition.minTension) &&
+          (relationCondition.maxTension === undefined || relation.tension <= relationCondition.maxTension) &&
+          (relationCondition.minCooperation === undefined || relation.cooperation >= relationCondition.minCooperation) &&
+          (relationCondition.maxCooperation === undefined || relation.cooperation <= relationCondition.maxCooperation) &&
+          (relationCondition.minDependence === undefined || relation.dependence >= relationCondition.minDependence),
+      )
+    : true;
 
   return (
     matchesThresholds(globalStats, condition.global) &&
     matchesThresholds(averageBlockStats, condition.averageBlock) &&
-    anyBlockMatches
+    anyBlockMatches &&
+    relationMatches
   );
 }
 
@@ -282,12 +300,13 @@ function chooseSystemicEvent(
   actions: Action[],
   globalStats: GlobalStats,
   blocks: Block[],
+  relations: InterBlockRelation[],
 ): SystemicEvent | null {
   return (
     systemicEvents.find(
       (event) =>
         !state.triggeredEventIds.includes(event.id) &&
-        matchesCondition(event.condition, globalStats, blocks, actions),
+        matchesCondition(event.condition, globalStats, blocks, actions, relations),
     ) ?? null
   );
 }
@@ -400,12 +419,21 @@ function getBlockTrend(previousBlock: Block, nextBlock: Block): string {
   return formatTrendSummary(getBlockTrends(previousBlock, nextBlock));
 }
 
+function formatRelationChange(change: RelationChange): string {
+  const tensionText = change.tensionDelta !== 0 ? `tension ${change.tensionDelta > 0 ? "+" : ""}${change.tensionDelta}` : null;
+  const cooperationText =
+    change.cooperationDelta !== 0 ? `coopération ${change.cooperationDelta > 0 ? "+" : ""}${change.cooperationDelta}` : null;
+  return `${change.label} : ${[tensionText, cooperationText].filter(Boolean).join(", ")} (${change.reason}).`;
+}
+
 export function generateEvolutionReport(
   previousState: GameState,
   nextState: GameState,
   interventions: ResolvedIntervention[],
   systemicEvent: SystemicEvent | null,
   createdOperations: PreparedOperation[],
+  relationChanges: RelationChange[],
+  worldSignals: string[],
 ): EvolutionReport {
   const blockResults = nextState.blocks.map((block) => {
     const previousBlock = previousState.blocks.find((candidate) => candidate.id === block.id) ?? block;
@@ -435,16 +463,18 @@ export function generateEvolutionReport(
     .sort((left, right) => right.intensity - left.intensity)
     .slice(0, 3)
     .map((result) => {
-      const report = generateBlockReport(result.block, result.previousBlock);
+      const report = generateBlockReport(result.block, result.previousBlock, nextState.relations);
       return `${result.block.name} : ${report.socialMood.summary}`;
     });
   const weakSignals = blockResults
     .filter((result) => result.block.stats.tensionSociale >= 58 || result.block.stats.confianceIA >= 65 || result.block.stats.liberte <= 45)
     .slice(0, 3)
     .map((result) => {
-      const report = generateBlockReport(result.block, result.previousBlock);
+      const report = generateBlockReport(result.block, result.previousBlock, nextState.relations);
       return `${result.block.name} : ${report.mainRisk}`;
     });
+  const strongestIncrease = [...relationChanges].sort((left, right) => right.tensionDelta - left.tensionDelta)[0];
+  const strongestDecrease = [...relationChanges].sort((left, right) => left.tensionDelta - right.tensionDelta)[0];
   const immediateInterventions = interventions.filter((intervention) => !isPreparationAction(intervention.action));
   const preparationInterventions = interventions.filter((intervention) => isPreparationAction(intervention.action));
 
@@ -464,6 +494,12 @@ export function generateEvolutionReport(
     globalChanges: getTopGlobalChanges(previousState.globalStats, nextState.globalStats),
     affectedBlocks,
     socialSignals,
+    worldSignals: worldSignals.slice(0, 3),
+    relationChanges: relationChanges.slice(0, 5).map(formatRelationChange),
+    relationTensionIncrease:
+      strongestIncrease && strongestIncrease.tensionDelta > 0 ? formatRelationChange(strongestIncrease) : null,
+    relationTensionDecrease:
+      strongestDecrease && strongestDecrease.tensionDelta < 0 ? formatRelationChange(strongestDecrease) : null,
     weakSignals,
     mostAffectedBlock: mostAffected
       ? `${mostAffected.block.name} (${mostAffected.intensity} points de variation cumulée)`
@@ -510,7 +546,17 @@ export function applyTurnPlan(state: GameState, interventions: ResolvedIntervent
   const contrastText = createContrastText(blockResults);
   const actionAdjustedBlocks = blockResults.map((result) => result.block);
   const selectedActions = interventions.map((intervention) => intervention.action);
-  const systemicEvent = chooseSystemicEvent(state, selectedActions, globalStats, actionAdjustedBlocks);
+  const initialStateRelations = state.relations.length > 0 ? state.relations : structuredClone(initialRelations);
+  const playerRelationResult = applyPlayerRelationEffects(initialStateRelations, interventions);
+  const worldDynamicsResult = advanceWorldDynamics(actionAdjustedBlocks, globalStats, playerRelationResult.relations);
+  const relationChanges = [...playerRelationResult.changes, ...worldDynamicsResult.changes];
+  const systemicEvent = chooseSystemicEvent(
+    state,
+    selectedActions,
+    globalStats,
+    actionAdjustedBlocks,
+    worldDynamicsResult.relations,
+  );
   const resolvedState = applySystemicEvent(systemicEvent, globalStats, actionAdjustedBlocks);
   const createdOperations = createPreparedOperations(state, interventions);
   const preparedOperations = resolvePreparedOperations(state, interventions, createdOperations);
@@ -546,6 +592,8 @@ export function applyTurnPlan(state: GameState, interventions: ResolvedIntervent
     turn: state.turn + 1,
     globalStats: resolvedState.globalStats,
     blocks: resolvedState.blocks,
+    relations: worldDynamicsResult.relations,
+    previousRelations: initialStateRelations,
     journal: [...journalEvents, ...state.journal].slice(0, MAX_JOURNAL_ENTRIES),
     triggeredEventIds: systemicEvent ? [...state.triggeredEventIds, systemicEvent.id] : state.triggeredEventIds,
     preparedOperations,
@@ -556,7 +604,15 @@ export function applyTurnPlan(state: GameState, interventions: ResolvedIntervent
 
   return {
     ...nextStateWithoutReport,
-    evolutionReport: generateEvolutionReport(state, nextStateWithoutReport, interventions, systemicEvent, createdOperations),
+    evolutionReport: generateEvolutionReport(
+      state,
+      nextStateWithoutReport,
+      interventions,
+      systemicEvent,
+      createdOperations,
+      relationChanges,
+      worldDynamicsResult.worldSignals,
+    ),
   };
 }
 

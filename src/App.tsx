@@ -9,15 +9,17 @@ import { BlocksGrid } from "./components/BlocksGrid";
 import { EvolutionReportPanel } from "./components/EvolutionReportPanel";
 import { GlobalPanel } from "./components/GlobalPanel";
 import { Journal } from "./components/Journal";
+import { RelationsPanel } from "./components/RelationsPanel";
 import { WorldMap } from "./components/WorldMap";
 import type { Action, BlockId, GameState, InfluenceTarget, PlannedIntervention, PreparedOperation } from "./types/game";
 
-type ViewId = "world" | "strategy" | "blocks" | "journal" | "report";
+type ViewId = "world" | "strategy" | "blocks" | "relations" | "journal" | "report";
 
 const views: Array<{ id: ViewId; label: string }> = [
   { id: "world", label: "Monde" },
   { id: "strategy", label: "Influence" },
   { id: "blocks", label: "Blocs" },
+  { id: "relations", label: "Relations" },
   { id: "journal", label: "Journal" },
   { id: "report", label: "Rapport" },
 ];
@@ -167,6 +169,7 @@ function App() {
             evolutionReport={gameState.evolutionReport}
             onSelectBlock={setSelectedBlockId}
             previousBlocks={gameState.previousBlocks}
+            relations={gameState.relations}
             selectedBlockId={selectedBlockId}
           />
         </div>
@@ -190,6 +193,8 @@ function App() {
       )}
 
       {activeView === "blocks" && <BlocksGrid blocks={gameState.blocks} previousBlocks={gameState.previousBlocks} />}
+
+      {activeView === "relations" && <RelationsPanel blocks={gameState.blocks} relations={gameState.relations} />}
 
       {activeView === "journal" && <Journal events={gameState.journal} />}
 

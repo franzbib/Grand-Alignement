@@ -9,6 +9,7 @@ export type SimulationTurn = {
   actionNames: string[];
   influenceUsed: number;
   systemicEvents: string[];
+  relationChanges: string[];
   ending: string | null;
   globalStats: GlobalStats;
 };
@@ -154,6 +155,7 @@ export function simulateScenario(scenario: SimulationScenario): SimulationResult
       actionNames: resolvedInterventions.map((intervention) => intervention.action.name),
       influenceUsed,
       systemicEvents: turnEvents,
+      relationChanges: state.evolutionReport?.relationChanges ?? [],
       ending: state.ending?.title ?? null,
       globalStats: state.globalStats,
     });

@@ -1,5 +1,6 @@
 import { blockSocialSalience, socialGroups } from "../data/socialGroups";
-import type { Block, BlockReport, BlockStats, BlockTrend, SocialGroupId, SocialMood } from "../types/game";
+import type { Block, BlockReport, BlockStats, BlockTrend, InterBlockRelation, SocialGroupId, SocialMood } from "../types/game";
+import { getRelationStatus } from "./relations";
 
 const statLabels: Record<keyof BlockStats, string> = {
   stabilite: "stabilité",
@@ -142,9 +143,46 @@ function getStrategicLeverage(block: Block, mood: SocialMood): string {
   return "Levier probable : observation, médiation lente ou récit d'unité peu intrusif.";
 }
 
-export function generateBlockReport(block: Block, previousBlock?: Block | null): BlockReport {
+function getBlockRelations(block: Block, relations: InterBlockRelation[]): InterBlockRelation[] {
+  return relations.filter((relation) => relation.from === block.id || relation.to === block.id);
+}
+
+function formatRelationSummary(block: Block, relations: InterBlockRelation[]): {
+  relationsSummary: string;
+  mostTenseRelation: string;
+  mostCooperativeRelation: string;
+} {
+  const blockRelations = getBlockRelations(block, relations);
+  const mostTense = [...blockRelations].sort((left, right) => right.tension - left.tension)[0];
+  const mostCooperative = [...blockRelations].sort((left, right) => right.cooperation - left.cooperation)[0];
+
+  if (!mostTense || !mostCooperative) {
+    return {
+      relationsSummary: "Relations extérieures encore peu lisibles.",
+      mostTenseRelation: "Aucune tension extérieure dominante.",
+      mostCooperativeRelation: "Aucune coopération extérieure dominante.",
+    };
+  }
+
+  return {
+    relationsSummary: `${block.name} est surtout exposé à ${mostTense.label.toLowerCase()} (${getRelationStatus(
+      mostTense,
+    )}).`,
+    mostTenseRelation: `${mostTense.label} : tension ${mostTense.tension}, ${mostTense.recentTrend ?? "tendance stable"}`,
+    mostCooperativeRelation: `${mostCooperative.label} : coopération ${mostCooperative.cooperation}, ${
+      mostCooperative.recentTrend ?? "tendance stable"
+    }`,
+  };
+}
+
+export function generateBlockReport(
+  block: Block,
+  previousBlock?: Block | null,
+  relations: InterBlockRelation[] = [],
+): BlockReport {
   const trends = getBlockTrends(previousBlock, block);
   const mood = getSocialMood(block);
+  const relationSummary = formatRelationSummary(block, relations);
   const favorableGroups = mood.favorableGroups.length > 0 ? mood.favorableGroups : ["Aucun groupe clairement acquis"];
   const tenseGroups = mood.tenseGroups.length > 0 ? mood.tenseGroups : ["Tensions diffuses"];
   const trendSummary = formatTrendSummary(trends);
@@ -169,6 +207,7 @@ export function generateBlockReport(block: Block, previousBlock?: Block | null):
           ? "Vulnérabilité : tension sociale transformable en langage politique."
           : "Vulnérabilité : acceptation encore réversible des dispositifs indirects.",
     possibleLeverage: getStrategicLeverage(block, mood),
+    ...relationSummary,
     socialMood: mood,
     trends,
   };

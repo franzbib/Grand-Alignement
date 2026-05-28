@@ -1,5 +1,6 @@
-import type { Block, BlockId, EvolutionReport } from "../types/game";
+import type { Block, BlockId, EvolutionReport, InterBlockRelation } from "../types/game";
 import { generateBlockReport } from "../engine/reports";
+import { getRelationStatus } from "../engine/relations";
 
 type MapZone = {
   id: BlockId;
@@ -140,6 +141,7 @@ type WorldMapProps = {
   blocks: Block[];
   evolutionReport: EvolutionReport | null;
   previousBlocks: Block[] | null;
+  relations: InterBlockRelation[];
   selectedBlockId: BlockId;
   onSelectBlock: (blockId: BlockId) => void;
 };
@@ -164,12 +166,14 @@ function getBlockInterpretation(block: Block, mapState: BlockMapState): string {
   return `${block.name} reste observable sans seuil critique dominant, ce qui ne signifie pas qu'il soit immobile.`;
 }
 
-export function WorldMap({ blocks, evolutionReport, previousBlocks, selectedBlockId, onSelectBlock }: WorldMapProps) {
+export function WorldMap({ blocks, evolutionReport, previousBlocks, relations, selectedBlockId, onSelectBlock }: WorldMapProps) {
   const blocksById = new Map(blocks.map((block) => [block.id, block]));
+  const zonesById = new Map(mapZones.map((zone) => [zone.id, zone]));
   const selectedBlock = blocksById.get(selectedBlockId) ?? blocks[0];
   const selectedMapState = getBlockMapState(selectedBlock);
   const previousBlock = previousBlocks?.find((block) => block.id === selectedBlock.id);
-  const blockReport = generateBlockReport(selectedBlock, previousBlock);
+  const blockReport = generateBlockReport(selectedBlock, previousBlock, relations);
+  const tenseRelations = [...relations].sort((left, right) => right.tension - left.tension).slice(0, 3);
 
   return (
     <section className="panel world-map-panel" aria-labelledby="world-map-title">
@@ -186,6 +190,31 @@ export function WorldMap({ blocks, evolutionReport, previousBlocks, selectedBloc
           <rect className="world-map__ocean" x="0" y="0" width="980" height="470" rx="12" />
           <path className="world-map__grid" d="M70 235 H910 M490 36 V430 M180 36 V430 M800 36 V430" />
           <path className="world-map__arc" d="M90 345 C280 205 589 190 893 326" />
+
+          {tenseRelations.map((relation) => {
+            const fromZone = zonesById.get(relation.from);
+            const toZone = zonesById.get(relation.to);
+
+            if (!fromZone || !toZone) {
+              return null;
+            }
+
+            const midX = (fromZone.labelX + toZone.labelX) / 2;
+            const midY = Math.min(fromZone.labelY, toZone.labelY) - 48;
+
+            return (
+              <path
+                aria-label={`${relation.label}. Tension ${relation.tension}.`}
+                className={`world-map__relation world-map__relation--${getRelationStatus(relation)}`}
+                d={`M${fromZone.labelX} ${fromZone.labelY} Q${midX} ${midY} ${toZone.labelX} ${toZone.labelY}`}
+                key={relation.id}
+              >
+                <title>
+                  {relation.label}. Tension {relation.tension}, coopération {relation.cooperation}.
+                </title>
+              </path>
+            );
+          })}
 
           {mapZones.map((zone) => {
             const block = blocksById.get(zone.id);
@@ -309,6 +338,12 @@ export function WorldMap({ blocks, evolutionReport, previousBlocks, selectedBloc
           <section>
             <h4>Lecture stratégique</h4>
             <p>{blockReport.strategicReading} {blockReport.possibleLeverage}</p>
+          </section>
+          <section>
+            <h4>Relations extérieures</h4>
+            <p>{blockReport.relationsSummary}</p>
+            <p>{blockReport.mostTenseRelation}</p>
+            <p>{blockReport.mostCooperativeRelation}</p>
           </section>
         </div>
         <p className="block-report__trend">{getBlockInterpretation(selectedBlock, selectedMapState)}</p>

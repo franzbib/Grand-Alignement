@@ -317,6 +317,27 @@ button {
   stroke-dasharray: 8 10;
 }
 
+.world-map__relation {
+  fill: none;
+  stroke: rgba(255, 253, 247, 0.65);
+  stroke-width: 3;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+.world-map__relation--tendue {
+  stroke: #d98c36;
+}
+
+.world-map__relation--critique {
+  stroke: #ff6b5f;
+  stroke-width: 4;
+}
+
+.world-map__relation--apaisée {
+  stroke: #6fc4a2;
+}
+
 .world-map__block {
   outline: none;
 }
@@ -805,6 +826,56 @@ button {
   padding-left: 18px;
 }
 
+.relations-list {
+  display: grid;
+  gap: 12px;
+}
+
+.relation-card {
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) minmax(260px, 0.9fr);
+  gap: 18px;
+  padding: 14px;
+  border: 1px solid #ded8c9;
+  border-left: 4px solid #8f7d52;
+  border-radius: 8px;
+  background: #f8f6ef;
+}
+
+.relation-card--tendue {
+  border-left-color: #b7791f;
+}
+
+.relation-card--critique {
+  border-left-color: #b13f35;
+}
+
+.relation-card--apaisée {
+  border-left-color: #3d7f61;
+}
+
+.relation-card small {
+  color: #7c3626;
+  font-weight: 900;
+}
+
+.relation-card h3 {
+  margin: 4px 0 8px;
+  font-size: 1rem;
+}
+
+.relation-card p {
+  margin: 4px 0 0;
+  color: #536158;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.relation-card__gauges {
+  display: grid;
+  gap: 10px;
+}
+
 .report-suspicion {
   margin-top: 14px !important;
   padding: 10px;
@@ -876,6 +947,7 @@ button {
 
   .block-report,
   .block-report__sections,
+  .relation-card,
   .report-grid {
     grid-template-columns: 1fr;
   }

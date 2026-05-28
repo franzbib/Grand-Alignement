@@ -1,4 +1,5 @@
 import { initialBlocks } from "./blocks";
+import { initialRelations } from "./relations";
 import type { GameState, GlobalStats } from "../types/game";
 
 export const initialGlobalStats: GlobalStats = {
@@ -15,6 +16,8 @@ export function createInitialState(): GameState {
     turn: 1,
     globalStats: { ...initialGlobalStats },
     blocks: structuredClone(initialBlocks),
+    relations: structuredClone(initialRelations),
+    previousRelations: null,
     triggeredEventIds: [],
     preparedOperations: [],
     previousBlocks: null,

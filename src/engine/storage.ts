@@ -1,4 +1,5 @@
 import { createInitialState } from "../data/initialState";
+import { initialRelations } from "../data/relations";
 import type { GameState } from "../types/game";
 
 const STORAGE_KEY = "grand-alignement-state-v1";
@@ -20,6 +21,8 @@ export function loadGameState(): GameState {
         ...initialState.globalStats,
         ...parsedState.globalStats,
       },
+      relations: parsedState.relations ?? structuredClone(initialRelations),
+      previousRelations: parsedState.previousRelations ?? null,
       triggeredEventIds:
         parsedState.triggeredEventIds ?? parsedState.journal.flatMap((event) => (event.sourceId ? [event.sourceId] : [])),
       preparedOperations: parsedState.preparedOperations ?? [],

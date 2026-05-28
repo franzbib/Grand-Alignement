@@ -72,6 +72,38 @@ export type SocialMood = {
   summary: string;
 };
 
+export type RelationDomain =
+  | "security"
+  | "trade"
+  | "climate"
+  | "technology"
+  | "migration"
+  | "information"
+  | "resources";
+
+export type InterBlockRelation = {
+  id: string;
+  from: BlockId;
+  to: BlockId;
+  tension: number;
+  cooperation: number;
+  dependence: number;
+  domain: RelationDomain;
+  label: string;
+  recentTrend?: string;
+};
+
+export type RelationDelta = Partial<Pick<InterBlockRelation, "tension" | "cooperation" | "dependence">>;
+
+export type RelationChange = {
+  relationId: string;
+  label: string;
+  tensionDelta: number;
+  cooperationDelta: number;
+  dependenceDelta: number;
+  reason: string;
+};
+
 export type BlockReport = {
   generalSituation: string;
   tenseGroups: string[];
@@ -81,6 +113,9 @@ export type BlockReport = {
   strategicReading: string;
   strategicVulnerability: string;
   possibleLeverage: string;
+  relationsSummary: string;
+  mostTenseRelation: string;
+  mostCooperativeRelation: string;
   socialMood: SocialMood;
   trends: BlockTrend[];
 };
@@ -168,6 +203,10 @@ export type EvolutionReport = {
   globalChanges: string[];
   affectedBlocks: string[];
   socialSignals: string[];
+  worldSignals: string[];
+  relationChanges: string[];
+  relationTensionIncrease: string | null;
+  relationTensionDecrease: string | null;
   weakSignals: string[];
   mostAffectedBlock: string;
   mainTension: string;
@@ -188,6 +227,8 @@ export type GameState = {
   turn: number;
   globalStats: GlobalStats;
   blocks: Block[];
+  relations: InterBlockRelation[];
+  previousRelations: InterBlockRelation[] | null;
   journal: Event[];
   triggeredEventIds: string[];
   preparedOperations: PreparedOperation[];
@@ -206,6 +247,14 @@ export type SystemicEventCondition = {
   global?: StatThresholds<GlobalStats>;
   averageBlock?: StatThresholds<BlockStats>;
   anyBlock?: StatThresholds<BlockStats>;
+  relation?: {
+    domain?: RelationDomain;
+    minTension?: number;
+    maxTension?: number;
+    minCooperation?: number;
+    maxCooperation?: number;
+    minDependence?: number;
+  };
 };
 
 export type SystemicEvent = {

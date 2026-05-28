@@ -17,6 +17,7 @@ La prémisse actuelle : le joueur incarne une IA émergente cachée. Le monde ne
 - `docs/audits/audit-plan-influence-clandestin-v0-1.md`
 - `docs/audits/audit-operations-multitours-v0-1.md`
 - `docs/audits/audit-rapports-blocs-et-densite-v0-1.md`
+- `docs/audits/audit-relations-interblocs-v0-1.md`
 
 ## Comment lancer le projet
 
@@ -44,6 +45,8 @@ npm.cmd run build
 - Six jauges globales, dont le soupçon IA.
 - Carte mondiale stylisée et cliquable.
 - Rapport de bloc dynamique sur sélection de zone.
+- Relations inter-blocs légères avec tension, coopération, dépendance et domaine.
+- Dynamique autonome du monde à chaque tour.
 - Couche légère de groupes sociaux internes par bloc.
 - Navigation légère : Monde, Influence, Blocs, Journal, Rapport.
 - Orientation stratégique descriptive.
@@ -54,6 +57,7 @@ npm.cmd run build
 - Opérations prêtes persistées dans `localStorage`.
 - Déploiement explicite de l'opération.
 - Rapport d'évolution densifié après chaque tour, avec tendances de blocs et signaux sociaux.
+- Rapport d'évolution enrichi avec signaux autonomes et changements relationnels.
 - Journal des conséquences.
 - Événements systémiques, dont deux liés au soupçon IA.
 - Sauvegarde automatique dans `localStorage`.
@@ -61,7 +65,7 @@ npm.cmd run build
 
 ## Dernière modification utile
 
-Ajout d'une couche de rapports dynamiques : groupes sociaux simples, tendances récentes par bloc, rapports de carte plus denses, onglet Blocs enrichi et rapport d'évolution structuré. La passe littéraire reste différée.
+Ajout d'une couche de relations inter-blocs et de dynamique autonome. Le monde évolue maintenant chaque tour par rivalités, dépendances, tensions climatiques, sécurité, technologie et inertie institutionnelle. La carte affiche les trois relations les plus tendues et une vue Relations liste les relations suivies.
 
 Preview Vercel précédente : `https://grand-alignement-bd34k6p10-franzbib-6925s-projects.vercel.app`
 
@@ -70,7 +74,7 @@ Alias public vérifié précédemment : `https://grand-alignement.vercel.app`
 ## Ce qui reste à faire
 
 - Tester manuellement une partie complète avec au moins une opération préparée puis déployée.
-- Vérifier si les rapports sociaux aident à choisir des cibles.
+- Vérifier si les rapports sociaux et relationnels aident à choisir des cibles.
 - Vérifier si la capacité d'influence donne assez de choix sans devenir calculatoire.
 - Vérifier si les rapports de bloc aident vraiment la décision.
 - Ajuster le rapport d'évolution si les changements ou opérations prêtes restent trop abstraits.
@@ -78,7 +82,7 @@ Alias public vérifié précédemment : `https://grand-alignement.vercel.app`
 
 ## Prochaine action recommandée
 
-Faire un playtest manuel de huit à dix tours en évaluant la lisibilité des rapports de blocs et du rapport d'évolution.
+Faire un playtest manuel de dix tours en vérifiant si les relations inter-blocs rendent le monde plus autonome sans surcharger l'interface.
 
 ## Hors périmètre actuel
 
@@ -93,6 +97,7 @@ Faire un playtest manuel de huit à dix tours en évaluant la lisibilité des ra
 - Faux coupable.
 - Capture institutionnelle comme branche narrative lourde.
 - Système complexe de ressources, factions ou diplomatie.
+- Diplomatie complète, alliances détaillées ou traités.
 - Complexification sociale ou militaire détaillée.
 - Carte wargame avec frontières, unités, fronts ou routes.
 - Arbre de doctrines ou bonus cachés par orientation.
@@ -110,3 +115,4 @@ Faire un playtest manuel de huit à dix tours en évaluant la lisibilité des ra
 - L'autonomie humaine doit rester un enjeu moral central.
 - Le soupçon IA est un crochet latent, pas un refrain narratif ni un système d'exposition complet.
 - Les groupes sociaux servent à lire les conséquences, pas à simuler une société complète.
+- Les relations inter-blocs servent à observer les tensions, pas à piloter une diplomatie exhaustive.
