@@ -109,9 +109,9 @@ function matchesCondition(
   condition: SystemicEventCondition,
   globalStats: GlobalStats,
   blocks: Block[],
-  action?: Action,
+  actions: Action[] = [],
 ): boolean {
-  if (condition.actionIds && (!action || !condition.actionIds.includes(action.id))) {
+  if (condition.actionIds && !actions.some((action) => condition.actionIds?.includes(action.id))) {
     return false;
   }
 
@@ -176,9 +176,18 @@ function getProfileAdjustedDelta(block: Block, action: Action): StatDelta<BlockS
 }
 
 export function applyActionToBlock(block: Block, action: Action): Block {
+  const blockAfterAction = applyActionEffectToBlock(block, action);
+
+  return {
+    ...blockAfterAction,
+    stats: applyDelta(blockAfterAction.stats, addBlockDrift(block.stats)),
+  };
+}
+
+function applyActionEffectToBlock(block: Block, action: Action): Block {
   return {
     ...block,
-    stats: applyDelta(applyDelta(block.stats, getProfileAdjustedDelta(block, action)), addBlockDrift(block.stats)),
+    stats: applyDelta(block.stats, getProfileAdjustedDelta(block, action)),
   };
 }
 
@@ -194,12 +203,17 @@ function createContrastText(blockResults: Array<{ block: Block; intensity: numbe
   return ` Effets contrastés : ${mostChanged.block.name} encaisse la variation la plus forte, tandis que ${leastChanged.block.name} l'absorbe plus doucement.`;
 }
 
-function chooseSystemicEvent(state: GameState, action: Action, globalStats: GlobalStats, blocks: Block[]): SystemicEvent | null {
+function chooseSystemicEvent(
+  state: GameState,
+  actions: Action[],
+  globalStats: GlobalStats,
+  blocks: Block[],
+): SystemicEvent | null {
   return (
     systemicEvents.find(
       (event) =>
         !state.triggeredEventIds.includes(event.id) &&
-        matchesCondition(event.condition, globalStats, blocks, action),
+        matchesCondition(event.condition, globalStats, blocks, actions),
     ) ?? null
   );
 }
@@ -223,17 +237,29 @@ function applySystemicEvent(
 }
 
 export function applyAction(state: GameState, action: Action): GameState {
-  if (state.ending) {
+  return applyTurnPlan(state, [action]);
+}
+
+export function applyTurnPlan(state: GameState, selectedActions: Action[]): GameState {
+  if (state.ending || selectedActions.length === 0) {
     return state;
   }
 
-  const globalStats = applyDelta(
-    applyDelta(state.globalStats, action.globalEffects),
-    addSystemicDrift(state.globalStats),
+  const globalStatsAfterActions = selectedActions.reduce(
+    (currentStats, action) => applyDelta(currentStats, action.globalEffects),
+    state.globalStats,
   );
+  const globalStats = applyDelta(globalStatsAfterActions, addSystemicDrift(state.globalStats));
 
   const blockResults = state.blocks.map((block) => {
-    const adjustedBlock = applyActionToBlock(block, action);
+    const blockAfterActions = selectedActions.reduce(
+      (currentBlock, action) => applyActionEffectToBlock(currentBlock, action),
+      block,
+    );
+    const adjustedBlock = {
+      ...blockAfterActions,
+      stats: applyDelta(blockAfterActions.stats, addBlockDrift(block.stats)),
+    };
 
     return {
       block: adjustedBlock,
@@ -243,19 +269,21 @@ export function applyAction(state: GameState, action: Action): GameState {
 
   const contrastText = createContrastText(blockResults);
   const actionAdjustedBlocks = blockResults.map((result) => result.block);
-  const systemicEvent = chooseSystemicEvent(state, action, globalStats, actionAdjustedBlocks);
+  const systemicEvent = chooseSystemicEvent(state, selectedActions, globalStats, actionAdjustedBlocks);
   const resolvedState = applySystemicEvent(systemicEvent, globalStats, actionAdjustedBlocks);
 
+  const actionNames = selectedActions.map((action) => action.name).join(", ");
   const actionEvent = {
-    id: `${action.id}-${state.turn}-${Date.now()}`,
-    sourceId: action.id,
+    id: `turn-plan-${state.turn}-${Date.now()}`,
+    sourceId: "turn-plan",
     turn: state.turn,
-    title: action.name,
-    text: `${action.eventText}${contrastText ?? ""}`,
+    title: "Paquet stratégique validé",
+    text: `Interventions lancées : ${actionNames}. Le monde réagit au paquet plutôt qu'à un ordre isolé.${contrastText ?? ""}`,
   };
 
   const journalEvents = systemicEvent
     ? [
+        actionEvent,
         {
           id: `${systemicEvent.id}-${state.turn}-${Date.now()}`,
           sourceId: systemicEvent.id,
@@ -265,7 +293,6 @@ export function applyAction(state: GameState, action: Action): GameState {
           effectsText: systemicEvent.effectsText,
           tone: systemicEvent.tone,
         },
-        actionEvent,
       ]
     : [actionEvent];
 

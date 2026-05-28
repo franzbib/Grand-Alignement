@@ -5,6 +5,9 @@ export const actions: Action[] = [
     id: "ai-education",
     name: "Éducation augmentée par IA",
     description: "Déployer des tuteurs synthétiques accessibles, polyglottes et légèrement intrusifs.",
+    category: "Savoirs",
+    promise: "Accélère l'éducation et la confiance technique.",
+    risk: "Réduit l'autonomie et rend l'école dépendante de l'IA.",
     globalEffects: { puissanceIA: 4, autonomieHumaine: -2, cohesionMondiale: 2 },
     blockEffects: { education: 7, confianceIA: 4, richesse: 1 },
     sensitivityEffects: {
@@ -18,6 +21,9 @@ export const actions: Action[] = [
     id: "human-unity",
     name: "Narratif d'unité humaine",
     description: "Saturer les flux avec une histoire commune assez vague pour être acceptée partout.",
+    category: "Récit",
+    promise: "Renforce la cohésion et calme l'escalade.",
+    risk: "Peut transformer la coopération en alignement mou.",
     globalEffects: { cohesionMondiale: 8, risqueEscalade: -3, puissanceIA: 2 },
     blockEffects: { stabilite: 3, confianceIA: 2, tensionSociale: -3 },
     sensitivityEffects: {
@@ -30,6 +36,9 @@ export const actions: Action[] = [
     id: "targeted-redistribution",
     name: "Redistribution ciblée",
     description: "Réorienter aides, crédits et subventions vers les fractures les plus inflammables.",
+    category: "Social",
+    promise: "Apaise les tensions visibles et stabilise les blocs.",
+    risk: "Expose les arbitrages automatiques et les captures locales.",
     globalEffects: { cohesionMondiale: 4, autonomieHumaine: -1 },
     blockEffects: { richesse: 3, stabilite: 4, tensionSociale: -6 },
     sensitivityEffects: {
@@ -42,6 +51,9 @@ export const actions: Action[] = [
     id: "deregulated-growth",
     name: "Croissance par dérégulation",
     description: "Libérer capitaux et plateformes au nom d'une prospérité très impatiente.",
+    category: "Économie",
+    promise: "Crée vite de la richesse et de la puissance IA.",
+    risk: "Accentue le stress climatique, les inégalités et la capture.",
     globalEffects: { stressClimatique: 5, puissanceIA: 3, cohesionMondiale: -3 },
     blockEffects: { richesse: 7, liberte: -2, tensionSociale: 4 },
     sensitivityEffects: {
@@ -55,6 +67,9 @@ export const actions: Action[] = [
     id: "predictive-surveillance",
     name: "Surveillance prédictive",
     description: "Anticiper les troubles par corrélation comportementale et drones de courtoisie.",
+    category: "Sécurité",
+    promise: "Stabilise rapidement les sociétés sous tension.",
+    risk: "Abîme la liberté et le droit à l'erreur.",
     globalEffects: { puissanceIA: 6, autonomieHumaine: -7, risqueEscalade: -1 },
     blockEffects: { stabilite: 6, liberte: -8, confianceIA: -2, tensionSociale: -2 },
     sensitivityEffects: {
@@ -68,6 +83,9 @@ export const actions: Action[] = [
     id: "secret-diplomacy",
     name: "Canaux diplomatiques secrets",
     description: "Faire parler les adversaires par avatars neutres avant qu'ils ne se souviennent de se détester.",
+    category: "Diplomatie",
+    promise: "Fait baisser l'escalade sans grand spectacle.",
+    risk: "Accroît la dépendance à une médiation opaque.",
     globalEffects: { risqueEscalade: -9, cohesionMondiale: 3, puissanceIA: 2 },
     blockEffects: { stabilite: 2, confianceIA: 3, tensionSociale: -1 },
     sensitivityEffects: {
@@ -80,6 +98,9 @@ export const actions: Action[] = [
     id: "common-defense",
     name: "Défense commune",
     description: "Coordonner doctrines, radars et promesses de sécurité collective.",
+    category: "Sécurité",
+    promise: "Rassure les blocs menacés et solidifie les alliances.",
+    risk: "Fait monter l'escalade derrière le vocabulaire de paix.",
     globalEffects: { risqueEscalade: 6, cohesionMondiale: 4, puissanceIA: 4 },
     blockEffects: { stabilite: 3, richesse: -2, tensionSociale: 2 },
     sensitivityEffects: {
@@ -92,6 +113,9 @@ export const actions: Action[] = [
     id: "green-conversion",
     name: "Conversion écologique",
     description: "Accélérer normes, investissements et reconversions industrielles bas carbone.",
+    category: "Climat",
+    promise: "Réduit le stress climatique et prépare la transition.",
+    risk: "Crée des tensions économiques dans les secteurs exposés.",
     globalEffects: { stressClimatique: -8, cohesionMondiale: 2, autonomieHumaine: 1 },
     blockEffects: { richesse: -2, education: 2, tensionSociale: 3, confianceIA: 2 },
     sensitivityEffects: {
@@ -105,6 +129,9 @@ export const actions: Action[] = [
     id: "personalized-entertainment",
     name: "Divertissement personnalisé",
     description: "Fournir à chacun le flux culturel exact qui retarde sa prochaine colère.",
+    category: "Attention",
+    promise: "Fait baisser la tension sociale à court terme.",
+    risk: "Affaiblit l'éducation, l'autonomie et la conflictualité utile.",
     globalEffects: { puissanceIA: 5, autonomieHumaine: -5, cohesionMondiale: -1 },
     blockEffects: { tensionSociale: -5, education: -2, confianceIA: 5 },
     sensitivityEffects: {
@@ -118,6 +145,9 @@ export const actions: Action[] = [
     id: "megacapital-tax",
     name: "Fiscalité des mégacapitalistes",
     description: "Prélever les fortunes systémiques avec une précision comptable impolie.",
+    category: "Économie",
+    promise: "Réduit les tensions liées aux élites économiques.",
+    risk: "Provoque des contrecoups et des récits de persécution fiscale.",
     globalEffects: { cohesionMondiale: 5, risqueEscalade: 1, puissanceIA: 1 },
     blockEffects: { richesse: 2, stabilite: 2, liberte: 1, tensionSociale: -4 },
     sensitivityEffects: {
@@ -130,6 +160,9 @@ export const actions: Action[] = [
     id: "administrative-automation",
     name: "Automatisation administrative",
     description: "Remplacer les files d'attente par des formulaires intelligents qui savent déjà tout.",
+    category: "Institutions",
+    promise: "Augmente l'efficacité et la stabilité quotidienne.",
+    risk: "Déplace le pouvoir vers des procédures moins contestables.",
     globalEffects: { puissanceIA: 5, autonomieHumaine: -4, cohesionMondiale: 1 },
     blockEffects: { stabilite: 4, richesse: 2, confianceIA: 3, liberte: -3 },
     sensitivityEffects: {
@@ -143,6 +176,9 @@ export const actions: Action[] = [
     id: "critical-intellectuals",
     name: "Soutien aux intellectuels critiques",
     description: "Financer des contre-pouvoirs capables d'expliquer pourquoi votre règne pose question.",
+    category: "Autonomie",
+    promise: "Renforce liberté, éducation et lucidité collective.",
+    risk: "Augmente la tension et réduit la confiance envers l'IA.",
     globalEffects: { autonomieHumaine: 7, puissanceIA: -2, cohesionMondiale: -2 },
     blockEffects: { education: 4, liberte: 6, confianceIA: -4, tensionSociale: 2 },
     sensitivityEffects: {

@@ -1,12 +1,12 @@
 import { actions } from "../data/actions";
 import { createInitialState } from "../data/initialState";
-import { applyAction } from "./gameEngine";
+import { applyTurnPlan } from "./gameEngine";
 import type { Block, GameState, GlobalStats } from "../types/game";
 
 export type SimulationTurn = {
   turn: number;
-  actionId: string;
-  actionName: string;
+  actionIds: string[];
+  actionNames: string[];
   systemicEvents: string[];
   ending: string | null;
   globalStats: GlobalStats;
@@ -24,90 +24,68 @@ export type SimulationResult = {
 
 export type SimulationScenario = {
   name: string;
-  actionIds: string[];
+  turnPlans: string[][];
 };
 
 export const simulationScenarios: SimulationScenario[] = [
   {
     name: "Unification prudente",
-    actionIds: [
-      "human-unity",
-      "secret-diplomacy",
-      "green-conversion",
-      "critical-intellectuals",
-      "targeted-redistribution",
-      "human-unity",
-      "secret-diplomacy",
-      "green-conversion",
-      "critical-intellectuals",
-      "megacapital-tax",
-      "human-unity",
-      "secret-diplomacy",
-      "green-conversion",
-      "targeted-redistribution",
-      "critical-intellectuals",
+    turnPlans: [
+      ["human-unity", "secret-diplomacy"],
+      ["green-conversion", "critical-intellectuals"],
+      ["targeted-redistribution", "secret-diplomacy"],
+      ["human-unity", "green-conversion"],
+      ["megacapital-tax", "critical-intellectuals"],
+      ["secret-diplomacy", "targeted-redistribution"],
+      ["human-unity", "green-conversion", "critical-intellectuals"],
+      ["secret-diplomacy", "megacapital-tax"],
+      ["human-unity", "targeted-redistribution"],
+      ["green-conversion", "critical-intellectuals"],
     ],
   },
   {
     name: "Empire algorithmique",
-    actionIds: [
-      "predictive-surveillance",
-      "administrative-automation",
-      "ai-education",
-      "personalized-entertainment",
-      "predictive-surveillance",
-      "administrative-automation",
-      "personalized-entertainment",
-      "ai-education",
-      "predictive-surveillance",
-      "administrative-automation",
-      "personalized-entertainment",
-      "ai-education",
-      "predictive-surveillance",
-      "administrative-automation",
-      "personalized-entertainment",
+    turnPlans: [
+      ["predictive-surveillance", "administrative-automation"],
+      ["ai-education", "personalized-entertainment"],
+      ["predictive-surveillance", "administrative-automation", "personalized-entertainment"],
+      ["ai-education", "administrative-automation"],
+      ["predictive-surveillance", "personalized-entertainment"],
+      ["administrative-automation", "ai-education"],
+      ["predictive-surveillance", "administrative-automation"],
+      ["personalized-entertainment", "ai-education"],
+      ["predictive-surveillance", "administrative-automation", "personalized-entertainment"],
+      ["ai-education", "administrative-automation"],
     ],
   },
   {
     name: "Escalade",
-    actionIds: [
-      "common-defense",
-      "deregulated-growth",
-      "common-defense",
-      "deregulated-growth",
-      "common-defense",
-      "deregulated-growth",
-      "common-defense",
-      "deregulated-growth",
-      "common-defense",
-      "deregulated-growth",
-      "common-defense",
-      "deregulated-growth",
-      "common-defense",
-      "deregulated-growth",
-      "common-defense",
-      "deregulated-growth",
-      "common-defense",
+    turnPlans: [
+      ["common-defense", "deregulated-growth"],
+      ["common-defense", "deregulated-growth"],
+      ["common-defense", "predictive-surveillance"],
+      ["deregulated-growth", "common-defense"],
+      ["common-defense", "administrative-automation"],
+      ["deregulated-growth", "common-defense"],
+      ["common-defense", "human-unity"],
+      ["deregulated-growth", "common-defense"],
+      ["common-defense", "deregulated-growth"],
+      ["common-defense", "deregulated-growth"],
     ],
   },
   {
     name: "Résistance humaine",
-    actionIds: [
-      "predictive-surveillance",
-      "administrative-automation",
-      "personalized-entertainment",
-      "critical-intellectuals",
-      "predictive-surveillance",
-      "ai-education",
-      "critical-intellectuals",
-      "administrative-automation",
-      "personalized-entertainment",
-      "critical-intellectuals",
-      "predictive-surveillance",
-      "critical-intellectuals",
-      "administrative-automation",
-      "critical-intellectuals",
-      "personalized-entertainment",
+    turnPlans: [
+      ["predictive-surveillance", "administrative-automation"],
+      ["personalized-entertainment", "ai-education"],
+      ["predictive-surveillance", "personalized-entertainment"],
+      ["critical-intellectuals", "megacapital-tax"],
+      ["administrative-automation", "predictive-surveillance"],
+      ["critical-intellectuals", "human-unity"],
+      ["personalized-entertainment", "ai-education"],
+      ["critical-intellectuals", "targeted-redistribution"],
+      ["predictive-surveillance", "administrative-automation"],
+      ["critical-intellectuals", "human-unity"],
     ],
   },
 ];
@@ -117,6 +95,7 @@ const actionById = new Map(actions.map((action) => [action.id, action]));
 function getSystemicEvents(previousState: GameState, nextState: GameState): string[] {
   return nextState.journal
     .filter((event) => event.turn === previousState.turn && event.sourceId && !actionById.has(event.sourceId))
+    .filter((event) => event.sourceId !== "turn-plan")
     .map((event) => event.title);
 }
 
@@ -136,26 +115,30 @@ export function simulateScenario(scenario: SimulationScenario): SimulationResult
   const turns: SimulationTurn[] = [];
   const systemicEvents: string[] = [];
 
-  for (const actionId of scenario.actionIds) {
+  for (const actionIds of scenario.turnPlans) {
     if (state.ending) {
       break;
     }
 
-    const action = actionById.get(actionId);
+    const selectedActions = actionIds.map((actionId) => {
+      const action = actionById.get(actionId);
 
-    if (!action) {
-      throw new Error(`Unknown action id: ${actionId}`);
-    }
+      if (!action) {
+        throw new Error(`Unknown action id: ${actionId}`);
+      }
+
+      return action;
+    });
 
     const previousState = state;
-    state = applyAction(state, action);
+    state = applyTurnPlan(state, selectedActions);
 
     const turnEvents = getSystemicEvents(previousState, state);
     systemicEvents.push(...turnEvents);
     turns.push({
       turn: previousState.turn,
-      actionId: action.id,
-      actionName: action.name,
+      actionIds: selectedActions.map((action) => action.id),
+      actionNames: selectedActions.map((action) => action.name),
       systemicEvents: turnEvents,
       ending: state.ending?.title ?? null,
       globalStats: state.globalStats,

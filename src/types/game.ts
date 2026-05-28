@@ -48,10 +48,19 @@ export type Action = {
   id: string;
   name: string;
   description: string;
+  category: string;
+  promise: string;
+  risk: string;
   globalEffects: StatDelta<GlobalStats>;
   blockEffects: StatDelta<BlockStats>;
   sensitivityEffects?: Partial<Record<BlockSensitivity, StatDelta<BlockStats>>>;
   eventText: string;
+};
+
+export type StrategicPosture = {
+  id: string;
+  name: string;
+  description: string;
 };
 
 export type Event = {

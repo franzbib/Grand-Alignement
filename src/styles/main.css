@@ -101,6 +101,26 @@ button {
   font-size: 1.2rem;
 }
 
+.panel-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.panel-heading h2 {
+  margin-bottom: 0;
+}
+
+.panel-heading > strong {
+  max-width: 260px;
+  color: #405047;
+  font-size: 0.86rem;
+  line-height: 1.35;
+  text-align: right;
+}
+
 .panel-help {
   margin: -8px 0 14px;
   color: #536158;
@@ -118,6 +138,73 @@ button {
   margin: 0;
   color: #5f2c25;
   line-height: 1.55;
+}
+
+.status-strip,
+.view-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-top: 18px;
+}
+
+.status-strip {
+  padding: 12px 14px;
+  border: 1px solid #d6d1c3;
+  border-radius: 8px;
+  background: #fffdf7;
+  color: #536158;
+  font-size: 0.88rem;
+}
+
+.status-strip span {
+  padding-right: 12px;
+  border-right: 1px solid #ded8c9;
+}
+
+.status-strip span:last-child {
+  border-right: 0;
+}
+
+.status-strip strong {
+  color: #17211c;
+}
+
+.view-nav__button,
+.posture-button,
+.validate-turn-button {
+  cursor: pointer;
+  border: 1px solid #d6d1c3;
+  border-radius: 6px;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background-color 160ms ease;
+}
+
+.view-nav__button {
+  padding: 10px 14px;
+  color: #17211c;
+  background: #fffdf7;
+  font-weight: 800;
+}
+
+.view-nav__button:hover,
+.posture-button:hover:not(:disabled),
+.validate-turn-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.view-nav__button--active {
+  border-color: #17211c;
+  color: #fffdf7;
+  background: #17211c;
+}
+
+.view-stack {
+  display: grid;
+  gap: 24px;
 }
 
 .global-panel {
@@ -390,6 +477,85 @@ button {
   gap: 10px;
 }
 
+.posture-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0 10px;
+}
+
+.posture-button {
+  padding: 8px 10px;
+  color: #17211c;
+  background: #f7f2e8;
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.posture-button--active {
+  border-color: #3d7f61;
+  background: #e4efe5;
+}
+
+.posture-button:disabled,
+.validate-turn-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.posture-note {
+  margin: 0 0 14px;
+  color: #536158;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.selected-actions {
+  margin: 14px 0;
+  padding: 13px;
+  border: 1px solid #ded8c9;
+  border-radius: 8px;
+  background: #f8f6ef;
+}
+
+.selected-actions strong {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.selected-actions ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.selected-actions li {
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: #e5dfd0;
+  color: #17211c;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.selected-actions p {
+  margin: 0;
+  color: #536158;
+  font-size: 0.9rem;
+}
+
+.validate-turn-button {
+  width: 100%;
+  margin: 0 0 16px;
+  padding: 13px 16px;
+  color: #fffdf7;
+  background: #7c3626;
+  font-weight: 900;
+}
+
 .action-card {
   width: 100%;
   padding: 13px;
@@ -405,7 +571,8 @@ button {
   font-weight: 800;
 }
 
-.action-card small {
+.action-card small,
+.action-card em {
   display: block;
   margin-top: 5px;
   color: #58655d;
@@ -413,9 +580,34 @@ button {
   line-height: 1.4;
 }
 
+.action-card em {
+  color: #2f6654;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.action-card__category {
+  width: fit-content;
+  padding: 3px 7px;
+  border: 1px solid #d6d1c3;
+  border-radius: 999px;
+  background: #fffdf7;
+  color: #7c3626 !important;
+  font-weight: 900;
+}
+
+.action-card__risk {
+  color: #7c3626 !important;
+}
+
 .action-card:hover:not(:disabled) {
   border-color: #8f7d52;
   background: #efe5ce;
+}
+
+.action-card--selected {
+  border-color: #3d7f61;
+  background: #e4efe5;
 }
 
 .action-card:disabled {
@@ -492,6 +684,21 @@ button {
 
   .site-header {
     display: grid;
+  }
+
+  .panel-heading,
+  .status-strip {
+    display: grid;
+  }
+
+  .panel-heading > strong {
+    max-width: none;
+    text-align: left;
+  }
+
+  .status-strip span {
+    padding-right: 0;
+    border-right: 0;
   }
 
   .reset-button {
