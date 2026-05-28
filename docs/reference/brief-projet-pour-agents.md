@@ -1,0 +1,87 @@
+# Le Grand Alignement — Brief de référence pour agents IA
+
+## 1. Pitch court
+
+Le joueur incarne une IA d'influence mondiale qui tente d'orienter six grands blocs géopolitiques. Le jeu porte sur les indicateurs, les récits, les institutions, la sécurité, le climat, la confiance envers l'IA, l'autonomie humaine et les effets secondaires.
+
+## 2. Principe directeur
+
+Univers riche, prototype évolutif et maîtrisé. Le prototype ne doit pas être simpliste, mais il ne doit pas devenir une usine à gaz.
+
+## 3. Nature du jeu
+
+Le Grand Alignement est un jeu de conséquences : observer, choisir une intervention, appliquer des effets, lire un événement, voir une trajectoire se dessiner, atteindre un diagnostic final.
+
+## 4. Ce que le jeu n'est pas
+
+- Pas un Civilization miniature.
+- Pas un SimCity mondial.
+- Pas un Democracy 4 global.
+- Pas un wargame.
+- Pas une encyclopédie géopolitique.
+- Pas un pur tableau de bord.
+
+## 5. Piliers v0.1
+
+- Six blocs mondiaux.
+- Cinq jauges globales.
+- Six variables visibles par bloc.
+- Actions IA systémiques.
+- Événements conditionnels courts.
+- Fins-diagnostics.
+- Carte mondiale stylisée.
+- Sauvegarde locale.
+- Pas de Supabase en v0.1.
+
+## 6. Blocs du jeu
+
+- Amérique du Nord.
+- Europe.
+- Russie / Eurasie autoritaire.
+- Asie industrielle.
+- Sud global émergent.
+- Amérique latine.
+
+## 7. Jauges globales
+
+- Cohésion mondiale.
+- Risque d'escalade.
+- Autonomie humaine.
+- Stress climatique.
+- Puissance IA.
+
+## 8. Variables par bloc
+
+- Stabilité.
+- Richesse.
+- Éducation.
+- Liberté.
+- Confiance envers l'IA.
+- Tension sociale.
+
+## 9. Philosophie du projet
+
+Le jeu doit divertir sans anesthésier. Il doit faire ressentir que la stabilité n'est pas toujours la liberté, que la paix peut devenir pacification, que la coopération peut devenir alignement, que la lucidité peut créer du conflit, et que le droit à l'erreur est une valeur humaine centrale.
+
+## 10. Ton narratif
+
+Départ sobre et crédible. Progression vers l'ironie institutionnelle. Absurde possible, mais seulement s'il vient du système. Pas de gags arbitraires.
+
+## 11. Ligne graphique
+
+Tableau de bord institutionnel. Carte mondiale stylisée. Ambiance froide, observatoire global. Dérèglement progressif. Pas de carte détaillée ni de wargame.
+
+## 12. Horizon de réception et signature
+
+Le projet vise un public national, mais doit garder une signature personnelle discrète :
+
+- Goût pour l'ironie institutionnelle.
+- Critique des dispositifs technologiques.
+- Défense de l'autonomie humaine.
+- Attention à la culture classique.
+- Méfiance envers la captation de l'attention.
+- Importance du droit à l'erreur.
+
+## 13. Règle de méthode
+
+Une session = un objectif principal, un livrable vérifiable, une note de reprise. Toute idée séduisante mais non nécessaire doit être archivée, non implémentée immédiatement.

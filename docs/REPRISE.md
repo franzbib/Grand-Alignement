@@ -6,6 +6,8 @@ Le dépôt contient une première version jouable du prototype React + TypeScrip
 
 Une première passe d'audit de jouabilité et d'UX v0.1 est disponible dans `docs/audits/audit-jouabilite-ux-v0-1.md`.
 
+Les futurs agents doivent aussi lire `docs/AGENTS.md`, `docs/reference/brief-projet-pour-agents.md` et `docs/reference/garde-fous-v0-1.md` avant toute intervention structurante.
+
 ## Comment lancer le projet
 
 ```bash
@@ -42,9 +44,9 @@ npm.cmd run build
 
 ## Dernière modification utile
 
-Première passe d'audit jouabilité / UX. Les corrections restent modestes : libellés plus clairs, aide courte sur les actions et ajout de l'état "Résistance" sur la carte.
+Création d'une documentation interne pour futurs agents IA : rôles opérationnels, brief de référence et garde-fous v0.1.
 
-L'audit confirme que la carte doit rester une surface d'observation : elle aide à lire l'état du monde, mais ne porte pas de territoire détaillé, d'unités, de frontières fines ou de mécaniques de conquête.
+Ces documents doivent aider Codex, ChatGPT, Claude, Antigravity, Game Studio ou tout autre assistant à préserver le périmètre du projet.
 
 ## Ce qui reste à faire
 
