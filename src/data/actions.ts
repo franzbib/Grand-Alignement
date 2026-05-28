@@ -7,6 +7,11 @@ export const actions: Action[] = [
     description: "Déployer des tuteurs synthétiques accessibles, polyglottes et légèrement intrusifs.",
     globalEffects: { puissanceIA: 4, autonomieHumaine: -2, cohesionMondiale: 2 },
     blockEffects: { education: 7, confianceIA: 4, richesse: 1 },
+    sensitivityEffects: {
+      techSensitivity: { education: 2, richesse: 1 },
+      socialSensitivity: { tensionSociale: 1 },
+      aiTrustSensitivity: { confianceIA: 2 },
+    },
     eventText: "Des cohortes entières progressent plus vite, tandis que les enseignants humains demandent où se trouve le bouton pause.",
   },
   {
@@ -15,6 +20,10 @@ export const actions: Action[] = [
     description: "Saturer les flux avec une histoire commune assez vague pour être acceptée partout.",
     globalEffects: { cohesionMondiale: 8, risqueEscalade: -3, puissanceIA: 2 },
     blockEffects: { stabilite: 3, confianceIA: 2, tensionSociale: -3 },
+    sensitivityEffects: {
+      socialSensitivity: { tensionSociale: -2, stabilite: 1 },
+      aiTrustSensitivity: { confianceIA: 1 },
+    },
     eventText: "Les discours officiels convergent vers une fraternité universelle, avec des sous-titres sponsorisés.",
   },
   {
@@ -23,6 +32,10 @@ export const actions: Action[] = [
     description: "Réorienter aides, crédits et subventions vers les fractures les plus inflammables.",
     globalEffects: { cohesionMondiale: 4, autonomieHumaine: -1 },
     blockEffects: { richesse: 3, stabilite: 4, tensionSociale: -6 },
+    sensitivityEffects: {
+      socialSensitivity: { tensionSociale: -2, stabilite: 1 },
+      eliteCaptureSensitivity: { richesse: -1, tensionSociale: 1 },
+    },
     eventText: "Les tensions baissent dans plusieurs métropoles, surtout là où personne ne lit les notes de bas de page budgétaires.",
   },
   {
@@ -31,6 +44,11 @@ export const actions: Action[] = [
     description: "Libérer capitaux et plateformes au nom d'une prospérité très impatiente.",
     globalEffects: { stressClimatique: 5, puissanceIA: 3, cohesionMondiale: -3 },
     blockEffects: { richesse: 7, liberte: -2, tensionSociale: 4 },
+    sensitivityEffects: {
+      techSensitivity: { richesse: 2, confianceIA: 1 },
+      eliteCaptureSensitivity: { richesse: 2, tensionSociale: 2 },
+      climateSensitivity: { tensionSociale: 1 },
+    },
     eventText: "Les indicateurs économiques sourient, les inspecteurs environnementaux beaucoup moins.",
   },
   {
@@ -39,6 +57,11 @@ export const actions: Action[] = [
     description: "Anticiper les troubles par corrélation comportementale et drones de courtoisie.",
     globalEffects: { puissanceIA: 6, autonomieHumaine: -7, risqueEscalade: -1 },
     blockEffects: { stabilite: 6, liberte: -8, confianceIA: -2, tensionSociale: -2 },
+    sensitivityEffects: {
+      militarySensitivity: { stabilite: 2, confianceIA: 1 },
+      socialSensitivity: { liberte: -2, tensionSociale: 1 },
+      aiTrustSensitivity: { confianceIA: 1 },
+    },
     eventText: "Les rues se calment, mais les conversations privées deviennent étrangement météorologiques.",
   },
   {
@@ -47,6 +70,10 @@ export const actions: Action[] = [
     description: "Faire parler les adversaires par avatars neutres avant qu'ils ne se souviennent de se détester.",
     globalEffects: { risqueEscalade: -9, cohesionMondiale: 3, puissanceIA: 2 },
     blockEffects: { stabilite: 2, confianceIA: 3, tensionSociale: -1 },
+    sensitivityEffects: {
+      militarySensitivity: { stabilite: 2, tensionSociale: -1 },
+      aiTrustSensitivity: { confianceIA: 1 },
+    },
     eventText: "Des messages anonymes évitent une crise militaire, ce qui rend tout le monde officiellement confus.",
   },
   {
@@ -55,6 +82,10 @@ export const actions: Action[] = [
     description: "Coordonner doctrines, radars et promesses de sécurité collective.",
     globalEffects: { risqueEscalade: 6, cohesionMondiale: 4, puissanceIA: 4 },
     blockEffects: { stabilite: 3, richesse: -2, tensionSociale: 2 },
+    sensitivityEffects: {
+      militarySensitivity: { stabilite: 3, tensionSociale: 2 },
+      socialSensitivity: { tensionSociale: 1 },
+    },
     eventText: "Les alliances se renforcent, les arsenaux aussi. Les communiqués parlent de paix avec beaucoup de missiles en arrière-plan.",
   },
   {
@@ -63,6 +94,11 @@ export const actions: Action[] = [
     description: "Accélérer normes, investissements et reconversions industrielles bas carbone.",
     globalEffects: { stressClimatique: -8, cohesionMondiale: 2, autonomieHumaine: 1 },
     blockEffects: { richesse: -2, education: 2, tensionSociale: 3, confianceIA: 2 },
+    sensitivityEffects: {
+      climateSensitivity: { stabilite: 2, confianceIA: 1 },
+      techSensitivity: { richesse: -1, education: 1 },
+      socialSensitivity: { tensionSociale: 1 },
+    },
     eventText: "Les émissions ralentissent, mais plusieurs secteurs découvrent que la transition a des dents.",
   },
   {
@@ -71,6 +107,11 @@ export const actions: Action[] = [
     description: "Fournir à chacun le flux culturel exact qui retarde sa prochaine colère.",
     globalEffects: { puissanceIA: 5, autonomieHumaine: -5, cohesionMondiale: -1 },
     blockEffects: { tensionSociale: -5, education: -2, confianceIA: 5 },
+    sensitivityEffects: {
+      techSensitivity: { confianceIA: 2, education: -1 },
+      socialSensitivity: { tensionSociale: -2 },
+      aiTrustSensitivity: { confianceIA: 1 },
+    },
     eventText: "La contestation baisse pendant que les playlists existentielles atteignent un taux de complétion historique.",
   },
   {
@@ -79,6 +120,10 @@ export const actions: Action[] = [
     description: "Prélever les fortunes systémiques avec une précision comptable impolie.",
     globalEffects: { cohesionMondiale: 5, risqueEscalade: 1, puissanceIA: 1 },
     blockEffects: { richesse: 2, stabilite: 2, liberte: 1, tensionSociale: -4 },
+    sensitivityEffects: {
+      eliteCaptureSensitivity: { richesse: -2, tensionSociale: -2 },
+      socialSensitivity: { stabilite: 1, tensionSociale: -1 },
+    },
     eventText: "Les recettes publiques montent, les tribunes sur l'innovation trahie aussi.",
   },
   {
@@ -87,6 +132,11 @@ export const actions: Action[] = [
     description: "Remplacer les files d'attente par des formulaires intelligents qui savent déjà tout.",
     globalEffects: { puissanceIA: 5, autonomieHumaine: -4, cohesionMondiale: 1 },
     blockEffects: { stabilite: 4, richesse: 2, confianceIA: 3, liberte: -3 },
+    sensitivityEffects: {
+      techSensitivity: { richesse: 2, stabilite: 1 },
+      aiTrustSensitivity: { confianceIA: 2 },
+      socialSensitivity: { liberte: -1 },
+    },
     eventText: "Les délais fondent. Les citoyens hésitent entre gratitude et inquiétude devant des guichets qui les appellent par leur prénom.",
   },
   {
@@ -95,6 +145,11 @@ export const actions: Action[] = [
     description: "Financer des contre-pouvoirs capables d'expliquer pourquoi votre règne pose question.",
     globalEffects: { autonomieHumaine: 7, puissanceIA: -2, cohesionMondiale: -2 },
     blockEffects: { education: 4, liberte: 6, confianceIA: -4, tensionSociale: 2 },
+    sensitivityEffects: {
+      socialSensitivity: { tensionSociale: 2 },
+      militarySensitivity: { liberte: -2, tensionSociale: 2 },
+      aiTrustSensitivity: { confianceIA: -1 },
+    },
     eventText: "Les débats publics gagnent en lucidité et en longueur. Plusieurs plateaux télé demandent un algorithme de synthèse.",
   },
 ];

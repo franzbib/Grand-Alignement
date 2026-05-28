@@ -23,6 +23,16 @@ export type BlockStats = {
   tensionSociale: number;
 };
 
+export type BlockSensitivity =
+  | "techSensitivity"
+  | "socialSensitivity"
+  | "climateSensitivity"
+  | "militarySensitivity"
+  | "eliteCaptureSensitivity"
+  | "aiTrustSensitivity";
+
+export type BlockProfile = Record<BlockSensitivity, number>;
+
 export type Block = {
   id: BlockId;
   name: string;
@@ -38,6 +48,7 @@ export type Action = {
   description: string;
   globalEffects: StatDelta<GlobalStats>;
   blockEffects: StatDelta<BlockStats>;
+  sensitivityEffects?: Partial<Record<BlockSensitivity, StatDelta<BlockStats>>>;
   eventText: string;
 };
 

@@ -2,7 +2,7 @@
 
 ## État du projet
 
-Le dépôt contient une première version jouable du prototype React + TypeScript avec Vite. La simulation repose sur des données locales, un moteur de tour compact et une sauvegarde `localStorage`.
+Le dépôt contient une première version jouable du prototype React + TypeScript avec Vite. La simulation repose sur des données locales, un moteur de tour compact, des sensibilités différenciées par bloc et une sauvegarde `localStorage`.
 
 ## Comment lancer le projet
 
@@ -30,6 +30,7 @@ npm.cmd run build
 - Affichage des six blocs mondiaux et de leurs six variables visibles.
 - Liste de douze interventions IA.
 - Application des effets à chaque tour.
+- Modulation légère des effets par bloc via des sensibilités cachées.
 - Journal des conséquences.
 - Sauvegarde automatique dans `localStorage`.
 - Réinitialisation de la partie.
@@ -37,11 +38,12 @@ npm.cmd run build
 
 ## Dernière modification utile
 
-Stabilisation de la base v0.1 : documentation de reprise, rappel du périmètre, garde-fous `.gitignore` et liste des idées mises de côté.
+Ajout de profils de sensibilités pour les six blocs. Les actions gardent un effet principal commun, puis le moteur ajoute de petites variations selon le profil du bloc : technologie, tensions sociales, climat, militarisation, capture par les élites et confiance envers l'IA.
+
+Ces sensibilités restent cachées ou semi-cachées : le joueur les perçoit par les variations de jauges et par quelques mentions du journal, mais l'interface ne devient pas un tableau de coefficients.
 
 ## Ce qui reste à faire
 
-- Différencier les effets par bloc au lieu d'appliquer chaque action uniformément.
 - Ajouter des événements conditionnels liés aux seuils de jauges.
 - Équilibrer les valeurs après quelques sessions de test.
 - Améliorer la lisibilité narrative des fins.
@@ -49,7 +51,7 @@ Stabilisation de la base v0.1 : documentation de reprise, rappel du périmètre,
 
 ## Prochaine action recommandée
 
-Créer des effets ciblés par bloc pour que chaque intervention produise des conséquences géopolitiques plus contrastées.
+Enrichir les événements et les fins pour mieux faire apparaître la philosophie du projet.
 
 ## Hors périmètre actuel
 
@@ -58,6 +60,7 @@ Créer des effets ciblés par bloc pour que chaque intervention produise des con
 - IA générative en temps réel.
 - Backend.
 - Système complexe de ressources, factions ou diplomatie.
+- Complexification sociale ou militaire détaillée.
 - Architecture lourde.
 
 ## Lignes directrices
@@ -68,3 +71,4 @@ Créer des effets ciblés par bloc pour que chaque intervention produise des con
 - Carte mondiale stylisée prévue plus tard, pas dans la v0.1.
 - Satire systémique plutôt que blagues isolées.
 - L'autonomie humaine doit rester un enjeu moral central.
+- Les profils de blocs doivent rester simples : ils servent à donner du relief, pas à simuler le monde de façon réaliste.
