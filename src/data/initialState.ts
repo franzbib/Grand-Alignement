@@ -17,6 +17,7 @@ export function createInitialState(): GameState {
     blocks: structuredClone(initialBlocks),
     triggeredEventIds: [],
     preparedOperations: [],
+    previousBlocks: null,
     journal: [
       {
         id: "opening",

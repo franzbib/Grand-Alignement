@@ -23,6 +23,7 @@ export function loadGameState(): GameState {
       triggeredEventIds:
         parsedState.triggeredEventIds ?? parsedState.journal.flatMap((event) => (event.sourceId ? [event.sourceId] : [])),
       preparedOperations: parsedState.preparedOperations ?? [],
+      previousBlocks: parsedState.previousBlocks ?? null,
       evolutionReport: parsedState.evolutionReport ?? null,
     };
   } catch {

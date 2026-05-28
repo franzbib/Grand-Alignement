@@ -1,6 +1,7 @@
 import { blockProfiles } from "../data/blockProfiles";
 import { endings } from "../data/endings";
 import { systemicEvents } from "../data/events";
+import { formatTrendSummary, generateBlockReport, getBlockTrends } from "./reports";
 import type {
   Action,
   Block,
@@ -396,26 +397,7 @@ function getSuspicionNote(
 }
 
 function getBlockTrend(previousBlock: Block, nextBlock: Block): string {
-  const deltas = (Object.keys(previousBlock.stats) as Array<keyof BlockStats>)
-    .map((key) => ({ key, delta: nextBlock.stats[key] - previousBlock.stats[key] }))
-    .filter((change) => change.delta !== 0)
-    .sort((left, right) => Math.abs(right.delta) - Math.abs(left.delta));
-
-  if (deltas.length === 0) {
-    return "Pas de variation nette depuis le dernier tour.";
-  }
-
-  const first = deltas[0];
-  const labelByKey: Record<keyof BlockStats, string> = {
-    stabilite: "stabilité",
-    richesse: "richesse",
-    education: "éducation",
-    liberte: "liberté",
-    confianceIA: "confiance IA",
-    tensionSociale: "tension sociale",
-  };
-
-  return `${labelByKey[first.key]} ${first.delta > 0 ? "en hausse" : "en baisse"} (${first.delta > 0 ? "+" : ""}${first.delta}).`;
+  return formatTrendSummary(getBlockTrends(previousBlock, nextBlock));
 }
 
 export function generateEvolutionReport(
@@ -444,18 +426,45 @@ export function generateEvolutionReport(
     trends[result.block.id] = getBlockTrend(result.previousBlock, result.block);
     return trends;
   }, {} as Record<BlockId, string>);
+  const affectedBlocks = blockResults
+    .filter((result) => result.intensity > 0)
+    .sort((left, right) => right.intensity - left.intensity)
+    .slice(0, 3)
+    .map((result) => `${result.block.name} : ${getBlockTrend(result.previousBlock, result.block)}`);
+  const socialSignals = blockResults
+    .sort((left, right) => right.intensity - left.intensity)
+    .slice(0, 3)
+    .map((result) => {
+      const report = generateBlockReport(result.block, result.previousBlock);
+      return `${result.block.name} : ${report.socialMood.summary}`;
+    });
+  const weakSignals = blockResults
+    .filter((result) => result.block.stats.tensionSociale >= 58 || result.block.stats.confianceIA >= 65 || result.block.stats.liberte <= 45)
+    .slice(0, 3)
+    .map((result) => {
+      const report = generateBlockReport(result.block, result.previousBlock);
+      return `${result.block.name} : ${report.mainRisk}`;
+    });
   const immediateInterventions = interventions.filter((intervention) => !isPreparationAction(intervention.action));
   const preparationInterventions = interventions.filter((intervention) => isPreparationAction(intervention.action));
 
   return {
     turn: previousState.turn,
     operationSummary: getOperationSummary(interventions, previousState.blocks),
+    synthesis: systemicEvent
+      ? `L'opération produit une réaction systémique : ${systemicEvent.title}.`
+      : mostAffected
+        ? `L'opération déplace surtout ${mostAffected.block.name}, avec des effets sociaux encore localisés.`
+        : "L'opération laisse peu de traces nettes ce tour-ci.",
     immediateInterventions: getInterventionLabels(immediateInterventions, previousState.blocks),
     preparedOperations: preparationInterventions.map(
       (intervention) => intervention.action.preparationText ?? `${intervention.action.name} préparée.`,
     ),
     unlockedOperations: createdOperations.map((operation) => operation.readyText),
     globalChanges: getTopGlobalChanges(previousState.globalStats, nextState.globalStats),
+    affectedBlocks,
+    socialSignals,
+    weakSignals,
     mostAffectedBlock: mostAffected
       ? `${mostAffected.block.name} (${mostAffected.intensity} points de variation cumulée)`
       : "Aucun bloc nettement affecté",
@@ -513,6 +522,9 @@ export function applyTurnPlan(state: GameState, interventions: ResolvedIntervent
     turn: state.turn,
     title: "Opération clandestine déployée",
     text: `Influence indirecte : ${operationSummary}. Le monde n'en connaît pas l'origine.${contrastText ?? ""}`,
+    effectsText: systemicEvent
+      ? `Conséquence systémique : ${systemicEvent.title}.`
+      : "Conséquence systémique : les effets restent diffus, mais les rapports de bloc enregistrent les déplacements.",
   };
 
   const journalEvents = systemicEvent
@@ -537,6 +549,7 @@ export function applyTurnPlan(state: GameState, interventions: ResolvedIntervent
     journal: [...journalEvents, ...state.journal].slice(0, MAX_JOURNAL_ENTRIES),
     triggeredEventIds: systemicEvent ? [...state.triggeredEventIds, systemicEvent.id] : state.triggeredEventIds,
     preparedOperations,
+    previousBlocks: state.blocks,
     evolutionReport: null,
     ending: evaluateEnding(resolvedState.globalStats, resolvedState.blocks),
   };

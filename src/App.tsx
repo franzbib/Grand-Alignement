@@ -166,6 +166,7 @@ function App() {
             blocks={gameState.blocks}
             evolutionReport={gameState.evolutionReport}
             onSelectBlock={setSelectedBlockId}
+            previousBlocks={gameState.previousBlocks}
             selectedBlockId={selectedBlockId}
           />
         </div>
@@ -188,7 +189,7 @@ function App() {
         />
       )}
 
-      {activeView === "blocks" && <BlocksGrid blocks={gameState.blocks} />}
+      {activeView === "blocks" && <BlocksGrid blocks={gameState.blocks} previousBlocks={gameState.previousBlocks} />}
 
       {activeView === "journal" && <Journal events={gameState.journal} />}
 

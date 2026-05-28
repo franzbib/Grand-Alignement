@@ -1,4 +1,5 @@
 import type { Block, BlockId, EvolutionReport } from "../types/game";
+import { generateBlockReport } from "../engine/reports";
 
 type MapZone = {
   id: BlockId;
@@ -138,6 +139,7 @@ export function getBlockMapState(block: Block): BlockMapState {
 type WorldMapProps = {
   blocks: Block[];
   evolutionReport: EvolutionReport | null;
+  previousBlocks: Block[] | null;
   selectedBlockId: BlockId;
   onSelectBlock: (blockId: BlockId) => void;
 };
@@ -162,10 +164,12 @@ function getBlockInterpretation(block: Block, mapState: BlockMapState): string {
   return `${block.name} reste observable sans seuil critique dominant, ce qui ne signifie pas qu'il soit immobile.`;
 }
 
-export function WorldMap({ blocks, evolutionReport, selectedBlockId, onSelectBlock }: WorldMapProps) {
+export function WorldMap({ blocks, evolutionReport, previousBlocks, selectedBlockId, onSelectBlock }: WorldMapProps) {
   const blocksById = new Map(blocks.map((block) => [block.id, block]));
   const selectedBlock = blocksById.get(selectedBlockId) ?? blocks[0];
   const selectedMapState = getBlockMapState(selectedBlock);
+  const previousBlock = previousBlocks?.find((block) => block.id === selectedBlock.id);
+  const blockReport = generateBlockReport(selectedBlock, previousBlock);
 
   return (
     <section className="panel world-map-panel" aria-labelledby="world-map-title">
@@ -263,7 +267,7 @@ export function WorldMap({ blocks, evolutionReport, selectedBlockId, onSelectBlo
         <div>
           <p className="eyebrow">Rapport de bloc</p>
           <h3 id="block-report-title">{selectedBlock.name}</h3>
-          <p>{selectedBlock.description}</p>
+          <p>{blockReport.generalSituation}</p>
         </div>
         <dl>
           <div>
@@ -287,10 +291,27 @@ export function WorldMap({ blocks, evolutionReport, selectedBlockId, onSelectBlo
             <dd>{selectedBlock.stats.liberte}</dd>
           </div>
         </dl>
-        <p className="block-report__trend">
-          {evolutionReport?.blockTrends[selectedBlock.id] ?? "Aucune tendance récente enregistrée."}
-        </p>
-        <p>{getBlockInterpretation(selectedBlock, selectedMapState)}</p>
+        <div className="block-report__sections">
+          <section>
+            <h4>Tendances récentes</h4>
+            <p>{evolutionReport?.blockTrends[selectedBlock.id] ?? blockReport.recentTrend}</p>
+          </section>
+          <section>
+            <h4>Groupes sociaux</h4>
+            <p>
+              Sous tension : {blockReport.tenseGroups.join(", ")}. Favorables : {blockReport.favorableGroups.join(", ")}.
+            </p>
+          </section>
+          <section>
+            <h4>Risque interne</h4>
+            <p>{blockReport.mainRisk}</p>
+          </section>
+          <section>
+            <h4>Lecture stratégique</h4>
+            <p>{blockReport.strategicReading} {blockReport.possibleLeverage}</p>
+          </section>
+        </div>
+        <p className="block-report__trend">{getBlockInterpretation(selectedBlock, selectedMapState)}</p>
       </aside>
     </section>
   );

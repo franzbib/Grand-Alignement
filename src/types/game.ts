@@ -41,6 +41,50 @@ export type Block = {
   stats: BlockStats;
 };
 
+export type SocialGroupId =
+  | "travailleurs_precaires"
+  | "classes_moyennes"
+  | "diplomes_techniques"
+  | "intellectuels_critiques"
+  | "elites_administratives"
+  | "elites_economiques"
+  | "jeunesse_etudiante";
+
+export type SocialGroupProfile = {
+  id: SocialGroupId;
+  label: string;
+  descriptor: string;
+};
+
+export type SocialGroupSalience = Partial<Record<SocialGroupId, number>>;
+
+export type BlockTrend = {
+  stat: keyof BlockStats;
+  label: string;
+  direction: "up" | "down" | "stable";
+  delta: number;
+};
+
+export type SocialMood = {
+  tenseGroups: string[];
+  favorableGroups: string[];
+  mostAffectedGroup: string;
+  summary: string;
+};
+
+export type BlockReport = {
+  generalSituation: string;
+  tenseGroups: string[];
+  favorableGroups: string[];
+  mainRisk: string;
+  recentTrend: string;
+  strategicReading: string;
+  strategicVulnerability: string;
+  possibleLeverage: string;
+  socialMood: SocialMood;
+  trends: BlockTrend[];
+};
+
 export type StatDelta<TStats> = Partial<Record<keyof TStats, number>>;
 
 export type EventTone = "realiste" | "ironique" | "absurde_modere" | "absurde_avance";
@@ -117,10 +161,14 @@ export type Event = {
 export type EvolutionReport = {
   turn: number;
   operationSummary: string;
+  synthesis: string;
   immediateInterventions: string[];
   preparedOperations: string[];
   unlockedOperations: string[];
   globalChanges: string[];
+  affectedBlocks: string[];
+  socialSignals: string[];
+  weakSignals: string[];
   mostAffectedBlock: string;
   mainTension: string;
   systemicEventTitle: string | null;
@@ -143,6 +191,7 @@ export type GameState = {
   journal: Event[];
   triggeredEventIds: string[];
   preparedOperations: PreparedOperation[];
+  previousBlocks: Block[] | null;
   evolutionReport: EvolutionReport | null;
   ending: Ending | null;
 };

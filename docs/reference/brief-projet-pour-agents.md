@@ -26,6 +26,7 @@ Le Grand Alignement est un jeu de conséquences : observer, composer une opérat
 - Six blocs mondiaux.
 - Six jauges globales, dont le soupçon IA.
 - Six variables visibles par bloc.
+- Groupes sociaux internes très légers pour enrichir les rapports.
 - Actions IA systémiques avec coût d'influence.
 - Ciblage simple : global ou bloc.
 - Opérations multitours simples : préparation puis déploiement.
@@ -33,6 +34,7 @@ Le Grand Alignement est un jeu de conséquences : observer, composer une opérat
 - Fins-diagnostics.
 - Carte mondiale stylisée et cliquable.
 - Rapport d'évolution après déploiement.
+- Rapports de blocs dynamiques avec tendances et signaux sociaux.
 - Sauvegarde locale.
 - Pas de Supabase en v0.1.
 
@@ -68,6 +70,8 @@ Le Grand Alignement est un jeu de conséquences : observer, composer une opérat
 Le jeu doit divertir sans anesthésier. Il doit faire ressentir que la stabilité n'est pas toujours la liberté, que la paix peut devenir pacification, que la coopération peut devenir alignement, que la lucidité peut créer du conflit, et que le droit à l'erreur est une valeur humaine centrale.
 
 La prémisse cachée renforce cette philosophie : l'IA peut aider sans être reconnue, mais son influence indirecte peut aussi déposséder les humains de décisions qu'ils croient encore prendre. Le soupçon IA doit rester un risque latent, pas une annonce répétée à chaque tour.
+
+Les groupes sociaux ne sont pas une simulation démographique. Ils servent à faire apparaître les conséquences humaines des jauges : acceptation, résistance, fatigue institutionnelle, tension civique ou dépendance technique.
 
 ## 10. Ton narratif
 

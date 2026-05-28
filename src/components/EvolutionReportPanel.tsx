@@ -8,6 +8,9 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
   const immediateInterventions = report?.immediateInterventions ?? [];
   const preparedOperations = report?.preparedOperations ?? [];
   const unlockedOperations = report?.unlockedOperations ?? [];
+  const affectedBlocks = report?.affectedBlocks ?? [];
+  const socialSignals = report?.socialSignals ?? [];
+  const weakSignals = report?.weakSignals ?? [];
 
   return (
     <section className="panel evolution-report" aria-labelledby="evolution-report-title">
@@ -20,6 +23,7 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
           <p>
             <strong>Tour {report.turn}.</strong> {report.operationSummary}
           </p>
+          <p>{report.synthesis ?? "Synthèse indisponible pour ce tour."}</p>
           <div className="report-grid">
             <div>
               <h3>Interventions immédiates</h3>
@@ -62,6 +66,26 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
               </ul>
             </div>
             <div>
+              <h3>Blocs affectés</h3>
+              <ul>
+                {affectedBlocks.length > 0 ? (
+                  affectedBlocks.map((block) => <li key={block}>{block}</li>)
+                ) : (
+                  <li>Aucun bloc ne se détache nettement.</li>
+                )}
+              </ul>
+            </div>
+            <div>
+              <h3>Groupes sociaux</h3>
+              <ul>
+                {socialSignals.length > 0 ? (
+                  socialSignals.map((signal) => <li key={signal}>{signal}</li>)
+                ) : (
+                  <li>Signal social encore diffus.</li>
+                )}
+              </ul>
+            </div>
+            <div>
               <h3>Bloc le plus affecté</h3>
               <p>{report.mostAffectedBlock}</p>
             </div>
@@ -72,6 +96,16 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
             <div>
               <h3>Événement</h3>
               <p>{report.systemicEventTitle ?? "Aucun événement systémique déclenché."}</p>
+            </div>
+            <div>
+              <h3>Signaux faibles</h3>
+              <ul>
+                {weakSignals.length > 0 ? (
+                  weakSignals.map((signal) => <li key={signal}>{signal}</li>)
+                ) : (
+                  <li>Aucun signal faible prioritaire.</li>
+                )}
+              </ul>
             </div>
           </div>
           {report.suspicionNote && <p className="report-suspicion">{report.suspicionNote}</p>}

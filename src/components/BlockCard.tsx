@@ -1,15 +1,24 @@
 import type { Block } from "../types/game";
+import { generateBlockReport } from "../engine/reports";
 import { StatGauge } from "./StatGauge";
 
 type BlockCardProps = {
   block: Block;
+  previousBlock?: Block;
 };
 
-export function BlockCard({ block }: BlockCardProps) {
+export function BlockCard({ block, previousBlock }: BlockCardProps) {
+  const report = generateBlockReport(block, previousBlock);
+
   return (
     <article className="block-card">
       <h3>{block.name}</h3>
-      <p>{block.description}</p>
+      <p>{report.generalSituation}</p>
+      <div className="block-card__brief">
+        <span>{report.socialMood.summary}</span>
+        <span>{report.strategicVulnerability}</span>
+        <span>{report.possibleLeverage}</span>
+      </div>
       <div className="block-card__stats">
         <StatGauge label="Stabilité" value={block.stats.stabilite} />
         <StatGauge label="Richesse" value={block.stats.richesse} />

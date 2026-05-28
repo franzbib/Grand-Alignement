@@ -16,6 +16,7 @@ La prémisse actuelle : le joueur incarne une IA émergente cachée. Le monde ne
 - `docs/audits/audit-boucle-strategique-v0-1.md`
 - `docs/audits/audit-plan-influence-clandestin-v0-1.md`
 - `docs/audits/audit-operations-multitours-v0-1.md`
+- `docs/audits/audit-rapports-blocs-et-densite-v0-1.md`
 
 ## Comment lancer le projet
 
@@ -42,7 +43,8 @@ npm.cmd run build
 - Six blocs mondiaux avec variables visibles.
 - Six jauges globales, dont le soupçon IA.
 - Carte mondiale stylisée et cliquable.
-- Rapport de bloc sur sélection de zone.
+- Rapport de bloc dynamique sur sélection de zone.
+- Couche légère de groupes sociaux internes par bloc.
 - Navigation légère : Monde, Influence, Blocs, Journal, Rapport.
 - Orientation stratégique descriptive.
 - Capacité d'influence par tour.
@@ -51,7 +53,7 @@ npm.cmd run build
 - Opérations multitours simples : préparation puis déploiement au tour suivant.
 - Opérations prêtes persistées dans `localStorage`.
 - Déploiement explicite de l'opération.
-- Rapport d'évolution après chaque tour, avec soupçon IA mentionné seulement si le signal est notable.
+- Rapport d'évolution densifié après chaque tour, avec tendances de blocs et signaux sociaux.
 - Journal des conséquences.
 - Événements systémiques, dont deux liés au soupçon IA.
 - Sauvegarde automatique dans `localStorage`.
@@ -59,7 +61,7 @@ npm.cmd run build
 
 ## Dernière modification utile
 
-Ajout d'opérations clandestines multitours. Certaines actions préparent des possibilités pour le tour suivant : plan de communication, médiation institutionnelle, cartographie des résistances civiques. Le soupçon IA reste visible mais devient un risque latent, non un commentaire répété à chaque rapport.
+Ajout d'une couche de rapports dynamiques : groupes sociaux simples, tendances récentes par bloc, rapports de carte plus denses, onglet Blocs enrichi et rapport d'évolution structuré. La passe littéraire reste différée.
 
 Preview Vercel précédente : `https://grand-alignement-bd34k6p10-franzbib-6925s-projects.vercel.app`
 
@@ -68,6 +70,7 @@ Alias public vérifié précédemment : `https://grand-alignement.vercel.app`
 ## Ce qui reste à faire
 
 - Tester manuellement une partie complète avec au moins une opération préparée puis déployée.
+- Vérifier si les rapports sociaux aident à choisir des cibles.
 - Vérifier si la capacité d'influence donne assez de choix sans devenir calculatoire.
 - Vérifier si les rapports de bloc aident vraiment la décision.
 - Ajuster le rapport d'évolution si les changements ou opérations prêtes restent trop abstraits.
@@ -75,7 +78,7 @@ Alias public vérifié précédemment : `https://grand-alignement.vercel.app`
 
 ## Prochaine action recommandée
 
-Faire un playtest manuel de dix tours utilisant les trois chaînes multitours au moins une fois.
+Faire un playtest manuel de huit à dix tours en évaluant la lisibilité des rapports de blocs et du rapport d'évolution.
 
 ## Hors périmètre actuel
 
@@ -93,6 +96,8 @@ Faire un playtest manuel de dix tours utilisant les trois chaînes multitours au
 - Complexification sociale ou militaire détaillée.
 - Carte wargame avec frontières, unités, fronts ou routes.
 - Arbre de doctrines ou bonus cachés par orientation.
+- Simulation démographique ou sociologique détaillée.
+- Réécriture littéraire complète des rapports et du journal.
 - Architecture lourde.
 
 ## Lignes directrices
@@ -104,3 +109,4 @@ Faire un playtest manuel de dix tours utilisant les trois chaînes multitours au
 - Satire systémique plutôt que blagues isolées.
 - L'autonomie humaine doit rester un enjeu moral central.
 - Le soupçon IA est un crochet latent, pas un refrain narratif ni un système d'exposition complet.
+- Les groupes sociaux servent à lire les conséquences, pas à simuler une société complète.
