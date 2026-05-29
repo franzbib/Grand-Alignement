@@ -19,6 +19,7 @@ La prémisse actuelle : le joueur incarne une IA émergente cachée. Le monde ne
 - `docs/audits/audit-rapports-blocs-et-densite-v0-1.md`
 - `docs/audits/audit-relations-interblocs-v0-1.md`
 - `docs/audits/audit-carte-simplifiee-analyse-blocs-v0-1.md`
+- `docs/design/fins-trajectoires-personnages-v0-2.md`
 
 ## Comment lancer le projet
 
@@ -64,10 +65,11 @@ npm.cmd run build
 - Sauvegarde automatique dans `localStorage`.
 - Quatre fins diagnostiques existantes.
 - Fins diagnostiques standard verrouillées uniquement à partir du tour 15.
+- Document de conception v0.2 ajouté pour les fins, trajectoires et personnages, non implémenté intégralement.
 
 ## Dernière modification utile
 
-Intégration de signaux visuels sur la carte mondiale et correction du déclenchement des fins diagnostiques : les fins standard ne peuvent plus être enregistrées avant le tour 15, ce qui évite une Confédération fragile ou autre diagnostic final trop précoce. Les anciennes sauvegardes avec une fin avant le tour 15 sont déverrouillées au chargement. La bannière de fin indique maintenant explicitement que la partie est terminée et propose de consulter le rapport final ou de réinitialiser.
+Ajout du document de conception `docs/design/fins-trajectoires-personnages-v0-2.md`, issu de `grand-alignement-conception-v02.docx`. Il sert de boussole narrative et systémique pour les 8 fins, les trajectoires, les personnages systémiques et les variables conceptuelles, mais ne constitue pas une implémentation.
 
 ## Ce qui reste à faire
 
@@ -79,7 +81,7 @@ Intégration de signaux visuels sur la carte mondiale et correction du déclench
 
 ## Prochaine action recommandée
 
-Playtest manuel d'une partie jusqu'au tour 15 ou plus pour vérifier que les diagnostics finaux arrivent au bon moment et restent compréhensibles.
+Validation humaine des fins, variables conceptuelles et proxys proposés avant toute nouvelle passe de code.
 
 ## Hors périmètre actuel
 
