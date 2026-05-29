@@ -263,9 +263,10 @@ export const actions: Action[] = [
   {
     id: "prepare-communication-plan",
     name: "Préparer un plan de communication",
-    description: "Assembler relais, études d'opinion et formulations testées sans diffusion immédiate.",
+    description:
+      "Assembler relais et formulations sans diffusion immédiate. Prépare au tour suivant : campagne d'information ou désinformation contrôlée.",
     category: "Préparation",
-    promise: "Ouvre une campagne informationnelle au tour suivant.",
+    promise: "Donne ensuite le choix entre renforcer un récit ou détourner une crise.",
     risk: "Laisse de faibles traces de coordination.",
     cost: 1,
     scope: "mixed",
@@ -321,9 +322,10 @@ export const actions: Action[] = [
   {
     id: "prepare-institutional-mediation",
     name: "Préparer une médiation institutionnelle",
-    description: "Identifier des relais patients, des formulations acceptables et des salles sans caméras.",
+    description:
+      "Identifier des relais patients et des formulations acceptables. Prépare au tour suivant : activer les relais diplomatiques.",
     category: "Préparation",
-    promise: "Ouvre une médiation plus efficace au tour suivant.",
+    promise: "Permet ensuite d'apaiser discrètement escalade et tensions relationnelles.",
     risk: "Effet immédiat faible.",
     cost: 1,
     scope: "mixed",
@@ -361,9 +363,10 @@ export const actions: Action[] = [
   {
     id: "map-civic-resistance",
     name: "Cartographier les résistances civiques",
-    description: "Repérer réseaux, doléances et foyers de refus sans intervenir encore.",
+    description:
+      "Repérer réseaux et foyers de refus sans agir encore. Prépare au tour suivant : dialoguer ou neutraliser les résistances.",
     category: "Préparation",
-    promise: "Prépare un choix éthique au tour suivant.",
+    promise: "Ouvre ensuite un choix clair entre autonomie humaine et contrôle discret.",
     risk: "Surveiller la résistance peut déjà la trahir.",
     cost: 1,
     scope: "block",
