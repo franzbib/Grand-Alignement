@@ -1,5 +1,5 @@
 import { blockProfiles } from "../data/blockProfiles";
-import { endings } from "../data/endings";
+import { MIN_STANDARD_ENDING_TURN, endings } from "../data/endings";
 import { systemicEvents } from "../data/events";
 import { initialRelations } from "../data/relations";
 import { advanceWorldDynamics, applyPlayerRelationEffects } from "./relations";
@@ -167,7 +167,11 @@ function matchesEnding(ending: EndingDefinition, globalStats: GlobalStats, block
   return matchesCondition(ending.condition, globalStats, blocks);
 }
 
-function evaluateEnding(globalStats: GlobalStats, blocks: Block[]): Ending | null {
+function evaluateEnding(turn: number, globalStats: GlobalStats, blocks: Block[]): Ending | null {
+  if (turn < MIN_STANDARD_ENDING_TURN) {
+    return null;
+  }
+
   const ending = endings.find((endingDefinition) => matchesEnding(endingDefinition, globalStats, blocks));
 
   if (!ending) {
@@ -599,7 +603,7 @@ export function applyTurnPlan(state: GameState, interventions: ResolvedIntervent
     preparedOperations,
     previousBlocks: state.blocks,
     evolutionReport: null,
-    ending: evaluateEnding(resolvedState.globalStats, resolvedState.blocks),
+    ending: evaluateEnding(state.turn + 1, resolvedState.globalStats, resolvedState.blocks),
   };
 
   return {

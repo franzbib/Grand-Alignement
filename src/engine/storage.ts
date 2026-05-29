@@ -1,4 +1,5 @@
 import { createInitialState } from "../data/initialState";
+import { MIN_STANDARD_ENDING_TURN } from "../data/endings";
 import { initialRelations } from "../data/relations";
 import type { GameState } from "../types/game";
 
@@ -28,6 +29,7 @@ export function loadGameState(): GameState {
       preparedOperations: parsedState.preparedOperations ?? [],
       previousBlocks: parsedState.previousBlocks ?? null,
       evolutionReport: parsedState.evolutionReport ?? null,
+      ending: parsedState.turn >= MIN_STANDARD_ENDING_TURN ? parsedState.ending : null,
     };
   } catch {
     window.localStorage.removeItem(STORAGE_KEY);

@@ -63,10 +63,11 @@ npm.cmd run build
 - Événements systémiques, dont deux liés au soupçon IA.
 - Sauvegarde automatique dans `localStorage`.
 - Quatre fins diagnostiques existantes.
+- Fins diagnostiques standard verrouillées uniquement à partir du tour 15.
 
 ## Dernière modification utile
 
-Intégration de signaux visuels sur la carte mondiale (`WorldMap.tsx`) : affichage d'un cluster de 1 à 3 pictogrammes/émojis (⚠️, 🔥, 👁️, 🧠, 😶, 🛡️, 🤝, 🌱) sous le statut de chaque bloc sur la carte, calculés de manière logique en fonction de l'état du bloc (crise, tension sociale, éducation/liberté pour la résistance/lucidité), du niveau de soupçon d'IA global et des tensions ou coopérations de ses relations extérieures. Les descriptions de ces signaux sont également exposées dans les infobulles SVG de survol (tooltip) pour garantir l'accessibilité.
+Intégration de signaux visuels sur la carte mondiale et correction du déclenchement des fins diagnostiques : les fins standard ne peuvent plus être enregistrées avant le tour 15, ce qui évite une Confédération fragile ou autre diagnostic final trop précoce. Les anciennes sauvegardes avec une fin avant le tour 15 sont déverrouillées au chargement. La bannière de fin indique maintenant explicitement que la partie est terminée et propose de consulter le rapport final ou de réinitialiser.
 
 ## Ce qui reste à faire
 
@@ -78,7 +79,7 @@ Intégration de signaux visuels sur la carte mondiale (`WorldMap.tsx`) : afficha
 
 ## Prochaine action recommandée
 
-Étape 3 de l'audit UX : Clarification textuelle des Préparations (`src/data/actions.ts`) en enrichissant les descriptions des cartes d'actions préparatoires afin d'y lister explicitement les opérations concrètes qu'elles débloqueront au tour suivant.
+Playtest manuel d'une partie jusqu'au tour 15 ou plus pour vérifier que les diagnostics finaux arrivent au bon moment et restent compréhensibles.
 
 ## Hors périmètre actuel
 

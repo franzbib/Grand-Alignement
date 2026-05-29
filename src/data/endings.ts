@@ -1,5 +1,7 @@
 import type { EndingDefinition } from "../types/game";
 
+export const MIN_STANDARD_ENDING_TURN = 15;
+
 export const endings: EndingDefinition[] = [
   {
     id: "human-revolt",

@@ -127,6 +127,18 @@ function App() {
           <p className="eyebrow">Diagnostic final</p>
           <h2>{gameState.ending.title}</h2>
           <p>{gameState.ending.description}</p>
+          <p>
+            Partie terminée : le diagnostic verrouille les opérations d'influence. Consultez le rapport final ou
+            réinitialisez la partie pour explorer une autre trajectoire.
+          </p>
+          <div className="ending-banner__actions">
+            <button onClick={() => setActiveView("report")} type="button">
+              Consulter le rapport final
+            </button>
+            <button onClick={handleReset} type="button">
+              Réinitialiser
+            </button>
+          </div>
         </section>
       )}
 
@@ -144,7 +156,7 @@ function App() {
           Soupçon IA <strong>{gameState.globalStats.soupconIA}</strong>
         </span>
         <span>
-          Diagnostic <strong>{gameState.ending ? gameState.ending.title : "en cours"}</strong>
+          Diagnostic <strong>{gameState.ending ? `final : ${gameState.ending.title}` : "en cours"}</strong>
         </span>
       </section>
 
