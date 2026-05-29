@@ -21,6 +21,7 @@ La prémisse actuelle : le joueur incarne une IA émergente cachée. Le monde ne
 - `docs/audits/audit-carte-simplifiee-analyse-blocs-v0-1.md`
 - `docs/design/fins-trajectoires-personnages-v0-2.md`
 - `docs/design/trajectoires-evolution-v0-3.md`
+- `docs/design/traduction-trajectoires-proxys-v0-4.md`
 
 ## Comment lancer le projet
 
@@ -68,10 +69,11 @@ npm.cmd run build
 - Fins diagnostiques standard verrouillées uniquement à partir du tour 15.
 - Document de conception v0.2 ajouté pour les fins, trajectoires et personnages, non implémenté intégralement.
 - Document de conception v0.3 ajouté pour les trajectoires d'évolution, non implémenté.
+- Document de conception technique v0.4 ajouté pour la traduction des trajectoires en proxys codables, non implémenté.
 
 ## Dernière modification utile
 
-Ajout du document de conception `docs/design/trajectoires-evolution-v0-3.md`, issu de `grand-alignement-trajectoires-v03.docx`. Il complète la v0.2 en décrivant 8 trajectoires d'évolution, leurs collisions, des proxys codables provisoires et des garde-fous de déclenchement, mais ne constitue pas une implémentation.
+Ajout du document de conception technique `docs/design/traduction-trajectoires-proxys-v0-4.md`, issu de `grand-alignement-traduction-trajectoires-v04.docx`. Il prépare une future micro-passe de calcul indicatif des scores de trajectoires, en lecture seule, mais ne constitue pas une implémentation.
 
 ## Ce qui reste à faire
 
@@ -83,7 +85,7 @@ Ajout du document de conception `docs/design/trajectoires-evolution-v0-3.md`, is
 
 ## Prochaine action recommandée
 
-Validation humaine des proxys codables des trajectoires avant toute modification du moteur.
+Micro-implémentation de lecture seule des scores de trajectoires, sans déclencher de fins ni d'événements.
 
 ## Hors périmètre actuel
 
