@@ -1309,6 +1309,10 @@ button {
   letter-spacing: 0.5px;
 }
 
+.trajectory-diagnostic {
+  border-left: 4px solid #52645a;
+}
+
 .report-event-alert {
   margin-bottom: 16px;
   padding: 14px;

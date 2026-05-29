@@ -104,6 +104,17 @@ export type RelationChange = {
   reason: string;
 };
 
+export type TrajectoryScores = {
+  t1: number;
+  t2: number;
+  t3: number;
+  t4: number;
+  t5: number;
+  t6: number;
+  t7: number;
+  t8: number;
+};
+
 export type BlockReport = {
   generalSituation: string;
   tenseGroups: string[];
@@ -213,6 +224,10 @@ export type EvolutionReport = {
   systemicEventTitle: string | null;
   suspicionNote: string | null;
   blockTrends: Record<BlockId, string>;
+  trajectoryScores?: TrajectoryScores;
+  dominantTrajectory?: string;
+  secondaryTrajectories?: string[];
+  collidingTrajectories?: string[];
 };
 
 export type Ending = {

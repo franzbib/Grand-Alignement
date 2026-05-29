@@ -4,6 +4,13 @@ import { systemicEvents } from "../data/events";
 import { initialRelations } from "../data/relations";
 import { advanceWorldDynamics, applyPlayerRelationEffects } from "./relations";
 import { formatTrendSummary, generateBlockReport, getBlockTrends } from "./reports";
+import {
+  computeTrajectoryScores,
+  getCollidingTrajectories,
+  getDominantTrajectory,
+  getStrongSecondaryTrajectories,
+  getTrajectoryWeakSignals,
+} from "./trajectories";
 import type {
   Action,
   Block,
@@ -477,6 +484,8 @@ export function generateEvolutionReport(
       const report = generateBlockReport(result.block, result.previousBlock, nextState.relations);
       return `${result.block.name} : ${report.mainRisk}`;
     });
+  const trajectoryScores = computeTrajectoryScores(nextState);
+  const trajectoryWeakSignals = getTrajectoryWeakSignals(trajectoryScores);
   const strongestIncrease = [...relationChanges].sort((left, right) => right.tensionDelta - left.tensionDelta)[0];
   const strongestDecrease = [...relationChanges].sort((left, right) => left.tensionDelta - right.tensionDelta)[0];
   const immediateInterventions = interventions.filter((intervention) => !isPreparationAction(intervention.action));
@@ -504,7 +513,7 @@ export function generateEvolutionReport(
       strongestIncrease && strongestIncrease.tensionDelta > 0 ? formatRelationChange(strongestIncrease) : null,
     relationTensionDecrease:
       strongestDecrease && strongestDecrease.tensionDelta < 0 ? formatRelationChange(strongestDecrease) : null,
-    weakSignals,
+    weakSignals: [...trajectoryWeakSignals, ...weakSignals].slice(0, 5),
     mostAffectedBlock: mostAffected
       ? `${mostAffected.block.name} (${mostAffected.intensity} points de variation cumulée)`
       : "Aucun bloc nettement affecté",
@@ -514,6 +523,10 @@ export function generateEvolutionReport(
     systemicEventTitle: systemicEvent?.title ?? null,
     suspicionNote: getSuspicionNote(previousState, nextState, systemicEvent),
     blockTrends,
+    trajectoryScores,
+    dominantTrajectory: getDominantTrajectory(trajectoryScores),
+    secondaryTrajectories: getStrongSecondaryTrajectories(trajectoryScores),
+    collidingTrajectories: getCollidingTrajectories(trajectoryScores),
   };
 }
 

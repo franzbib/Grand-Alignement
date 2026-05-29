@@ -23,6 +23,10 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
   const worldSignals = report.worldSignals ?? [];
   const relationChanges = report.relationChanges ?? [];
   const weakSignals = report.weakSignals ?? [];
+  const secondaryTrajectories = report.secondaryTrajectories ?? [];
+  const collidingTrajectories = report.collidingTrajectories ?? [];
+  const trajectorySignals = [...collidingTrajectories, ...secondaryTrajectories].slice(0, 2);
+  const hasTrajectoryInsight = Boolean(report.dominantTrajectory) || trajectorySignals.length > 0;
 
   // Filter out neutral values to avoid noise
   const mostAffectedBlock = report.mostAffectedBlock && report.mostAffectedBlock !== "Aucun bloc nettement affecté"
@@ -70,7 +74,8 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
                               hasRelations || 
                               hasPlanification || 
                               hasEvent || 
-                              hasWeakSignals;
+                              hasWeakSignals ||
+                              hasTrajectoryInsight;
 
   return (
     <section className="panel evolution-report" aria-labelledby="evolution-report-title">
@@ -176,6 +181,23 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
               <div className="report-sub-section">
                 <h4>Point chaud</h4>
                 <p>{mainTension}</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {hasTrajectoryInsight && (
+          <div className="trajectory-diagnostic">
+            <h3>Lecture de trajectoire</h3>
+            {report.dominantTrajectory && <p>Dominante : {report.dominantTrajectory}</p>}
+            {trajectorySignals.length > 0 && (
+              <div className="report-sub-section">
+                <h4>Signaux secondaires</h4>
+                <ul>
+                  {trajectorySignals.map((item, idx) => (
+                    <li key={idx}>{item}</li>
+                  ))}
+                </ul>
               </div>
             )}
           </div>

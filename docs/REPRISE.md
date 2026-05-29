@@ -62,6 +62,7 @@ npm.cmd run build
 - Déploiement explicite de l'opération.
 - Rapport d'évolution densifié après chaque tour, avec tendances de blocs et signaux sociaux.
 - Rapport d'évolution enrichi avec signaux autonomes et changements relationnels.
+- Scores de trajectoires calculés en lecture seule dans le rapport d'évolution : trajectoire dominante, signaux secondaires et au plus deux signaux faibles.
 - Journal des conséquences.
 - Événements systémiques, dont deux liés au soupçon IA.
 - Sauvegarde automatique dans `localStorage`.
@@ -69,11 +70,13 @@ npm.cmd run build
 - Fins diagnostiques standard verrouillées uniquement à partir du tour 15.
 - Document de conception v0.2 ajouté pour les fins, trajectoires et personnages, non implémenté intégralement.
 - Document de conception v0.3 ajouté pour les trajectoires d'évolution, non implémenté.
-- Document de conception technique v0.4 ajouté pour la traduction des trajectoires en proxys codables, non implémenté.
+- Document de conception technique v0.4 ajouté pour la traduction des trajectoires en proxys codables.
 
 ## Dernière modification utile
 
-Ajout du document de conception technique `docs/design/traduction-trajectoires-proxys-v0-4.md`, issu de `grand-alignement-traduction-trajectoires-v04.docx`. Il prépare une future micro-passe de calcul indicatif des scores de trajectoires, en lecture seule, mais ne constitue pas une implémentation.
+Micro-implémentation de lecture seule des scores de trajectoires. Les fichiers modifiés sont `src/types/game.ts`, `src/engine/trajectories.ts`, `src/engine/gameEngine.ts`, `src/components/EvolutionReportPanel.tsx`, `src/styles/main.css` et `docs/REPRISE.md`.
+
+Les scores T1 à T8 sont calculés par une fonction pure à partir de `globalStats`, `blocks` et `relations`, puis ajoutés au rapport d'évolution. Ils servent uniquement de diagnostic indicatif : ils ne déclenchent aucune fin, aucun événement-balise, aucune nouvelle variable visible et ne modifient pas l'état de partie.
 
 ## Ce qui reste à faire
 
@@ -85,7 +88,7 @@ Ajout du document de conception technique `docs/design/traduction-trajectoires-p
 
 ## Prochaine action recommandée
 
-Micro-implémentation de lecture seule des scores de trajectoires, sans déclencher de fins ni d'événements.
+Playtest de 10 à 15 tours pour observer si les trajectoires affichées correspondent à l'expérience réelle.
 
 ## Hors périmètre actuel
 
