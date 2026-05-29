@@ -980,14 +980,23 @@ button {
   font-weight: 900;
 }
 
+.target-control--preview {
+  padding-top: 0;
+  color: #6a746d;
+}
+
 .target-control select {
   width: 100%;
-  padding: 8px 10px;
+  padding: 7px 10px;
   border: 1px solid #c8c0ac;
   border-radius: 6px;
   color: #17211c;
   background: #fffdf7;
   font: inherit;
+}
+
+.target-control--preview select {
+  background: #fbf8ef;
 }
 
 .selected-actions li span {

@@ -188,6 +188,7 @@ function App() {
           onValidateTurn={handleValidateTurn}
           plannedInterventions={plannedInterventions}
           postures={strategicPostures}
+          selectedBlockId={selectedBlockId}
           selectedPostureId={selectedPostureId}
         />
       )}

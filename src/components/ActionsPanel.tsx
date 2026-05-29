@@ -1,6 +1,8 @@
+import { useState } from "react";
 import type {
   Action,
   Block,
+  BlockId,
   InfluenceTarget,
   PlannedIntervention,
   PreparedOperation,
@@ -14,6 +16,7 @@ type ActionsPanelProps = {
   disabled: boolean;
   influenceCapacity: number;
   plannedInterventions: PlannedIntervention[];
+  selectedBlockId: BlockId;
   selectedPostureId: string;
   postures: StrategicPosture[];
   onPostureChange: (postureId: string) => void;
@@ -51,6 +54,7 @@ export function ActionsPanel({
   disabled,
   influenceCapacity,
   plannedInterventions,
+  selectedBlockId,
   selectedPostureId,
   postures,
   onPostureChange,
@@ -65,6 +69,39 @@ export function ActionsPanel({
   }, 0);
   const influenceRemaining = influenceCapacity - influenceUsed;
   const selectedPosture = postures.find((posture) => posture.id === selectedPostureId);
+  const [pendingTargets, setPendingTargets] = useState<Record<string, InfluenceTarget>>({});
+
+  function getDefaultTarget(action: Action): InfluenceTarget {
+    if (action.scope === "block" && blocks.some((block) => block.id === selectedBlockId)) {
+      return selectedBlockId;
+    }
+
+    return action.defaultTarget;
+  }
+
+  function getDisplayedTarget(action: Action, intervention: PlannedIntervention | undefined): InfluenceTarget {
+    return intervention?.target ?? pendingTargets[action.id] ?? getDefaultTarget(action);
+  }
+
+  function handleTargetSelection(action: Action, target: InfluenceTarget, isSelected: boolean) {
+    setPendingTargets((currentTargets) => ({ ...currentTargets, [action.id]: target }));
+
+    if (isSelected) {
+      onTargetChange(action.id, target);
+    }
+  }
+
+  function handleToggle(action: Action, preparedOperation: PreparedOperation | undefined, isSelected: boolean) {
+    onToggleAction(action, preparedOperation);
+
+    if (!isSelected && !preparedOperation) {
+      const target = pendingTargets[action.id];
+
+      if (target) {
+        onTargetChange(action.id, target);
+      }
+    }
+  }
 
   function renderActionCard(action: Action, preparedOperation?: PreparedOperation) {
     const intervention = plannedInterventions.find(
@@ -74,10 +111,12 @@ export function ActionsPanel({
     const isDisabled = disabled || (!isSelected && action.cost > influenceRemaining);
     const targetOptions = getTargetOptions(action, blocks);
     const recommended = action.recommendedPostures?.includes(selectedPostureId);
+    const displayedTarget = getDisplayedTarget(action, intervention);
+    const canChooseTarget = targetOptions.length > 1 && !preparedOperation;
 
     return (
       <article className={`action-card${isSelected ? " action-card--selected" : ""}`} key={preparedOperation?.id ?? action.id}>
-        <button disabled={isDisabled} onClick={() => onToggleAction(action, preparedOperation)} type="button">
+        <button disabled={isDisabled} onClick={() => handleToggle(action, preparedOperation, isSelected)} type="button">
           <small className="action-card__category">
             {action.category} · coût {action.cost}
           </small>
@@ -89,13 +128,13 @@ export function ActionsPanel({
           {preparedOperation && <small className="action-card__ready">{preparedOperation.readyText}</small>}
         </button>
 
-        {isSelected && targetOptions.length > 1 && !preparedOperation && (
-          <label className="target-control">
-            Cible
+        {canChooseTarget && (
+          <label className={isSelected ? "target-control" : "target-control target-control--preview"}>
+            {isSelected ? "Cible retenue" : "Cible possible"}
             <select
               disabled={disabled}
-              onChange={(event) => onTargetChange(action.id, event.target.value as InfluenceTarget)}
-              value={intervention?.target ?? action.defaultTarget}
+              onChange={(event) => handleTargetSelection(action, event.target.value as InfluenceTarget, isSelected)}
+              value={displayedTarget}
             >
               {targetOptions.map((option) => (
                 <option key={option.value} value={option.value}>
