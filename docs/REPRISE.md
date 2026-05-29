@@ -66,7 +66,7 @@ npm.cmd run build
 
 ## Dernière modification utile
 
-Simplification du Rapport d'évolution post-tour (`EvolutionReportPanel.tsx`) : filtrage des sections vides, masquage des signaux sociaux non modifiés, masquage des risques par défaut dans les signaux faibles, élimination des doublons de hausse/baisse de tension (déjà présents dans la liste de frictions globale), ordonnancement optimal des sections (Synthèse, Effets majeurs, Blocs affectés, Relations inter-blocs, Opérations préparées, Événement systémique, Signaux faibles), raccourcissement des sous-titres et gestion d'un statut par défaut "aucun changement notable ce tour-ci".
+Amélioration ergonomique du panneau d'influence (`ActionsPanel.tsx`) : implémentation d'une structure à deux colonnes (catalogue des actions à gauche sous forme de grille compacte fluide responsive, console de contrôle avec posture, jauge d'influence et bouton de validation à droite dans une barre latérale collante/sticky), intégration d'une barre d'onglets de filtrage (Toutes, Recommandées, Immédiates, Préparations), et conception de cartes d'actions dépliables (details masqués par défaut, révélés en douceur au survol `:hover`, à la mise au point `:focus-within` ou lors de la sélection active). De plus, l'affichage permanent des menus déroulants de ciblage pour pré-visualiser ou choisir sa cible a été préservé et intégré dans le tiroir d'information de chaque carte d'action.
 
 ## Ce qui reste à faire
 
@@ -78,7 +78,7 @@ Simplification du Rapport d'évolution post-tour (`EvolutionReportPanel.tsx`) : 
 
 ## Prochaine action recommandée
 
-Étape 2 de l'audit UX : Amélioration du ciblage dans le menu d'influence (`ActionsPanel.tsx`) pour rendre les listes déroulantes de cibles visibles en permanence sur les cartes d'actions disponibles, facilitant ainsi la planification rapide par le joueur.
+Étape 3 de l'audit UX : Clarification textuelle des Préparations (`src/data/actions.ts`) en enrichissant les descriptions des cartes d'actions préparatoires afin d'y lister explicitement les opérations concrètes qu'elles débloqueront au tour suivant.
 
 ## Hors périmètre actuel
 
