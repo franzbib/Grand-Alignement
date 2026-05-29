@@ -20,6 +20,7 @@ La prémisse actuelle : le joueur incarne une IA émergente cachée. Le monde ne
 - `docs/audits/audit-relations-interblocs-v0-1.md`
 - `docs/audits/audit-carte-simplifiee-analyse-blocs-v0-1.md`
 - `docs/design/fins-trajectoires-personnages-v0-2.md`
+- `docs/design/trajectoires-evolution-v0-3.md`
 
 ## Comment lancer le projet
 
@@ -66,10 +67,11 @@ npm.cmd run build
 - Quatre fins diagnostiques existantes.
 - Fins diagnostiques standard verrouillées uniquement à partir du tour 15.
 - Document de conception v0.2 ajouté pour les fins, trajectoires et personnages, non implémenté intégralement.
+- Document de conception v0.3 ajouté pour les trajectoires d'évolution, non implémenté.
 
 ## Dernière modification utile
 
-Ajout du document de conception `docs/design/fins-trajectoires-personnages-v0-2.md`, issu de `grand-alignement-conception-v02.docx`. Il sert de boussole narrative et systémique pour les 8 fins, les trajectoires, les personnages systémiques et les variables conceptuelles, mais ne constitue pas une implémentation.
+Ajout du document de conception `docs/design/trajectoires-evolution-v0-3.md`, issu de `grand-alignement-trajectoires-v03.docx`. Il complète la v0.2 en décrivant 8 trajectoires d'évolution, leurs collisions, des proxys codables provisoires et des garde-fous de déclenchement, mais ne constitue pas une implémentation.
 
 ## Ce qui reste à faire
 
@@ -81,7 +83,7 @@ Ajout du document de conception `docs/design/fins-trajectoires-personnages-v0-2.
 
 ## Prochaine action recommandée
 
-Validation humaine des fins, variables conceptuelles et proxys proposés avant toute nouvelle passe de code.
+Validation humaine des proxys codables des trajectoires avant toute modification du moteur.
 
 ## Hors périmètre actuel
 
