@@ -415,7 +415,8 @@ button {
 }
 
 .world-map__label,
-.world-map__status {
+.world-map__status,
+.world-map__signals {
   pointer-events: none;
   fill: #fffdf7;
   paint-order: stroke;
@@ -432,6 +433,10 @@ button {
 .world-map__status {
   font-size: 14px;
   font-weight: 800;
+}
+
+.world-map__signals {
+  font-size: 16px;
 }
 
 .world-map-legend {

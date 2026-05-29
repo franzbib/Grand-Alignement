@@ -66,7 +66,7 @@ npm.cmd run build
 
 ## Dernière modification utile
 
-Amélioration ergonomique du panneau d'influence (`ActionsPanel.tsx`) : implémentation d'une structure à deux colonnes (catalogue des actions à gauche sous forme de grille compacte fluide responsive, console de contrôle avec posture, jauge d'influence et bouton de validation à droite dans une barre latérale collante/sticky), intégration d'une barre d'onglets de filtrage (Toutes, Recommandées, Immédiates, Préparations), et conception de cartes d'actions dépliables (details masqués par défaut, révélés en douceur au survol `:hover`, à la mise au point `:focus-within` ou lors de la sélection active). De plus, l'affichage permanent des menus déroulants de ciblage pour pré-visualiser ou choisir sa cible a été préservé et intégré dans le tiroir d'information de chaque carte d'action.
+Intégration de signaux visuels sur la carte mondiale (`WorldMap.tsx`) : affichage d'un cluster de 1 à 3 pictogrammes/émojis (⚠️, 🔥, 👁️, 🧠, 😶, 🛡️, 🤝, 🌱) sous le statut de chaque bloc sur la carte, calculés de manière logique en fonction de l'état du bloc (crise, tension sociale, éducation/liberté pour la résistance/lucidité), du niveau de soupçon d'IA global et des tensions ou coopérations de ses relations extérieures. Les descriptions de ces signaux sont également exposées dans les infobulles SVG de survol (tooltip) pour garantir l'accessibilité.
 
 ## Ce qui reste à faire
 

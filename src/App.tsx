@@ -171,6 +171,7 @@ function App() {
             previousBlocks={gameState.previousBlocks}
             relations={gameState.relations}
             selectedBlockId={selectedBlockId}
+            soupconIA={gameState.globalStats.soupconIA}
           />
         </div>
       )}

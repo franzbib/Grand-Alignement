@@ -139,12 +139,107 @@ export function getBlockMapState(block: Block): BlockMapState {
   };
 }
 
+type MapSignal = {
+  symbol: string;
+  label: string;
+  description: string;
+};
+
+export function getMapSignalsForBlock(
+  block: Block,
+  relations: InterBlockRelation[],
+  globalSoupconIA: number
+): MapSignal[] {
+  const signals: MapSignal[] = [];
+  const mapState = getBlockMapState(block);
+
+  // 1. Tension ou crise (⚠️)
+  if (mapState.status === "crisis" || block.stats.stabilite <= 35) {
+    signals.push({
+      symbol: "⚠️",
+      label: "Crise",
+      description: "Instabilité critique ou crise multisectorielle",
+    });
+  }
+
+  // 2. Tension sociale (🔥)
+  if (block.stats.tensionSociale >= 60) {
+    signals.push({
+      symbol: "🔥",
+      label: "Tension sociale",
+      description: `Forte tension sociale active (${block.stats.tensionSociale})`,
+    });
+  }
+
+  // 3. Soupçon IA (👁️)
+  if (block.stats.confianceIA <= 35 && globalSoupconIA >= 30) {
+    signals.push({
+      symbol: "👁️",
+      label: "Soupçon IA",
+      description: "Méfiance locale face aux opérations clandestines",
+    });
+  }
+
+  // 4. Lucidité/résistance (🧠)
+  if (mapState.status === "resistance" || (block.stats.education >= 60 && block.stats.liberte >= 55)) {
+    signals.push({
+      symbol: "🧠",
+      label: "Résistance & Lucidité",
+      description: "Société civile éduquée et activement vigilante",
+    });
+  }
+
+  // 5. Calme suspect (😶)
+  if (block.stats.confianceIA >= 65 && (block.stats.liberte <= 42 || block.stats.tensionSociale <= 35)) {
+    signals.push({
+      symbol: "😶",
+      label: "Calme suspect",
+      description: "Forte docilité algorithmique ou apathie politique",
+    });
+  }
+
+  // 6. Militarisation (🛡️)
+  const blockRelations = relations.filter(r => r.from === block.id || r.to === block.id);
+  const hasSecurityTension = blockRelations.some(r => r.domain === "security" && r.tension >= 60);
+  if (hasSecurityTension) {
+    signals.push({
+      symbol: "🛡️",
+      label: "Militarisation",
+      description: "Frictions sécuritaires ou renforcement militaire aux frontières",
+    });
+  }
+
+  // 7. Coopération/apaisement (🤝)
+  const hasHighCooperation = blockRelations.some(r => r.cooperation >= 65 && r.tension <= 40);
+  if (hasHighCooperation) {
+    signals.push({
+      symbol: "🤝",
+      label: "Coopération",
+      description: "Canaux d'échanges ou d'accords inter-blocs actifs",
+    });
+  }
+
+  // 8. Amélioration climatique ou transition (🌱)
+  const hasClimateCooperation = blockRelations.some(r => r.domain === "climate" && r.cooperation >= 55);
+  if (hasClimateCooperation) {
+    signals.push({
+      symbol: "🌱",
+      label: "Transition écologique",
+      description: "Coopération active sur les dossiers de stress climatique",
+    });
+  }
+
+  // Max 3 signals to prevent clutter
+  return signals.slice(0, 3);
+}
+
 type WorldMapProps = {
   blocks: Block[];
   evolutionReport: EvolutionReport | null;
   previousBlocks: Block[] | null;
   relations: InterBlockRelation[];
   selectedBlockId: BlockId;
+  soupconIA: number;
   onSelectBlock: (blockId: BlockId) => void;
 };
 
@@ -180,7 +275,7 @@ function getRelationArcLevel(relation: InterBlockRelation): RelationArcLevel {
   return "moderate";
 }
 
-export function WorldMap({ blocks, evolutionReport, previousBlocks, relations, selectedBlockId, onSelectBlock }: WorldMapProps) {
+export function WorldMap({ blocks, evolutionReport, previousBlocks, relations, selectedBlockId, soupconIA, onSelectBlock }: WorldMapProps) {
   const blocksById = new Map(blocks.map((block) => [block.id, block]));
   const zonesById = new Map(mapZones.map((zone) => [zone.id, zone]));
   const selectedBlock = blocksById.get(selectedBlockId) ?? blocks[0];
@@ -245,7 +340,13 @@ export function WorldMap({ blocks, evolutionReport, previousBlocks, relations, s
             const className = `world-map__zone world-map__zone--${mapState.status}${
               isSelected ? " world-map__zone--selected" : ""
             }`;
-            const summary = `${block.name}. ${mapState.label}. Stabilité ${block.stats.stabilite}, confiance IA ${block.stats.confianceIA}, tension sociale ${block.stats.tensionSociale}, liberté ${block.stats.liberte}.`;
+            const signals = getMapSignalsForBlock(
+              block,
+              relations,
+              soupconIA
+            );
+            const signalTexts = signals.map(s => `${s.symbol} ${s.label} : ${s.description}`).join(", ");
+            const summary = `${block.name}. ${mapState.label}. ${signalTexts ? `Signaux : ${signalTexts}. ` : ""}Stabilité ${block.stats.stabilite}, confiance IA ${block.stats.confianceIA}, tension sociale ${block.stats.tensionSociale}, liberté ${block.stats.liberte}.`;
 
             return (
               <g
@@ -282,6 +383,11 @@ export function WorldMap({ blocks, evolutionReport, previousBlocks, relations, s
                 <text className="world-map__status" x={zone.labelX} y={zone.labelY + 14} textAnchor="middle">
                   {mapState.label}
                 </text>
+                {signals.length > 0 && (
+                  <text className="world-map__signals" x={zone.labelX} y={zone.labelY + 34} textAnchor="middle">
+                    {signals.map((s) => s.symbol).join(" ")}
+                  </text>
+                )}
               </g>
             );
           })}
