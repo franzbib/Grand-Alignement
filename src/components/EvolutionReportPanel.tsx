@@ -10,7 +10,7 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
       <section className="panel evolution-report" aria-labelledby="evolution-report-title">
         <p className="eyebrow">Après déploiement</p>
         <h2 id="evolution-report-title">Rapport d'évolution</h2>
-        <p className="panel-help">Aucune opération n'a encore été déployée.</p>
+        <p className="panel-help">Le monde attend. Aucune opération n'a encore été déployée.</p>
       </section>
     );
   }
@@ -90,7 +90,7 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
       <div className="report-grid">
         {hasEffetsMajeurs && (
           <div>
-            <h3>Effets majeurs</h3>
+            <h3>Ce tour</h3>
             
             {immediateInterventions.length > 0 && (
               <div className="report-sub-section">
@@ -105,7 +105,7 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
             
             {report.globalChanges.length > 0 && (
               <div className="report-sub-section">
-                <h4>Indicateurs</h4>
+                <h4>Jauges globales</h4>
                 <ul>
                   {report.globalChanges.map((item, idx) => (
                     <li key={idx}>{item}</li>
@@ -116,7 +116,7 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
             
             {worldSignals.length > 0 && (
               <div className="report-sub-section">
-                <h4>Tendances globales</h4>
+                <h4>Signaux du monde</h4>
                 <ul>
                   {worldSignals.map((item, idx) => (
                     <li key={idx}>{item}</li>
@@ -129,11 +129,11 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
 
         {hasBlocsAffectes && (
           <div>
-            <h3>Blocs affectés</h3>
+            <h3>Mouvements dans les blocs</h3>
             
             {affectedBlocks.length > 0 && (
               <div className="report-sub-section">
-                <h4>Variations</h4>
+                <h4>Évolutions locales</h4>
                 <ul>
                   {affectedBlocks.map((item, idx) => (
                     <li key={idx}>{item}</li>
@@ -144,7 +144,7 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
             
             {filteredSocialSignals.length > 0 && (
               <div className="report-sub-section">
-                <h4>Sociétés</h4>
+                <h4>Climat social</h4>
                 <ul>
                   {filteredSocialSignals.map((item, idx) => (
                     <li key={idx}>{item}</li>
@@ -155,7 +155,7 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
             
             {mostAffectedBlock && (
               <div className="report-sub-section">
-                <h4>Focus</h4>
+                <h4>Bloc en premier plan</h4>
                 <p>{mostAffectedBlock}</p>
               </div>
             )}
@@ -168,7 +168,7 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
             
             {relationChanges.length > 0 && (
               <div className="report-sub-section">
-                <h4>Frictions & Évolutions</h4>
+                <h4>Entre les blocs</h4>
                 <ul>
                   {relationChanges.map((item, idx) => (
                     <li key={idx}>{item}</li>
@@ -179,7 +179,7 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
             
             {mainTension && (
               <div className="report-sub-section">
-                <h4>Point chaud</h4>
+                <h4>Tension principale</h4>
                 <p>{mainTension}</p>
               </div>
             )}
@@ -189,11 +189,11 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
         {hasTrajectoryInsight && (
           <div className="trajectory-diagnostic">
             <h3>Lecture historique</h3>
-            <p className="report-muted">Diagnostic indicatif : à confronter à la carte, aux blocs et au journal.</p>
+            <p className="report-muted">Lecture indicative : à confronter à la carte, aux blocs et au journal.</p>
             {report.dominantTrajectory && <p>Dominante : {report.dominantTrajectory}</p>}
             {trajectorySignals.length > 0 && (
               <div className="report-sub-section">
-                <h4>Signaux secondaires</h4>
+                <h4>Orientations secondaires</h4>
                 <ul>
                   {trajectorySignals.map((item, idx) => (
                     <li key={idx}>{item}</li>
@@ -221,7 +221,7 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
             
             {unlockedOperations.length > 0 && (
               <div className="report-sub-section">
-                <h4>Débloquées</h4>
+                <h4>Nouvelles opérations disponibles</h4>
                 <ul>
                   {unlockedOperations.map((item, idx) => (
                     <li key={idx}>{item}</li>
@@ -253,8 +253,8 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
 
         {!hasAnyNotableChange && (
           <div style={{ gridColumn: "1 / -1" }}>
-            <h3>Statut général</h3>
-            <p>Aucun changement notable ce tour-ci.</p>
+            <h3>Situation générale</h3>
+            <p>Aucun mouvement notable ce tour. Le monde poursuit son inertie — ce qui n'est ni une garantie ni un repos.</p>
           </div>
         )}
       </div>

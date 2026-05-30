@@ -232,8 +232,8 @@ export function generateBlockNarrativeSummary(
     indicators: [
       { label: "Climat politique", value: getPoliticalClimate(block) },
       { label: "Rapport à l'IA", value: getAiRelation(block) },
-      { label: "Risque dominant", value: getDominantRisk(block, relations) },
-      { label: "État social", value: getSocialState(block) },
+      { label: "Péril dominant", value: getDominantRisk(block, relations) },
+      { label: "Climat social", value: getSocialState(block) },
     ],
     briefs: getBriefs(block, previousBlock, relations, year),
   };

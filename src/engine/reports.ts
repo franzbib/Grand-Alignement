@@ -38,7 +38,7 @@ export function getBlockTrends(previousBlock: Block | undefined | null, currentB
 
 export function formatTrendSummary(trends: BlockTrend[]): string {
   if (trends.length === 0) {
-    return "Aucune tendance récente nette.";
+    return "Aucun mouvement net depuis le dernier tour.";
   }
 
   return trends
@@ -159,7 +159,7 @@ function formatRelationSummary(block: Block, relations: InterBlockRelation[]): {
   if (!mostTense || !mostCooperative) {
     return {
       relationsSummary: "Relations extérieures encore peu lisibles.",
-      mostTenseRelation: "Aucune tension extérieure dominante.",
+      mostTenseRelation: "Aucune tension extérieure identifiée.",
       mostCooperativeRelation: "Aucune coopération extérieure dominante.",
     };
   }
@@ -183,7 +183,7 @@ export function generateBlockReport(
   const trends = getBlockTrends(previousBlock, block);
   const mood = getSocialMood(block);
   const relationSummary = formatRelationSummary(block, relations);
-  const favorableGroups = mood.favorableGroups.length > 0 ? mood.favorableGroups : ["Aucun groupe clairement acquis"];
+  const favorableGroups = mood.favorableGroups.length > 0 ? mood.favorableGroups : ["Aucun groupe nettement favorable"];
   const tenseGroups = mood.tenseGroups.length > 0 ? mood.tenseGroups : ["Tensions diffuses"];
   const trendSummary = formatTrendSummary(trends);
 

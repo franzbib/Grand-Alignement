@@ -81,9 +81,23 @@ npm.cmd run build
 
 ## Dernière modification utile
 
-Passe documentaire : ajout de `docs/design/passe-litteraire-A-v0-1.md`.
+Intégration de la Passe littéraire A (modifications textuelles) pour harmoniser la tonalité politique et narrative du prototype.
 
-Ce document rassemble les textes prêts à intégrer issus de l'audit narratif : renommage des sections du rapport, reformulation des signaux faibles de trajectoire, extension des descriptions de fins existantes, ajustement de quelques labels de l'onglet Blocs et mini-lexique de cohérence. Aucun code, gameplay, équilibrage, score, action, fin comme condition, sauvegarde ou UX structurelle n'a été modifié.
+Les fichiers modifiés sont :
+- [BlockAnalysisPanel.tsx](file:///C:/Users/franz/OneDrive/Documents/grand-alignement/src/components/BlockAnalysisPanel.tsx) (renommage de trois en-têtes et d'un attribut `aria-label` dans le panneau d'analyse des blocs)
+- [EvolutionReportPanel.tsx](file:///C:/Users/franz/OneDrive/Documents/grand-alignement/src/components/EvolutionReportPanel.tsx) (renommage de labels d'interface et textes d'accompagnement/repli du rapport d'évolution)
+- [endings.ts](file:///C:/Users/franz/OneDrive/Documents/grand-alignement/src/data/endings.ts) (mise à jour des descriptions longues et politiques des 4 fins diagnostiques existantes)
+- [blockNarrative.ts](file:///C:/Users/franz/OneDrive/Documents/grand-alignement/src/engine/blockNarrative.ts) (renommage de deux labels d'indicateurs de diagnostic du bloc : "Péril dominant" et "Climat social")
+- [reports.ts](file:///C:/Users/franz/OneDrive/Documents/grand-alignement/src/engine/reports.ts) (mise à jour des trois textes de repli/par défaut des rapports)
+- [trajectories.ts](file:///C:/Users/franz/OneDrive/Documents/grand-alignement/src/engine/trajectories.ts) (harmonisation littéraire des 8 signaux faibles de trajectoire dans `getTrajectoryWeakSignals`)
+- [REPRISE.md](file:///C:/Users/franz/OneDrive/Documents/grand-alignement/docs/REPRISE.md) (mise à jour de la présente documentation)
+
+Confirmations importantes :
+- Cette passe est strictement textuelle (labels, descriptions narratives, fallbacks).
+- Aucun comportement fonctionnel, gameplay, équilibrage, score, action, condition de fin, sauvegarde automatique ou structure UX n'a été modifié.
+- Les commandes de validation s'exécutent avec succès :
+  - `npm.cmd run build` : **OK**
+  - `npm.cmd run simulate:trajectories` : **OK**
 
 ## Ce qui reste à faire
 
@@ -95,7 +109,7 @@ Ce document rassemble les textes prêts à intégrer issus de l'audit narratif :
 
 ## Prochaine action recommandée
 
-Intégrer la Passe littéraire A avec Antigravity ou Codex en modification strictement textuelle, sans toucher au gameplay : labels du rapport, signaux faibles de trajectoire, descriptions des quatre fins existantes, labels de blocs et textes de repli.
+Playtest manuel pour éprouver l'ambiance littéraire globale après 10–20 tours.
 
 ## Hors périmètre actuel
 

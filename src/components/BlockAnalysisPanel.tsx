@@ -64,7 +64,7 @@ export function BlockAnalysisPanel({ block, blocks, previousBlock, relations, ye
         <StatGauge label="Confiance IA" value={block.stats.confianceIA} />
       </div>
 
-      <div className="block-indicators" aria-label="Indicateurs interprétatifs">
+      <div className="block-indicators" aria-label="Indicateurs du bloc">
         {narrative.indicators.map((indicator) => (
           <div className="block-indicator" key={indicator.label}>
             <span>{indicator.label}</span>
@@ -101,7 +101,7 @@ export function BlockAnalysisPanel({ block, blocks, previousBlock, relations, ye
         </section>
 
         <section>
-          <h4>Groupes sociaux</h4>
+          <h4>Forces sociales</h4>
           <p>Sous tension : {report.tenseGroups.join(", ")}.</p>
           <p>Favorables : {report.favorableGroups.join(", ")}.</p>
         </section>
@@ -131,7 +131,7 @@ export function BlockAnalysisPanel({ block, blocks, previousBlock, relations, ye
         </section>
 
         <section>
-          <h4>Dernier signal</h4>
+          <h4>Signal récent</h4>
           <p>{recentRelation?.recentTrend ?? report.strategicVulnerability}</p>
         </section>
       </div>

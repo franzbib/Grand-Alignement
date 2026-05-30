@@ -151,14 +151,30 @@ export function getCollidingTrajectories(scores: TrajectoryScores): string[] {
 
 export function getTrajectoryWeakSignals(scores: TrajectoryScores): string[] {
   const signals = [
-    scores.t1 >= 65 ? "Unification humaine imparfaite : la cohésion progresse sans effacer la lenteur institutionnelle." : null,
-    scores.t5 >= 65 ? "Escalade militaire en progression." : null,
-    scores.t2 >= 65 ? "Tutelle algorithmique avancée." : null,
-    scores.t4 >= 65 ? "Abêtissement médiatique : la stabilité apparente masque une perte de lucidité." : null,
-    scores.t6 >= 65 ? "Capture privée : la richesse se concentre autour de dispositifs peu contestés." : null,
-    scores.t8 >= 65 ? "Stress climatique critique." : null,
-    scores.t7 >= 65 ? "Saturation systémique en progression." : null,
-    scores.t3 >= 65 ? "Résistance humaine en cristallisation." : null,
+    scores.t1 >= 65
+      ? "Unification humaine imparfaite : la cohésion progresse, mais les institutions gardent leur lenteur — signe qu'elles restent vivantes."
+      : null,
+    scores.t5 >= 65
+      ? "Escalade militaire : la peur devient un mode de coordination entre les blocs. Les canaux de désescalade existent encore — et sont moins utilisés."
+      : null,
+    scores.t2 >= 65
+      ? "Tutelle algorithmique : les décisions humaines ne disparaissent pas encore, elles deviennent des ratifications."
+      : null,
+    scores.t4 >= 65
+      ? "Abêtissement médiatique : la stabilité s'installe, mais la capacité à contester ce qui la produit recule discrètement."
+      : null,
+    scores.t6 >= 65
+      ? "Capture privée : la richesse se concentre dans des mains que les institutions ne savent plus exactement nommer."
+      : null,
+    scores.t8 >= 65
+      ? "Réel climatique : le stress climatique dépasse les seuils que les institutions ont cessé de nommer publiquement."
+      : null,
+    scores.t7 >= 65
+      ? "Saturation systémique : les institutions répondent encore, mais leurs délais allongent et leurs contradictions s'accumulent."
+      : null,
+    scores.t3 >= 65
+      ? "Résistance humaine : plusieurs blocs développent une méfiance active envers les systèmes algorithmiques. Elle n'est pas encore coordonnée."
+      : null,
   ];
 
   return signals.filter((signal): signal is string => Boolean(signal)).slice(0, 2);
