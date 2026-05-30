@@ -49,7 +49,7 @@ npm.cmd run build
 - Six jauges globales, dont le soupçon IA.
 - Carte mondiale stylisée et cliquable.
 - Rapport de bloc dynamique sur sélection de zone.
-- Onglet Blocs réorganisé en journal synthétique : liste compacte, synthèse narrative, année de partie, direction dominante, indicateurs interprétatifs et brèves de bloc.
+- Onglet Blocs réorganisé en journal synthétique : liste compacte, synthèse narrative, année de partie, direction dominante, quatre jauges synthétiques, indicateurs interprétatifs et brèves de bloc.
 - Relations inter-blocs légères avec tension, coopération, dépendance et domaine.
 - Dynamique autonome du monde à chaque tour.
 - Couche légère de groupes sociaux internes par bloc.
@@ -75,9 +75,9 @@ npm.cmd run build
 
 ## Dernière modification utile
 
-Passe UX ciblée sur l'onglet Blocs. Les fichiers modifiés sont `src/App.tsx`, `src/components/BlocksGrid.tsx`, `src/components/BlockCard.tsx`, `src/components/BlockAnalysisPanel.tsx`, `src/engine/blockNarrative.ts`, `src/styles/main.css` et `docs/REPRISE.md`.
+Micro-passe corrective sur l'onglet Blocs. Les fichiers modifiés sont `src/components/BlockAnalysisPanel.tsx`, `src/engine/blockNarrative.ts`, `src/styles/main.css` et `docs/REPRISE.md`.
 
-L'onglet Blocs affiche désormais une année dérivée du tour, une direction dominante calculée depuis les variables existantes, quatre indicateurs qualitatifs et des brèves courtes générées en lecture seule. Les jauges ne sont plus répétées dans la synthèse du bloc sélectionné. Build vérifié avec `npm.cmd run build` : OK.
+Le panneau de synthèse du bloc sélectionné réintroduit quatre jauges graphiques compactes : stabilité, tension sociale, liberté et confiance IA. Les textes narratifs et les brèves varient davantage selon l'année, les tendances récentes, les seuils de confiance IA, de liberté, de stabilité et de tension sociale. Build vérifié avec `npm.cmd run build` : OK.
 
 ## Ce qui reste à faire
 
@@ -89,7 +89,7 @@ L'onglet Blocs affiche désormais une année dérivée du tour, une direction do
 
 ## Prochaine action recommandée
 
-Playtest de 10 à 15 tours pour vérifier si le journal synthétique des blocs aide réellement à choisir les cibles d'influence.
+Playtest de 10 à 15 tours pour vérifier si les jauges compactes et les brèves évolutives améliorent la lecture des blocs sans rallonger l'écran.
 
 ## Hors périmètre actuel
 

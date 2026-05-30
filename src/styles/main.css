@@ -783,6 +783,27 @@ button {
   line-height: 1.55;
 }
 
+.block-analysis__vitals {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 10px;
+  border: 1px solid #ded8c9;
+  border-radius: 8px;
+  background: #fffdf7;
+}
+
+.block-analysis__vitals .stat-gauge {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.block-analysis__vitals .stat-gauge__header {
+  font-size: 0.74rem;
+}
+
 .block-indicators {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1538,6 +1559,7 @@ button {
   .blocks-analysis-layout,
   .block-analysis__grid,
   .block-indicators,
+  .block-analysis__vitals,
   .relation-card,
   .report-grid {
     grid-template-columns: 1fr;

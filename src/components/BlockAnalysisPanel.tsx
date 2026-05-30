@@ -2,6 +2,7 @@ import { generateBlockNarrativeSummary } from "../engine/blockNarrative";
 import { generateBlockReport } from "../engine/reports";
 import { getRelationStatus } from "../engine/relations";
 import type { Block, BlockId, BlockTrend, InterBlockRelation } from "../types/game";
+import { StatGauge } from "./StatGauge";
 
 type BlockAnalysisPanelProps = {
   block: Block;
@@ -55,6 +56,13 @@ export function BlockAnalysisPanel({ block, blocks, previousBlock, relations, ye
       </div>
 
       <p className="block-analysis__lead">{narrative.summary}</p>
+
+      <div className="block-analysis__vitals" aria-label="Jauges synthétiques du bloc">
+        <StatGauge label="Stabilité" value={block.stats.stabilite} />
+        <StatGauge label="Tension sociale" value={block.stats.tensionSociale} tone="danger" />
+        <StatGauge label="Liberté" value={block.stats.liberte} />
+        <StatGauge label="Confiance IA" value={block.stats.confianceIA} />
+      </div>
 
       <div className="block-indicators" aria-label="Indicateurs interprétatifs">
         {narrative.indicators.map((indicator) => (
