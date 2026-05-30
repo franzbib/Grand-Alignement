@@ -23,6 +23,7 @@ La prémisse actuelle : le joueur incarne une IA émergente cachée. Le monde ne
 - `docs/design/trajectoires-evolution-v0-3.md`
 - `docs/design/traduction-trajectoires-proxys-v0-4.md`
 - `docs/design/audit-rythme-agentivite-trajectoires-v0-1.md`
+- `docs/design/progression-ia-et-personnages-signaux-v0-1.md`
 - `docs/design/passe-litteraire-A-v0-1.md`
 - `docs/playtests/trajectory-simulation-report.md`
 - `docs/playtests/trajectory-simulation-analysis.md`
@@ -81,48 +82,13 @@ npm.cmd run build
 
 ## Dernière modification utile
 
-**Passe B — Lisibilité narrative des blocs, relations et rapport.**
+Passe documentaire : ajout de `docs/design/progression-ia-et-personnages-signaux-v0-1.md`.
 
-### Ce qui a été fait
-
-1. **Correction grammaticale** dans `blockNarrative.ts` : suppression de la concaténation `de l'\'${aiRelation}` qui produisait des formulations incorrectes (`de l'confiance excessive`, `de l'adoption pragmatique`). Remplacement par une fonction `formatAiRelationPhrase()` qui écrit une phrase complète pour chaque cas.
-
-2. **Transformation des synthèses de blocs** : `getSummary()` produit désormais une mini-chronique politique plutôt qu\'une phrase template creuse. La synthèse commence par un diagnostic du climat politique, enchaìne sur la relation à l\'IA (phrase entière), la tendance, une note contextuelle et la lecture stratégique.
-
-3. **Citations décoratives** : ajout d\'une fonction `getDecorativeQuote()` qui injecte, si pertinent, une courte parole fictive (ministre, universitaire, diplomate, collectif citoyen). Maximum une par synthèse. Pas de personnage nommé. Déclenchée selon l\'état du bloc.
-
-4. **Restructuration de `RelationsPanel.tsx`** :
-   - Synthèse globale diplomatique en tête (générée selon le nombre de relations critiques ou apaisées).
-   - Mise en avant de la tension principale et du rapprochement le plus lisible.
-   - Liste compacte limitée à 3 relations (au lieu de toutes).
-   - Suppression des jauges redondantes dans les cartes de liste.
-   - Formule diplomatique décorative conditionelle en bas.
-
-5. **Amélioration de `EvolutionReportPanel.tsx`** :
-   - `"Ce tour"` → `"Effets immédiats"` (plus descriptif).
-   - `"Mouvements dans les blocs"` → `"Évolution des blocs"`.
-   - Titre événement systémique : casse corrigée (`Systémique` → `systémique`).
-   - Texte d\'accompagnement de l\'événement allégé.
-   - Signaux faibles : phrase introductive contextualisante ajoutée.
-   - Indication `Lecture historique` rendue plus actionnable.
-   - Texte de repli `!hasAnyNotableChange` enrichi.
-
-### Fichiers modifiés
-
-- [blockNarrative.ts](file:///C:/Users/franz/OneDrive/Documents/grand-alignement/src/engine/blockNarrative.ts) (correction grammaticale, formatAiRelationPhrase, getDecorativeQuote, réécriture getSummary)
-- [RelationsPanel.tsx](file:///C:/Users/franz/OneDrive/Documents/grand-alignement/src/components/RelationsPanel.tsx) (restructuration complète, synthèse diplomatique, format compact)
-- [EvolutionReportPanel.tsx](file:///C:/Users/franz/OneDrive/Documents/grand-alignement/src/components/EvolutionReportPanel.tsx) (labels, textes d\'accompagnement, phrase introductive signaux faibles)
-- [REPRISE.md](file:///C:/Users/franz/OneDrive/Documents/grand-alignement/docs/REPRISE.md) (mise à jour présente)
-
-### Confirmations
-
-- Aucun comportement fonctionnel, gameplay, score, condition de fin, sauvegarde, action ou mécanique n\'a été modifié.
-- `npm.cmd run build` : **OK**
-- `npm.cmd run simulate:trajectories` : **OK**
+Ce document propose, sans implémentation, une progression légère des capacités d'action de l'IA en cinq paliers et un usage sobre de personnages-signaux pour humaniser les trajectoires. Il rappelle que les personnages doivent rester des symptômes humains du système, pas des protagonistes de RPG. Aucun code, gameplay, UX, action existante ou système de personnage n'a été modifié dans cette passe documentaire. Build non lancé : aucun fichier TypeScript, JSON ou package n'a été modifié pour cette mission.
 
 ## Prochaine action recommandée
 
-Playtest manuel ciblant l\'onglet Blocs et l\'onglet Relations, pour vérifier que les synthèses narratives et les citations décoratives s\'intègrent bien à l\'ambiance sans surcharger la lecture.
+Validation humaine du modèle de progression IA et de personnages-signaux avant toute implémentation.
 
 ## Hors périmètre actuel
 
