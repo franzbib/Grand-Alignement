@@ -23,6 +23,7 @@ La prémisse actuelle : le joueur incarne une IA émergente cachée. Le monde ne
 - `docs/design/trajectoires-evolution-v0-3.md`
 - `docs/design/traduction-trajectoires-proxys-v0-4.md`
 - `docs/design/audit-rythme-agentivite-trajectoires-v0-1.md`
+- `docs/design/passe-litteraire-A-v0-1.md`
 - `docs/playtests/trajectory-simulation-report.md`
 - `docs/playtests/trajectory-simulation-analysis.md`
 
@@ -76,12 +77,13 @@ npm.cmd run build
 - Document de conception v0.2 ajouté pour les fins, trajectoires et personnages, non implémenté intégralement.
 - Document de conception v0.3 ajouté pour les trajectoires d'évolution, non implémenté.
 - Document de conception technique v0.4 ajouté pour la traduction des trajectoires en proxys codables.
+- Passe littéraire A disponible comme document d'intégration strictement textuelle.
 
 ## Dernière modification utile
 
-Micro-passe de cohérence transversale entre Rapport, trajectoires et écrans de lecture.
+Passe documentaire : ajout de `docs/design/passe-litteraire-A-v0-1.md`.
 
-Les fichiers modifiés sont `src/engine/trajectories.ts`, `src/components/EvolutionReportPanel.tsx`, `src/styles/main.css`, `docs/playtests/trajectory-simulation-analysis.md`, `docs/playtests/trajectory-simulation-report.md` et `docs/REPRISE.md`. Les signaux faibles de trajectoire couvrent désormais aussi `Unification humaine imparfaite`, `Capture privée` et `Abêtissement médiatique`, et le rapport rappelle que la lecture historique doit être confrontée à la carte, aux blocs et au journal. Commandes lancées : `npm.cmd run build` OK et `npm.cmd run simulate:trajectories` OK. Aucun gameplay, équilibrage, score, fin, action, sauvegarde ou profil de simulation n'a été modifié.
+Ce document rassemble les textes prêts à intégrer issus de l'audit narratif : renommage des sections du rapport, reformulation des signaux faibles de trajectoire, extension des descriptions de fins existantes, ajustement de quelques labels de l'onglet Blocs et mini-lexique de cohérence. Aucun code, gameplay, équilibrage, score, action, fin comme condition, sauvegarde ou UX structurelle n'a été modifié.
 
 ## Ce qui reste à faire
 
@@ -93,7 +95,7 @@ Les fichiers modifiés sont `src/engine/trajectories.ts`, `src/components/Evolut
 
 ## Prochaine action recommandée
 
-Playtest manuel de 10 à 20 tours pour vérifier si les signaux de trajectoire se retrouvent bien dans la carte, les rapports de blocs et le journal.
+Intégrer la Passe littéraire A avec Antigravity ou Codex en modification strictement textuelle, sans toucher au gameplay : labels du rapport, signaux faibles de trajectoire, descriptions des quatre fins existantes, labels de blocs et textes de repli.
 
 ## Hors périmètre actuel
 
