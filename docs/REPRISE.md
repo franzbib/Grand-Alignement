@@ -64,6 +64,7 @@ npm.cmd run build
 - Rapport d'évolution densifié après chaque tour, avec tendances de blocs et signaux sociaux.
 - Rapport d'évolution enrichi avec signaux autonomes et changements relationnels.
 - Scores de trajectoires calculés en lecture seule dans le rapport d'évolution : trajectoire dominante, signaux secondaires et au plus deux signaux faibles.
+- Outil local de simulation des trajectoires lançable avec `npm.cmd run simulate:trajectories`.
 - Journal des conséquences.
 - Événements systémiques, dont deux liés au soupçon IA.
 - Sauvegarde automatique dans `localStorage`.
@@ -75,9 +76,9 @@ npm.cmd run build
 
 ## Dernière modification utile
 
-Micro-passe corrective sur l'onglet Blocs. Les fichiers modifiés sont `src/components/BlockAnalysisPanel.tsx`, `src/engine/blockNarrative.ts`, `src/styles/main.css` et `docs/REPRISE.md`.
+Ajout d'un outil local de playtest automatique des trajectoires. Les fichiers modifiés ou créés sont `package.json`, `package-lock.json`, `scripts/simulate-trajectories.ts`, `src/engine/simulateGame.ts`, `docs/playtests/trajectory-simulation-report.md` et `docs/REPRISE.md`.
 
-Le panneau de synthèse du bloc sélectionné réintroduit quatre jauges graphiques compactes : stabilité, tension sociale, liberté et confiance IA. Les textes narratifs et les brèves varient davantage selon l'année, les tendances récentes, les seuils de confiance IA, de liberté, de stabilité et de tension sociale. Build vérifié avec `npm.cmd run build` : OK.
+La commande `npm.cmd run simulate:trajectories` simule huit profils de joueur aux horizons 5, 10, 30 et 50 tours, puis écrit un rapport synthétique dans `docs/playtests/trajectory-simulation-report.md`. L'outil observe les jauges, blocs, trajectoires dominantes, trajectoires secondaires et fins éventuelles sans modifier le gameplay public. Build vérifié avec `npm.cmd run build` : OK.
 
 ## Ce qui reste à faire
 
@@ -89,7 +90,7 @@ Le panneau de synthèse du bloc sélectionné réintroduit quatre jauges graphiq
 
 ## Prochaine action recommandée
 
-Playtest de 10 à 15 tours pour vérifier si les jauges compactes et les brèves évolutives améliorent la lecture des blocs sans rallonger l'écran.
+Lire le rapport `docs/playtests/trajectory-simulation-report.md`, puis décider humainement s'il faut une passe d'équilibrage ciblée sur les saturations de jauges et la domination de certaines trajectoires.
 
 ## Hors périmètre actuel
 
