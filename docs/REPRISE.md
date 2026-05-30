@@ -22,6 +22,7 @@ La prémisse actuelle : le joueur incarne une IA émergente cachée. Le monde ne
 - `docs/design/fins-trajectoires-personnages-v0-2.md`
 - `docs/design/trajectoires-evolution-v0-3.md`
 - `docs/design/traduction-trajectoires-proxys-v0-4.md`
+- `docs/design/audit-rythme-agentivite-trajectoires-v0-1.md`
 - `docs/playtests/trajectory-simulation-report.md`
 - `docs/playtests/trajectory-simulation-analysis.md`
 
@@ -78,9 +79,9 @@ npm.cmd run build
 
 ## Dernière modification utile
 
-Micro-passe sur la lecture des scores de trajectoires. Les fichiers modifiés sont `src/engine/trajectories.ts`, `docs/playtests/trajectory-simulation-report.md`, `docs/playtests/trajectory-simulation-analysis.md` et `docs/REPRISE.md`.
+Passe documentaire : ajout de `docs/design/audit-rythme-agentivite-trajectoires-v0-1.md`.
 
-La formule de `Capture privée` a été rendue plus discriminante : elle exige davantage une co-présence richesse/liberté basse, une dépendance technologique ou commerciale et un signal de concentration, au lieu de trois extrêmes indépendants. Un léger ajustement du score `Réel climatique` évite aussi que le stress climatique initial devienne la trajectoire dominante par défaut. Commandes lancées : `npm.cmd run build` OK et `npm.cmd run simulate:trajectories` OK. Aucun gameplay, action, fin, événement ou équilibrage n'a été modifié.
+Ce document fixe une doctrine de rythme et d'agentivité pour les futurs agents : partie cible de 20 à 30 tours, 50 tours comme stress test, trajectoires progressivement lisibles et cohérence narrative entre Carte, Rapport, Blocs, Journal, Influence et fins. Aucun code, gameplay, équilibrage, score, texte narratif ou script de simulation n'a été modifié.
 
 ## Ce qui reste à faire
 
@@ -92,7 +93,7 @@ La formule de `Capture privée` a été rendue plus discriminante : elle exige d
 
 ## Prochaine action recommandée
 
-Playtest manuel de 10 à 20 tours pour vérifier si les trajectoires affichées en rapport correspondent mieux au ressenti réel de partie.
+Validation humaine de la doctrine de rythme et d'agentivité avant toute nouvelle passe d'équilibrage ou d'UX fondée sur les trajectoires.
 
 ## Hors périmètre actuel
 
