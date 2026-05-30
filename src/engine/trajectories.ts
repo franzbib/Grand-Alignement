@@ -151,8 +151,11 @@ export function getCollidingTrajectories(scores: TrajectoryScores): string[] {
 
 export function getTrajectoryWeakSignals(scores: TrajectoryScores): string[] {
   const signals = [
+    scores.t1 >= 65 ? "Unification humaine imparfaite : la cohésion progresse sans effacer la lenteur institutionnelle." : null,
     scores.t5 >= 65 ? "Escalade militaire en progression." : null,
     scores.t2 >= 65 ? "Tutelle algorithmique avancée." : null,
+    scores.t4 >= 65 ? "Abêtissement médiatique : la stabilité apparente masque une perte de lucidité." : null,
+    scores.t6 >= 65 ? "Capture privée : la richesse se concentre autour de dispositifs peu contestés." : null,
     scores.t8 >= 65 ? "Stress climatique critique." : null,
     scores.t7 >= 65 ? "Saturation systémique en progression." : null,
     scores.t3 >= 65 ? "Résistance humaine en cristallisation." : null,

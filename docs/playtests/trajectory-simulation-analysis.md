@@ -210,3 +210,17 @@ Le diagnostic est donc plus différencié, sans modification du gameplay.
 - `Réel climatique` reste très fort dans les profils qui n'agissent pas sur le climat ou qui l'aggravent.
 - Les saturations de jauges à 30-50 tours restent présentes : elles relèvent d'une future passe d'équilibrage, pas de cette correction de lecture.
 - `Capture privée` devra être réévaluée quand une vraie variable ou proxy plus robuste de capture privée existera.
+
+## Micro-passe de cohérence transversale des écrans
+
+### Problème observé
+
+Certaines trajectoires existaient dans le diagnostic de rapport, mais ne remontaient pas assez comme signaux faibles lisibles. `Unification humaine imparfaite`, `Capture privée` et `Abêtissement médiatique` pouvaient donc rester trop abstraites, alors que `Escalade`, `Tutelle algorithmique`, `Réel climatique`, `Saturation systémique` et `Résistance humaine` disposaient déjà de relais textuels.
+
+### Modification appliquée
+
+Sans modifier les scores ni le gameplay, les signaux faibles de trajectoire ont été complétés pour couvrir les principales dynamiques surveillées. Le panneau de rapport précise aussi que la lecture historique est indicative et doit être confrontée à la carte, aux blocs et au journal.
+
+### Effet attendu
+
+Le rapport d'évolution sert mieux de passerelle entre diagnostic historique, symptômes cartographiques, états de blocs et événements du journal. Les trajectoires restent en lecture seule : elles ne déclenchent ni fin, ni événement, ni modification d'état.

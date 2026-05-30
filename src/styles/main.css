@@ -1413,6 +1413,13 @@ button {
   border-left: 4px solid #52645a;
 }
 
+.report-muted {
+  margin: 4px 0 8px;
+  color: #5f6a63;
+  font-size: 0.86rem;
+  line-height: 1.35;
+}
+
 .report-event-alert {
   margin-bottom: 16px;
   padding: 14px;

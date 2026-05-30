@@ -79,9 +79,9 @@ npm.cmd run build
 
 ## Dernière modification utile
 
-Passe documentaire : ajout de `docs/design/audit-rythme-agentivite-trajectoires-v0-1.md`.
+Micro-passe de cohérence transversale entre Rapport, trajectoires et écrans de lecture.
 
-Ce document fixe une doctrine de rythme et d'agentivité pour les futurs agents : partie cible de 20 à 30 tours, 50 tours comme stress test, trajectoires progressivement lisibles et cohérence narrative entre Carte, Rapport, Blocs, Journal, Influence et fins. Aucun code, gameplay, équilibrage, score, texte narratif ou script de simulation n'a été modifié.
+Les fichiers modifiés sont `src/engine/trajectories.ts`, `src/components/EvolutionReportPanel.tsx`, `src/styles/main.css`, `docs/playtests/trajectory-simulation-analysis.md`, `docs/playtests/trajectory-simulation-report.md` et `docs/REPRISE.md`. Les signaux faibles de trajectoire couvrent désormais aussi `Unification humaine imparfaite`, `Capture privée` et `Abêtissement médiatique`, et le rapport rappelle que la lecture historique doit être confrontée à la carte, aux blocs et au journal. Commandes lancées : `npm.cmd run build` OK et `npm.cmd run simulate:trajectories` OK. Aucun gameplay, équilibrage, score, fin, action, sauvegarde ou profil de simulation n'a été modifié.
 
 ## Ce qui reste à faire
 
@@ -93,7 +93,7 @@ Ce document fixe une doctrine de rythme et d'agentivité pour les futurs agents 
 
 ## Prochaine action recommandée
 
-Validation humaine de la doctrine de rythme et d'agentivité avant toute nouvelle passe d'équilibrage ou d'UX fondée sur les trajectoires.
+Playtest manuel de 10 à 20 tours pour vérifier si les signaux de trajectoire se retrouvent bien dans la carte, les rapports de blocs et le journal.
 
 ## Hors périmètre actuel
 

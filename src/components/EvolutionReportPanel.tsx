@@ -188,7 +188,8 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
 
         {hasTrajectoryInsight && (
           <div className="trajectory-diagnostic">
-            <h3>Lecture de trajectoire</h3>
+            <h3>Lecture historique</h3>
+            <p className="report-muted">Diagnostic indicatif : à confronter à la carte, aux blocs et au journal.</p>
             {report.dominantTrajectory && <p>Dominante : {report.dominantTrajectory}</p>}
             {trajectorySignals.length > 0 && (
               <div className="report-sub-section">
