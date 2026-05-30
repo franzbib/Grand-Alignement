@@ -1,6 +1,5 @@
 import { getRelationStatus } from "../engine/relations";
 import type { Block, InterBlockRelation } from "../types/game";
-import { StatGauge } from "./StatGauge";
 
 type RelationsPanelProps = {
   blocks: Block[];
@@ -17,40 +16,119 @@ const domainLabels: Record<InterBlockRelation["domain"], string> = {
   resources: "Ressources",
 };
 
+function getGlobalDiplomaticSynthesis(relations: InterBlockRelation[]): string {
+  const criticalCount = relations.filter((r) => getRelationStatus(r) === "critique").length;
+  const tensedCount = relations.filter((r) => getRelationStatus(r) === "tendue").length;
+  const peacefulCount = relations.filter((r) => getRelationStatus(r) === "apaisée").length;
+
+  if (criticalCount >= 2) {
+    return "Plusieurs relations ont atteint un niveau critique. La coopération reste formellement maintenue, mais elle ne repose plus sur la confiance.";
+  }
+  if (criticalCount === 1) {
+    return "Une relation a basculé dans le rouge. Les autres restent sous contrôle, mais la contagion des tensions est possible.";
+  }
+  if (tensedCount >= 3) {
+    return "Les relations mondiales restent officiellement stables, mais plusieurs blocs traitent désormais la coopération comme une forme de dépendance.";
+  }
+  if (peacefulCount >= 3) {
+    return "Les relations inter-blocs traversent une phase de détente relative. Elle tient moins à une confiance retrouvée qu'à la fatigue des crises successives.";
+  }
+  return "Les équilibres diplomatiques se maintiennent par inertie. Aucune rupture nette, mais aucune confiance structurée non plus.";
+}
+
+function getDecorativeDiplomaticNote(relations: InterBlockRelation[]): string | null {
+  const mostTense = [...relations].sort((a, b) => b.tension - a.tension)[0];
+  if (!mostTense) return null;
+
+  const status = getRelationStatus(mostTense);
+  if (status === "critique") {
+    return "« Les canaux diplomatiques restent ouverts. C'est ce qu'ils ne disent plus qui compte », observe un négociateur.";
+  }
+  if (status === "tendue") {
+    return "« L'accord est maintenu. Il ressemble moins à une paix qu'à une manière de différer le conflit », note un analyste.";
+  }
+  return null;
+}
+
 export function RelationsPanel({ blocks, relations }: RelationsPanelProps) {
   const blockNames = new Map(blocks.map((block) => [block.id, block.name]));
+
+  const sortedByTension = [...relations].sort((a, b) => b.tension - a.tension);
+  const sortedByCooperation = [...relations].sort((a, b) => b.cooperation - a.cooperation);
+
+  const mainTension = sortedByTension[0];
+  const mainCooperation = sortedByCooperation.find(
+    (r) => r.id !== mainTension?.id && r.cooperation >= 50,
+  );
+
+  // Show only up to 3 relations (most tension first), excluding already highlighted ones
+  const compactRelations = sortedByTension.slice(0, 3);
+
+  const globalSynthesis = getGlobalDiplomaticSynthesis(relations);
+  const diplomaticNote = getDecorativeDiplomaticNote(relations);
 
   return (
     <section className="panel relations-panel" aria-labelledby="relations-title">
       <div className="panel-heading">
         <div>
           <p className="eyebrow">Monde autonome</p>
-          <h2 id="relations-title">Tensions inter-blocs</h2>
+          <h2 id="relations-title">Relations inter-blocs</h2>
         </div>
-        <strong>{relations.length} relations suivies</strong>
       </div>
-      <p className="panel-help">
-        Quelques relations structurantes évoluent à chaque tour. Elles ne forment pas une diplomatie complète.
-      </p>
-      <div className="relations-list">
-        {relations.map((relation) => (
-          <article className={`relation-card relation-card--${getRelationStatus(relation)}`} key={relation.id}>
-            <div>
-              <small>{domainLabels[relation.domain]}</small>
-              <h3>{relation.label}</h3>
-              <p>
-                {blockNames.get(relation.from)} ↔ {blockNames.get(relation.to)} · {getRelationStatus(relation)}
-              </p>
-              <p>{relation.recentTrend ?? "Tendance stable."}</p>
+
+      <p className="panel-help">{globalSynthesis}</p>
+
+      {mainTension && (
+        <div className="relation-highlight relation-highlight--tension">
+          <small className="eyebrow">Tension principale · {domainLabels[mainTension.domain]}</small>
+          <p className="relation-highlight__title">{mainTension.label}</p>
+          <p className="relation-highlight__detail">
+            {blockNames.get(mainTension.from)} ↔ {blockNames.get(mainTension.to)} —{" "}
+            <em>{getRelationStatus(mainTension)}</em>
+          </p>
+          {mainTension.recentTrend && (
+            <p className="relation-highlight__trend">{mainTension.recentTrend}</p>
+          )}
+        </div>
+      )}
+
+      {mainCooperation && (
+        <div className="relation-highlight relation-highlight--cooperation">
+          <small className="eyebrow">Rapprochement lisible · {domainLabels[mainCooperation.domain]}</small>
+          <p className="relation-highlight__title">{mainCooperation.label}</p>
+          <p className="relation-highlight__detail">
+            {blockNames.get(mainCooperation.from)} ↔ {blockNames.get(mainCooperation.to)} —{" "}
+            coopération {mainCooperation.cooperation}
+          </p>
+        </div>
+      )}
+
+      <div className="relations-compact-list">
+        {compactRelations.map((relation) => (
+          <div
+            className={`relation-compact relation-compact--${getRelationStatus(relation)}`}
+            key={relation.id}
+          >
+            <div className="relation-compact__header">
+              <span className="relation-compact__domain">{domainLabels[relation.domain]}</span>
+              <span className={`relation-compact__status relation-compact__status--${getRelationStatus(relation)}`}>
+                {getRelationStatus(relation)}
+              </span>
             </div>
-            <div className="relation-card__gauges">
-              <StatGauge label="Tension" value={relation.tension} tone="danger" />
-              <StatGauge label="Coopération" value={relation.cooperation} />
-              <StatGauge label="Dépendance" value={relation.dependence} tone="warning" />
-            </div>
-          </article>
+            <p className="relation-compact__label">{relation.label}</p>
+            <p className="relation-compact__blocks">
+              {blockNames.get(relation.from)} ↔ {blockNames.get(relation.to)}
+            </p>
+            {relation.recentTrend && (
+              <p className="relation-compact__trend">{relation.recentTrend}</p>
+            )}
+          </div>
         ))}
       </div>
+
+      {diplomaticNote && (
+        <p className="relations-diplomatic-note">{diplomaticNote}</p>
+      )}
     </section>
   );
 }

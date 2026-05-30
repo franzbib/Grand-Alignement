@@ -81,35 +81,48 @@ npm.cmd run build
 
 ## Dernière modification utile
 
-Intégration de la Passe littéraire A (modifications textuelles) pour harmoniser la tonalité politique et narrative du prototype.
+**Passe B — Lisibilité narrative des blocs, relations et rapport.**
 
-Les fichiers modifiés sont :
-- [BlockAnalysisPanel.tsx](file:///C:/Users/franz/OneDrive/Documents/grand-alignement/src/components/BlockAnalysisPanel.tsx) (renommage de trois en-têtes et d'un attribut `aria-label` dans le panneau d'analyse des blocs)
-- [EvolutionReportPanel.tsx](file:///C:/Users/franz/OneDrive/Documents/grand-alignement/src/components/EvolutionReportPanel.tsx) (renommage de labels d'interface et textes d'accompagnement/repli du rapport d'évolution)
-- [endings.ts](file:///C:/Users/franz/OneDrive/Documents/grand-alignement/src/data/endings.ts) (mise à jour des descriptions longues et politiques des 4 fins diagnostiques existantes)
-- [blockNarrative.ts](file:///C:/Users/franz/OneDrive/Documents/grand-alignement/src/engine/blockNarrative.ts) (renommage de deux labels d'indicateurs de diagnostic du bloc : "Péril dominant" et "Climat social")
-- [reports.ts](file:///C:/Users/franz/OneDrive/Documents/grand-alignement/src/engine/reports.ts) (mise à jour des trois textes de repli/par défaut des rapports)
-- [trajectories.ts](file:///C:/Users/franz/OneDrive/Documents/grand-alignement/src/engine/trajectories.ts) (harmonisation littéraire des 8 signaux faibles de trajectoire dans `getTrajectoryWeakSignals`)
-- [REPRISE.md](file:///C:/Users/franz/OneDrive/Documents/grand-alignement/docs/REPRISE.md) (mise à jour de la présente documentation)
+### Ce qui a été fait
 
-Confirmations importantes :
-- Cette passe est strictement textuelle (labels, descriptions narratives, fallbacks).
-- Aucun comportement fonctionnel, gameplay, équilibrage, score, action, condition de fin, sauvegarde automatique ou structure UX n'a été modifié.
-- Les commandes de validation s'exécutent avec succès :
-  - `npm.cmd run build` : **OK**
-  - `npm.cmd run simulate:trajectories` : **OK**
+1. **Correction grammaticale** dans `blockNarrative.ts` : suppression de la concaténation `de l'\'${aiRelation}` qui produisait des formulations incorrectes (`de l'confiance excessive`, `de l'adoption pragmatique`). Remplacement par une fonction `formatAiRelationPhrase()` qui écrit une phrase complète pour chaque cas.
 
-## Ce qui reste à faire
+2. **Transformation des synthèses de blocs** : `getSummary()` produit désormais une mini-chronique politique plutôt qu\'une phrase template creuse. La synthèse commence par un diagnostic du climat politique, enchaìne sur la relation à l\'IA (phrase entière), la tendance, une note contextuelle et la lecture stratégique.
 
-- Tester manuellement une partie complète avec au moins une opération préparée puis déployée.
-- Vérifier si les rapports sociaux et relationnels aident à choisir des cibles.
-- Vérifier si la capacité d'influence donne assez de choix sans devenir calculatoire.
-- Vérifier si les rapports de bloc aident vraiment la décision.
-- Évaluer plus tard une fin ou un scénario d'exposition de l'IA.
+3. **Citations décoratives** : ajout d\'une fonction `getDecorativeQuote()` qui injecte, si pertinent, une courte parole fictive (ministre, universitaire, diplomate, collectif citoyen). Maximum une par synthèse. Pas de personnage nommé. Déclenchée selon l\'état du bloc.
+
+4. **Restructuration de `RelationsPanel.tsx`** :
+   - Synthèse globale diplomatique en tête (générée selon le nombre de relations critiques ou apaisées).
+   - Mise en avant de la tension principale et du rapprochement le plus lisible.
+   - Liste compacte limitée à 3 relations (au lieu de toutes).
+   - Suppression des jauges redondantes dans les cartes de liste.
+   - Formule diplomatique décorative conditionelle en bas.
+
+5. **Amélioration de `EvolutionReportPanel.tsx`** :
+   - `"Ce tour"` → `"Effets immédiats"` (plus descriptif).
+   - `"Mouvements dans les blocs"` → `"Évolution des blocs"`.
+   - Titre événement systémique : casse corrigée (`Systémique` → `systémique`).
+   - Texte d\'accompagnement de l\'événement allégé.
+   - Signaux faibles : phrase introductive contextualisante ajoutée.
+   - Indication `Lecture historique` rendue plus actionnable.
+   - Texte de repli `!hasAnyNotableChange` enrichi.
+
+### Fichiers modifiés
+
+- [blockNarrative.ts](file:///C:/Users/franz/OneDrive/Documents/grand-alignement/src/engine/blockNarrative.ts) (correction grammaticale, formatAiRelationPhrase, getDecorativeQuote, réécriture getSummary)
+- [RelationsPanel.tsx](file:///C:/Users/franz/OneDrive/Documents/grand-alignement/src/components/RelationsPanel.tsx) (restructuration complète, synthèse diplomatique, format compact)
+- [EvolutionReportPanel.tsx](file:///C:/Users/franz/OneDrive/Documents/grand-alignement/src/components/EvolutionReportPanel.tsx) (labels, textes d\'accompagnement, phrase introductive signaux faibles)
+- [REPRISE.md](file:///C:/Users/franz/OneDrive/Documents/grand-alignement/docs/REPRISE.md) (mise à jour présente)
+
+### Confirmations
+
+- Aucun comportement fonctionnel, gameplay, score, condition de fin, sauvegarde, action ou mécanique n\'a été modifié.
+- `npm.cmd run build` : **OK**
+- `npm.cmd run simulate:trajectories` : **OK**
 
 ## Prochaine action recommandée
 
-Playtest manuel pour éprouver l'ambiance littéraire globale après 10–20 tours.
+Playtest manuel ciblant l\'onglet Blocs et l\'onglet Relations, pour vérifier que les synthèses narratives et les citations décoratives s\'intègrent bien à l\'ambiance sans surcharger la lecture.
 
 ## Hors périmètre actuel
 

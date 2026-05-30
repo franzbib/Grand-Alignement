@@ -90,7 +90,7 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
       <div className="report-grid">
         {hasEffetsMajeurs && (
           <div>
-            <h3>Ce tour</h3>
+            <h3>Effets immédiats</h3>
             
             {immediateInterventions.length > 0 && (
               <div className="report-sub-section">
@@ -129,7 +129,7 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
 
         {hasBlocsAffectes && (
           <div>
-            <h3>Mouvements dans les blocs</h3>
+            <h3>Évolution des blocs</h3>
             
             {affectedBlocks.length > 0 && (
               <div className="report-sub-section">
@@ -189,7 +189,7 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
         {hasTrajectoryInsight && (
           <div className="trajectory-diagnostic">
             <h3>Lecture historique</h3>
-            <p className="report-muted">Lecture indicative : à confronter à la carte, aux blocs et au journal.</p>
+            <p className="report-muted">Indication provisoire — à confronter à la carte et aux blocs avant d\'agir.</p>
             {report.dominantTrajectory && <p>Dominante : {report.dominantTrajectory}</p>}
             {trajectorySignals.length > 0 && (
               <div className="report-sub-section">
@@ -234,15 +234,16 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
 
         {hasEvent && (
           <div className="report-event-alert" aria-live="polite" style={{ gridColumn: "1 / -1" }}>
-            <span className="eyebrow">Événement Systémique</span>
+            <span className="eyebrow">Événement systémique</span>
             <h3>{report.systemicEventTitle}</h3>
-            <p>Une réaction majeure a secoué les équilibres mondiaux. Consultez le journal des conséquences ou les blocs concernés pour en mesurer les impacts.</p>
+            <p>Une réaction majeure a affecté les équilibres. Consultez le journal et les blocs concernés pour en mesurer la portée.</p>
           </div>
         )}
 
         {hasWeakSignals && (
           <div>
             <h3>Signaux faibles</h3>
+            <p className="report-muted">Ces signaux ne déclenchent rien encore. Ils indiquent ce qui commence à se déplacer.</p>
             <ul>
               {filteredWeakSignals.map((item, idx) => (
                 <li key={idx}>{item}</li>
@@ -254,7 +255,7 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
         {!hasAnyNotableChange && (
           <div style={{ gridColumn: "1 / -1" }}>
             <h3>Situation générale</h3>
-            <p>Aucun mouvement notable ce tour. Le monde poursuit son inertie — ce qui n'est ni une garantie ni un repos.</p>
+            <p>Aucun mouvement notable ce tour. Le monde maintient son inertie — ce qui n'est ni une garantie ni un repos. Les effets des opérations précédentes continuent de se diffuser sans produire de signal net.</p>
           </div>
         )}
       </div>

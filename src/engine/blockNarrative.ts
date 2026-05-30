@@ -55,6 +55,70 @@ function getAiRelation(block: Block): string {
   return "méfiance diffuse";
 }
 
+function formatAiRelationPhrase(aiRelation: string): string {
+  switch (aiRelation) {
+    case "confiance excessive":
+      return "Le bloc fait preuve d'une confiance excessive envers l'IA, sans toujours distinguer assistance et délégation.";
+    case "dépendance fonctionnelle":
+      return "La dépendance aux systèmes automatisés s'est installée sans débat public notable.";
+    case "adoption pragmatique":
+      return "L'IA est adoptée de façon pragmatique : utile, mais pas encore structurante.";
+    case "résistance civique":
+      return "Une résistance civique organise son vocabulaire autour de la question algorithmique.";
+    default:
+      return "La méfiance envers l'IA reste diffuse, peu organisée, difficile à mobiliser.";
+  }
+}
+
+function getDecorativeQuote(block: Block, year: number): string | null {
+  const aiRelation = getAiRelation(block);
+  const socialState = getSocialState(block);
+  const climate = getPoliticalClimate(block);
+
+  if (aiRelation === "confiance excessive") {
+    return pickVariant(
+      [
+        '« L\'algorithme propose, le gouvernement dispose », assure un porte-parole officiel.',
+        '« La coordination est devenue notre méthode. Ce n\'est pas une dépendance, c\'est une efficacité », affirme un responsable technique.',
+      ],
+      block,
+      year,
+    );
+  }
+
+  if (aiRelation === "résistance civique") {
+    return pickVariant(
+      [
+        '« La stabilité n\'est pas le silence », prévient une universitaire.',
+        '« Nous ne refusons pas l\'outil. Nous refusons qu\'il décide à notre place », déclare un collectif citoyen.',
+      ],
+      block,
+      year,
+    );
+  }
+
+  if (climate === "autoritaire" || block.stats.liberte <= 40) {
+    return '« Les canaux restent ouverts ; c\'est leur usage qui se raréfie », note un observateur indépendant.';
+  }
+
+  if (socialState === "polarisé" || block.stats.tensionSociale >= 68) {
+    return pickVariant(
+      [
+        '« La fracture ne date pas d\'hier. Elle a seulement cessé d\'être discrète », constate un sociologue.',
+        '« Les deux camps ont raison sur des choses différentes. C\'est ce qui rend la médiation si difficile », observe un diplomate.',
+      ],
+      block,
+      year,
+    );
+  }
+
+  if (aiRelation === "dépendance fonctionnelle" && block.stats.liberte <= 50) {
+    return '« Nous ne parlons pas de dépendance, mais de coordination renforcée », affirme un ministre.';
+  }
+
+  return null;
+}
+
 function getSocialState(block: Block): string {
   if (block.stats.tensionSociale >= 70) return "polarisé";
   if (block.stats.tensionSociale >= 58) return "inquiet";
@@ -128,21 +192,32 @@ function getTrendReading(block: Block, previousBlock: Block | undefined, year: n
 
 function getSummary(block: Block, previousBlock: Block | undefined, relations: InterBlockRelation[], year: number): string {
   const report = generateBlockReport(block, previousBlock, relations);
-  const direction = getDominantDirection(block, relations, previousBlock);
   const aiRelation = getAiRelation(block);
-  const socialState = getSocialState(block);
+  const climate = getPoliticalClimate(block);
   const trendReading = getTrendReading(block, previousBlock, year);
-  const toneVariant = pickVariant(
+  const aiPhrase = formatAiRelationPhrase(aiRelation);
+
+  const contextualNote = pickVariant(
     [
-      "Les autorités parlent encore de gestion ordinaire.",
       "Les observateurs internes notent moins un choc qu'une habitude nouvelle.",
       "La ligne officielle reste calme, mais les arbitrages deviennent plus visibles.",
+      "Les institutions décrivent encore la situation comme maîtrisée.",
     ],
     block,
     year,
   );
 
-  return `${block.name} suit une trajectoire de ${direction.toLowerCase()}. Le climat social paraît ${socialState}, tandis que le rapport à l'IA relève surtout de l'${aiRelation}. ${trendReading} ${toneVariant} ${report.strategicReading}`;
+  const climateClause =
+    climate === "autoritaire"
+      ? `Le bloc est politiquement ${climate} : la stabilité visible repose sur une liberté restreinte.`
+      : climate === "fragmenté" || climate === "tendu"
+        ? `Le bloc traverse une période ${climate === "fragmenté" ? "de fragmentation croissante" : "de tensions perceptibles"}.`
+        : `Le bloc présente un climat politique ${climate}.`;
+
+  const quote = getDecorativeQuote(block, year);
+  const quotePart = quote ? ` ${quote}` : "";
+
+  return `${climateClause} ${aiPhrase} ${trendReading} ${contextualNote} ${report.strategicReading}${quotePart}`;
 }
 
 function getBriefs(block: Block, previousBlock: Block | undefined, relations: InterBlockRelation[], year: number): BlockBrief[] {
