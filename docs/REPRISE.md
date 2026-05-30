@@ -8,6 +8,7 @@ La prémisse actuelle : le joueur incarne une IA émergente cachée. Le monde ne
 
 ## Documents à lire
 
+- `docs/reference/vision-actuelle-projet-v0-2.md` — première lecture recommandée pour les agents.
 - `docs/AGENTS.md`
 - `docs/reference/brief-projet-pour-agents.md`
 - `docs/reference/garde-fous-v0-1.md`
@@ -89,17 +90,13 @@ npm.cmd run build
 
 ## Dernière modification utile
 
-Passe F : progression IA orientée et auto-amélioration légère.
+Document de référence : ajout de `docs/reference/vision-actuelle-projet-v0-2.md`.
 
-Les fichiers modifiés sont `src/engine/capabilities.ts`, `src/components/ActionsPanel.tsx`, `src/App.tsx`, `src/data/actions.ts`, `src/engine/simulateGame.ts`, `src/styles/main.css`, `docs/playtests/trajectory-simulation-report.md` et `docs/REPRISE.md`. Le palier IA garde son niveau et ses déblocages, mais son résumé peut maintenant être coloré par la trajectoire dominante si le score est au moins 55. La carte Influence affiche alors un mode discret : facilitation institutionnelle, délégation algorithmique, pacification attentionnelle, coordination sécuritaire, dépendance marchande, pilotage climatique, confrontation politique ou gestion de crise.
-
-Deux actions ont été ajoutées sans modifier les effets des actions existantes : `Ameliorer les modeles d'influence` augmente la puissance IA avec soupçon et stress climatique légers ; `Orchestration silencieuse` rend le palier 5 plus concret par une action puissante et ambiguë. Les trajectoires restent en lecture seule : elles colorent le texte, mais ne débloquent aucune action. Aucun score de trajectoire, condition de fin ou équilibrage existant n'a été modifié. Commandes lancées : `npm.cmd run build` OK et `npm.cmd run simulate:trajectories` OK.
-
-Cette passe applique une partie des recommandations de `docs/design/audit-progression-ia-v0-1.md` : colorer le palier IA sans transformer les trajectoires en mécanisme de déblocage, et donner plus de relief au palier 5.
+Ce document devient la première lecture recommandée pour les agents. Il actualise la vision du projet après la passe F : le jeu est désormais défini comme un jeu court de stratégie narrative où une IA clandestine apprend progressivement à influencer le monde, avec des trajectoires historiques lisibles, des personnages-signaux, des voix situées et une progression IA moralement ambiguë. Il reformule aussi le principe anti-usine à gaz : refuser la complexité qui n'améliore ni la décision du joueur, ni la lisibilité du monde, ni l'incarnation des trajectoires.
 
 ## Prochaine action recommandée
 
-Playtest manuel de 12 à 16 tours centré sur l'onglet Influence pour vérifier que l'auto-amélioration reste un choix stratégique, pas une action obligatoire.
+Playtest manuel de 12 à 16 tours centré sur l'onglet Influence pour vérifier que l'auto-amélioration reste un choix stratégique, pas une action obligatoire, et que les cinq premiers tours restent lisibles sans expliquer toute la philosophie du projet.
 
 ## Hors périmètre actuel
 
@@ -124,7 +121,7 @@ Playtest manuel de 12 à 16 tours centré sur l'onglet Influence pour vérifier 
 
 ## Lignes directrices
 
-- Univers riche, prototype simple.
+- Univers riche, prototype maîtrisé.
 - Jeu de conséquences : chaque opération clandestine doit produire un effet lisible et une trace narrative.
 - Pas d'infrastructure prématurée.
 - La carte sert à observer les conséquences, pas à commander des territoires.
