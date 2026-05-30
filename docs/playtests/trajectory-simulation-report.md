@@ -1,7 +1,7 @@
 # Rapport de simulation des trajectoires
 
 Date : 2026-05-30
-Commit testé : 2a4cab1
+Commit testé : 744c577
 Commande : `npm.cmd run simulate:trajectories`
 Capacité d'influence : 5
 

@@ -1501,6 +1501,181 @@ button {
   font-weight: 800;
 }
 
+/* === Relations inter-blocs — Passe C === */
+
+.relation-highlight {
+  margin-bottom: 10px;
+  padding: 12px 14px;
+  border: 1px solid #ded8c9;
+  border-left: 4px solid #8f7d52;
+  border-radius: 8px;
+  background: #f8f6ef;
+}
+
+.relation-highlight--tension {
+  border-left-color: #b7791f;
+  background: #fdf8ef;
+}
+
+.relation-highlight--cooperation {
+  border-left-color: #3d7f61;
+  background: #f1f8f4;
+}
+
+.relation-highlight__title {
+  margin: 4px 0 2px;
+  color: #17211c;
+  font-size: 0.96rem;
+  font-weight: 800;
+}
+
+.relation-highlight__detail {
+  margin: 0 0 8px;
+  color: #536158;
+  font-size: 0.86rem;
+}
+
+.relation-highlight__gauges {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.relation-highlight__trend {
+  margin: 4px 0 0;
+  color: #536158;
+  font-size: 0.84rem;
+  line-height: 1.4;
+  font-style: italic;
+}
+
+.relations-compact-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.relation-compact {
+  padding: 10px 12px;
+  border: 1px solid #ded8c9;
+  border-left: 3px solid #8f7d52;
+  border-radius: 6px;
+  background: #f8f6ef;
+}
+
+.relation-compact--tendue {
+  border-left-color: #b7791f;
+}
+
+.relation-compact--critique {
+  border-left-color: #b13f35;
+  background: #fff6f4;
+}
+
+.relation-compact__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.relation-compact__domain {
+  color: #7c3626;
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.relation-compact__status {
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 900;
+  background: #e5dfd0;
+  color: #405047;
+}
+
+.relation-compact__status--tendue {
+  background: #fff0d6;
+  color: #7a4f1a;
+}
+
+.relation-compact__status--critique {
+  background: #fee8e5;
+  color: #8a2a25;
+}
+
+.relation-compact__label {
+  margin: 0 0 2px;
+  color: #17211c;
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.relation-compact__blocks {
+  margin: 0 0 6px;
+  color: #536158;
+  font-size: 0.82rem;
+}
+
+.relation-compact__values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 4px;
+}
+
+.relation-compact__trend {
+  margin: 4px 0 0;
+  color: #6a746d;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  font-style: italic;
+}
+
+.relation-value-badge {
+  padding: 2px 7px;
+  border-radius: 4px;
+  border: 1px solid #d6d1c3;
+  background: #fffdf7;
+  color: #405047;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.relation-value-badge--tension {
+  border-color: #d4a05a;
+  background: #fff8e8;
+  color: #7a4f1a;
+}
+
+.relation-value-badge--tension.relation-value-badge--high {
+  border-color: #c05a3a;
+  background: #fff1ec;
+  color: #8a2a25;
+}
+
+.relation-value-badge--dep {
+  border-color: #b0a880;
+  background: #faf8ec;
+  color: #5a5430;
+}
+
+.relations-diplomatic-note {
+  margin-top: 12px;
+  padding: 9px 12px;
+  border-left: 3px solid #8f7d52;
+  background: #faf7ed;
+  color: #536158;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  font-style: italic;
+}
+
+
 .journal ol {
   display: grid;
   gap: 12px;

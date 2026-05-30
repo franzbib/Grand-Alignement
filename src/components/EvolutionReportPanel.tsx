@@ -164,11 +164,11 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
 
         {hasRelations && (
           <div>
-            <h3>Relations inter-blocs</h3>
+            <h3>Mouvements diplomatiques</h3>
             
             {relationChanges.length > 0 && (
               <div className="report-sub-section">
-                <h4>Entre les blocs</h4>
+                <h4>Ce qui a bougé ce tour</h4>
                 <ul>
                   {relationChanges.map((item, idx) => (
                     <li key={idx}>{item}</li>

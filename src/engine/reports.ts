@@ -105,22 +105,22 @@ export function getSocialMood(block: Block): SocialMood {
 
 function getMainRisk(block: Block): string {
   if (block.stats.tensionSociale >= 65) {
-    return "Cristallisation sociale rapide autour des coûts invisibles de l'optimisation.";
+    return "La tension sociale s'organise : elle commence à trouver un vocabulaire politique.";
   }
 
   if (block.stats.liberte <= 42) {
-    return "Stabilité obtenue au prix d'une liberté civique en recul.";
+    return "L'ordre tient, mais il repose de moins en moins sur le consentement.";
   }
 
   if (block.stats.confianceIA >= 66) {
-    return "Dépendance croissante aux médiations algorithmiques.";
+    return "Les institutions délèguent trop : les décisions sont prises, mais personne ne sait toujours par qui.";
   }
 
   if (block.stats.richesse <= 42) {
-    return "Fragilité économique transformable en tension politique.";
+    return "Les inégalités économiques alimentent une frustration qui n'a pas encore trouvé de cible claire.";
   }
 
-  return "Équilibre encore lisible, mais sensible aux opérations trop visibles.";
+  return "La situation reste lisible. Une opération trop visible pourrait rompre cet équilibre discret.";
 }
 
 function getStrategicLeverage(block: Block, mood: SocialMood): string {
@@ -189,9 +189,13 @@ export function generateBlockReport(
 
   return {
     generalSituation:
-      block.stats.stabilite >= 60
-        ? `${block.name} conserve une stabilité exploitable, mais cette stabilité ne dit pas tout de l'adhésion sociale.`
-        : `${block.name} présente une stabilité fragile, avec des arbitrages visibles dans plusieurs milieux sociaux.`,
+      block.stats.stabilite >= 60 && block.stats.tensionSociale <= 50
+        ? `${block.name} reste ordonné. Les institutions fonctionnent. Mais cette stabilité repose sur des compromis que peu d'acteurs ont envie de renommer.`
+        : block.stats.stabilite >= 60 && block.stats.tensionSociale > 50
+          ? `${block.name} maintient l'ordre en surface, mais la tension monte dans les milieux les plus exposés aux arbitrages non expliqués.`
+          : block.stats.liberte <= 45
+            ? `${block.name} présente une stabilité fragile. L'autorité maintient le calme, mais les marges d'expression civique se réduisent visiblement.`
+            : `${block.name} traverse une période instable. Plusieurs groupes sociaux cherchent à nommer ce qui change, sans trouver encore de consensus.`,
     tenseGroups,
     favorableGroups,
     mainRisk: getMainRisk(block),
@@ -202,10 +206,10 @@ export function generateBlockReport(
         : mood.summary,
     strategicVulnerability:
       block.stats.liberte <= 45
-        ? "Vulnérabilité : liberté en recul, risque de résistance mieux formulée."
+        ? "Point sensible : la liberté recule. Une résistance mieux formulée pourrait se structurer rapidement."
         : block.stats.tensionSociale >= 58
-          ? "Vulnérabilité : tension sociale transformable en langage politique."
-          : "Vulnérabilité : acceptation encore réversible des dispositifs indirects.",
+          ? "Point sensible : la tension sociale cherche un langage. Elle pourrait le trouver à tout moment."
+          : "Point sensible : l'acceptation des dispositifs reste réversible si leur coût devient trop visible.",
     possibleLeverage: getStrategicLeverage(block, mood),
     ...relationSummary,
     socialMood: mood,

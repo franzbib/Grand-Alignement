@@ -1,5 +1,6 @@
 import { getRelationStatus } from "../engine/relations";
 import type { Block, InterBlockRelation } from "../types/game";
+import { StatGauge } from "./StatGauge";
 
 type RelationsPanelProps = {
   blocks: Block[];
@@ -61,7 +62,7 @@ export function RelationsPanel({ blocks, relations }: RelationsPanelProps) {
     (r) => r.id !== mainTension?.id && r.cooperation >= 50,
   );
 
-  // Show only up to 3 relations (most tension first), excluding already highlighted ones
+  // Relations compactes : les 3 plus tendues
   const compactRelations = sortedByTension.slice(0, 3);
 
   const globalSynthesis = getGlobalDiplomaticSynthesis(relations);
@@ -86,6 +87,10 @@ export function RelationsPanel({ blocks, relations }: RelationsPanelProps) {
             {blockNames.get(mainTension.from)} ↔ {blockNames.get(mainTension.to)} —{" "}
             <em>{getRelationStatus(mainTension)}</em>
           </p>
+          <div className="relation-highlight__gauges">
+            <StatGauge label="Tension" value={mainTension.tension} tone="danger" />
+            <StatGauge label="Coopération" value={mainTension.cooperation} />
+          </div>
           {mainTension.recentTrend && (
             <p className="relation-highlight__trend">{mainTension.recentTrend}</p>
           )}
@@ -97,33 +102,55 @@ export function RelationsPanel({ blocks, relations }: RelationsPanelProps) {
           <small className="eyebrow">Rapprochement lisible · {domainLabels[mainCooperation.domain]}</small>
           <p className="relation-highlight__title">{mainCooperation.label}</p>
           <p className="relation-highlight__detail">
-            {blockNames.get(mainCooperation.from)} ↔ {blockNames.get(mainCooperation.to)} —{" "}
-            coopération {mainCooperation.cooperation}
+            {blockNames.get(mainCooperation.from)} ↔ {blockNames.get(mainCooperation.to)}
           </p>
+          <div className="relation-highlight__gauges">
+            <StatGauge label="Coopération" value={mainCooperation.cooperation} />
+            <StatGauge label="Dépendance" value={mainCooperation.dependence} tone="warning" />
+          </div>
         </div>
       )}
 
       <div className="relations-compact-list">
-        {compactRelations.map((relation) => (
-          <div
-            className={`relation-compact relation-compact--${getRelationStatus(relation)}`}
-            key={relation.id}
-          >
-            <div className="relation-compact__header">
-              <span className="relation-compact__domain">{domainLabels[relation.domain]}</span>
-              <span className={`relation-compact__status relation-compact__status--${getRelationStatus(relation)}`}>
-                {getRelationStatus(relation)}
-              </span>
+        {compactRelations.map((relation) => {
+          const status = getRelationStatus(relation);
+          return (
+            <div
+              className={`relation-compact relation-compact--${status}`}
+              key={relation.id}
+            >
+              <div className="relation-compact__header">
+                <span className="relation-compact__domain">{domainLabels[relation.domain]}</span>
+                <span className={`relation-compact__status relation-compact__status--${status}`}>
+                  {status}
+                </span>
+              </div>
+              <p className="relation-compact__label">{relation.label}</p>
+              <p className="relation-compact__blocks">
+                {blockNames.get(relation.from)} ↔ {blockNames.get(relation.to)}
+              </p>
+              <div className="relation-compact__values">
+                <span
+                  className={`relation-value-badge relation-value-badge--tension${relation.tension >= 65 ? " relation-value-badge--high" : ""}`}
+                  title="Tension"
+                >
+                  T {relation.tension}
+                </span>
+                <span className="relation-value-badge" title="Coopération">
+                  C {relation.cooperation}
+                </span>
+                {relation.dependence > 0 && (
+                  <span className="relation-value-badge relation-value-badge--dep" title="Dépendance">
+                    D {relation.dependence}
+                  </span>
+                )}
+              </div>
+              {relation.recentTrend && (
+                <p className="relation-compact__trend">{relation.recentTrend}</p>
+              )}
             </div>
-            <p className="relation-compact__label">{relation.label}</p>
-            <p className="relation-compact__blocks">
-              {blockNames.get(relation.from)} ↔ {blockNames.get(relation.to)}
-            </p>
-            {relation.recentTrend && (
-              <p className="relation-compact__trend">{relation.recentTrend}</p>
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {diplomaticNote && (
