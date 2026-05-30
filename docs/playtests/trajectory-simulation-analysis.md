@@ -166,3 +166,47 @@ Niveau C — stress test long :
 Prochaine action recommandée : micro-ajuster uniquement la lecture des scores de trajectoires, en priorité `Capture privée`, sans toucher aux actions ni aux fins.
 
 But : vérifier si la domination de `Capture privée` vient d'un score trop large avant de modifier l'équilibrage réel du jeu.
+
+## Micro-ajustement de la lecture des trajectoires — Capture privée
+
+### Problème observé
+
+La formule initiale de `Capture privée` utilisait trois extrêmes indépendants : richesse maximale, dépendance technologique maximale et liberté minimale. Elle pouvait donc monter fortement même si ces signaux ne décrivaient pas le même bloc ni une logique de capture cohérente.
+
+Effet visible : `Capture privée` dominait presque tous les profils dès 5 ou 10 tours, y compris `Alignement mondial`, `Autonomie humaine` et `Sécurité`.
+
+### Hypothèse retenue
+
+Le gameplay ne pousse pas forcément toutes les parties vers la capture privée. Le score T6 lisait trop largement des états généraux : richesse, technicisation, baisse locale de liberté. Il fallait donc rendre le diagnostic plus discriminant sans modifier les actions.
+
+### Modification appliquée
+
+La formule T6 a été resserrée :
+
+- remplacement du couple `max richesse` + `min liberté` par une pression de capture par bloc ;
+- la richesse et la liberté basse doivent davantage coexister ;
+- ajout de la dépendance commerciale aux dépendances technologiques ;
+- conservation d'un signal de concentration par écart entre richesse maximale et richesse moyenne ;
+- coefficients réduits pour éviter qu'un seul extrême domine le score.
+
+Un petit ajustement de T8 a aussi été appliqué : `Réel climatique` ne vaut plus directement `stressClimatique`, afin que le stress climatique initial ne devienne pas mécaniquement la trajectoire dominante par défaut.
+
+### Effet sur les simulations
+
+Après simulation :
+
+- `Capture privée` ne domine plus artificiellement la majorité des profils à 5 et 10 tours.
+- `Empire algorithmique` redevient dominant dans le profil du même nom.
+- `Unification humaine imparfaite` redevient lisible dans `Alignement mondial`, `Autonomie humaine`, `Sécurité` ou `Écologie`.
+- `Escalade militaire` redevient dominante dans `Chaos contrôlé`.
+- `Capture privée` reste possible, notamment comme secondaire dans `Empire algorithmique`.
+- `Marché / dérégulation` reste dominé par `Réel climatique`, ce qui correspond à l'effet massif de dérégulation sur le climat.
+
+Le diagnostic est donc plus différencié, sans modification du gameplay.
+
+### Points à surveiller
+
+- `Tutelle algorithmique` apparaît maintenant sur `Alignement mondial` à 10 tours, probablement parce que la stratégie monte beaucoup la confiance IA et la puissance IA.
+- `Réel climatique` reste très fort dans les profils qui n'agissent pas sur le climat ou qui l'aggravent.
+- Les saturations de jauges à 30-50 tours restent présentes : elles relèvent d'une future passe d'équilibrage, pas de cette correction de lecture.
+- `Capture privée` devra être réévaluée quand une vraie variable ou proxy plus robuste de capture privée existera.

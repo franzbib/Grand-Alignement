@@ -36,20 +36,12 @@ function max(values: number[]): number {
   return values.length > 0 ? Math.max(...values) : 0;
 }
 
-function min(values: number[]): number {
-  return values.length > 0 ? Math.min(...values) : 0;
-}
-
 function averageBlockStat(blocks: Block[], stat: keyof Block["stats"]): number {
   return average(blocks.map((block) => block.stats[stat]));
 }
 
 function maxBlockStat(blocks: Block[], stat: keyof Block["stats"]): number {
   return max(blocks.map((block) => block.stats[stat]));
-}
-
-function minBlockStat(blocks: Block[], stat: keyof Block["stats"]): number {
-  return min(blocks.map((block) => block.stats[stat]));
 }
 
 function relationsByDomain(relations: InterBlockRelation[], domain: RelationDomain): InterBlockRelation[] {
@@ -68,6 +60,10 @@ function maxDependence(relations: InterBlockRelation[]): number {
   return max(relations.map((relation) => relation.dependence));
 }
 
+function maxPrivateCapturePressure(blocks: Block[]): number {
+  return max(blocks.map((block) => Math.min(block.stats.richesse, 100 - block.stats.liberte)));
+}
+
 export function computeTrajectoryScores(state: GameState): TrajectoryScores {
   const { globalStats, blocks, relations } = state;
   const averageTrust = averageBlockStat(blocks, "confianceIA");
@@ -76,9 +72,13 @@ export function computeTrajectoryScores(state: GameState): TrajectoryScores {
   const averageStability = averageBlockStat(blocks, "stabilite");
   const maxSocialTension = maxBlockStat(blocks, "tensionSociale");
   const maxWealth = maxBlockStat(blocks, "richesse");
-  const minLiberty = minBlockStat(blocks, "liberte");
+  const averageWealth = averageBlockStat(blocks, "richesse");
+  const privateCapturePressure = maxPrivateCapturePressure(blocks);
+  const wealthConcentrationSignal = Math.max(0, maxWealth - averageWealth);
   const securityRelations = relationsByDomain(relations, "security");
   const technologyRelations = relationsByDomain(relations, "technology");
+  const tradeRelations = relationsByDomain(relations, "trade");
+  const platformDependence = Math.max(maxDependence(technologyRelations), maxDependence(tradeRelations));
 
   // These formulas are intentionally lightweight diagnostics, not ending conditions.
   return {
@@ -111,14 +111,14 @@ export function computeTrajectoryScores(state: GameState): TrajectoryScores {
         maxTension(securityRelations) * 0.35 -
         globalStats.cohesionMondiale * 0.2,
     ),
-    t6: clampScore(maxWealth * 0.3 + maxDependence(technologyRelations) * 0.3 + (100 - minLiberty) * 0.4),
+    t6: clampScore(privateCapturePressure * 0.45 + platformDependence * 0.3 + wealthConcentrationSignal * 0.25),
     t7: clampScore(
       (100 - globalStats.cohesionMondiale) * 0.35 +
         averageTension * 0.3 +
         (100 - averageStability) * 0.25 +
         globalStats.risqueEscalade * 0.1,
     ),
-    t8: clampScore(globalStats.stressClimatique),
+    t8: clampScore((globalStats.stressClimatique - 35) * 1.25),
   };
 }
 

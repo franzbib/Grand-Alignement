@@ -78,9 +78,9 @@ npm.cmd run build
 
 ## Dernière modification utile
 
-Analyse du rapport de simulation des trajectoires. Les fichiers modifiés ou créés sont `docs/playtests/trajectory-simulation-analysis.md` et `docs/REPRISE.md`.
+Micro-passe sur la lecture des scores de trajectoires. Les fichiers modifiés sont `src/engine/trajectories.ts`, `docs/playtests/trajectory-simulation-report.md`, `docs/playtests/trajectory-simulation-analysis.md` et `docs/REPRISE.md`.
 
-Le diagnostic conclut que les profils produisent des trajectoires différentes, mais que `Capture privée` est probablement surpondérée par sa formule de score, car elle dépend d'extrêmes comme richesse maximale, dépendance technologique maximale et liberté minimale. Les saturations à 50 tours relèvent surtout du stress test long, mais certaines saturations à 10 tours méritent surveillance. Aucun équilibrage n'a été appliqué.
+La formule de `Capture privée` a été rendue plus discriminante : elle exige davantage une co-présence richesse/liberté basse, une dépendance technologique ou commerciale et un signal de concentration, au lieu de trois extrêmes indépendants. Un léger ajustement du score `Réel climatique` évite aussi que le stress climatique initial devienne la trajectoire dominante par défaut. Commandes lancées : `npm.cmd run build` OK et `npm.cmd run simulate:trajectories` OK. Aucun gameplay, action, fin, événement ou équilibrage n'a été modifié.
 
 ## Ce qui reste à faire
 
@@ -92,7 +92,7 @@ Le diagnostic conclut que les profils produisent des trajectoires différentes, 
 
 ## Prochaine action recommandée
 
-Micro-ajuster uniquement la lecture des scores de trajectoires, en priorité `Capture privée`, sans toucher aux actions ni aux fins.
+Playtest manuel de 10 à 20 tours pour vérifier si les trajectoires affichées en rapport correspondent mieux au ressenti réel de partie.
 
 ## Hors périmètre actuel
 
