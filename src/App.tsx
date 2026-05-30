@@ -3,7 +3,7 @@ import { actions } from "./data/actions";
 import { createInitialState } from "./data/initialState";
 import { strategicPostures } from "./data/postures";
 import { INFLUENCE_CAPACITY, applyTurnPlan, getAvailablePreparedOperations } from "./engine/gameEngine";
-import { getIaCapabilityLevel } from "./engine/capabilities";
+import { getIaCapabilityInfo } from "./engine/capabilities";
 import { clearGameState, loadGameState, saveGameState } from "./engine/storage";
 import { ActionsPanel } from "./components/ActionsPanel";
 import { BlocksGrid } from "./components/BlocksGrid";
@@ -31,7 +31,7 @@ function App() {
   const [plannedInterventions, setPlannedInterventions] = useState<PlannedIntervention[]>([]);
   const [selectedPostureId, setSelectedPostureId] = useState(strategicPostures[0].id);
   const [selectedBlockId, setSelectedBlockId] = useState<BlockId>("europe");
-  const iaCapabilityLevel = getIaCapabilityLevel(gameState);
+  const iaCapabilityInfo = getIaCapabilityInfo(gameState);
 
   useEffect(() => {
     saveGameState(gameState);
@@ -197,7 +197,7 @@ function App() {
           blocks={gameState.blocks}
           disabled={Boolean(gameState.ending)}
           influenceCapacity={INFLUENCE_CAPACITY}
-          iaCapabilityLevel={iaCapabilityLevel}
+          iaCapabilityInfo={iaCapabilityInfo}
           onPostureChange={setSelectedPostureId}
           onTargetChange={handleTargetChange}
           onToggleAction={handleToggleAction}

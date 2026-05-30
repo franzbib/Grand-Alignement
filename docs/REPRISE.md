@@ -63,6 +63,9 @@ npm.cmd run build
 - Orientation stratégique descriptive.
 - Capacité d'influence par tour.
 - Progression légère des capacités de l'IA en cinq paliers dérivés du tour et de la puissance IA.
+- Coloration narrative du palier IA selon la trajectoire dominante, sans effet mécanique sur les déblocages.
+- Action d'auto-amélioration légère : `Ameliorer les modeles d'influence`.
+- Action de palier 5 : `Orchestration silencieuse`, pour rendre la souveraineté latente plus perceptible.
 - Interventions avec coût 1, 2 ou 3.
 - Ciblage simple : global ou bloc selon l'action.
 - Opérations multitours simples : préparation puis déploiement au tour suivant.
@@ -86,13 +89,17 @@ npm.cmd run build
 
 ## Dernière modification utile
 
-Passe documentaire : ajout de `docs/design/audit-progression-ia-v0-1.md`.
+Passe F : progression IA orientée et auto-amélioration légère.
 
-Ce document audite la progression actuelle des capacités de l'IA-joueur. Il recommande de conserver le tronc commun chronologique, mais d'ajouter plus tard une coloration narrative du palier courant selon la trajectoire dominante, sans transformer les trajectoires en mécanisme de déblocage. Il signale aussi que le palier 5 de Souveraineté latente est encore trop creux et propose des garde-fous contre l'arbre technologique. Aucun code, gameplay, équilibrage, score, action, fin, sauvegarde ou logique de progression IA n'a été modifié.
+Les fichiers modifiés sont `src/engine/capabilities.ts`, `src/components/ActionsPanel.tsx`, `src/App.tsx`, `src/data/actions.ts`, `src/engine/simulateGame.ts`, `src/styles/main.css`, `docs/playtests/trajectory-simulation-report.md` et `docs/REPRISE.md`. Le palier IA garde son niveau et ses déblocages, mais son résumé peut maintenant être coloré par la trajectoire dominante si le score est au moins 55. La carte Influence affiche alors un mode discret : facilitation institutionnelle, délégation algorithmique, pacification attentionnelle, coordination sécuritaire, dépendance marchande, pilotage climatique, confrontation politique ou gestion de crise.
+
+Deux actions ont été ajoutées sans modifier les effets des actions existantes : `Ameliorer les modeles d'influence` augmente la puissance IA avec soupçon et stress climatique légers ; `Orchestration silencieuse` rend le palier 5 plus concret par une action puissante et ambiguë. Les trajectoires restent en lecture seule : elles colorent le texte, mais ne débloquent aucune action. Aucun score de trajectoire, condition de fin ou équilibrage existant n'a été modifié. Commandes lancées : `npm.cmd run build` OK et `npm.cmd run simulate:trajectories` OK.
+
+Cette passe applique une partie des recommandations de `docs/design/audit-progression-ia-v0-1.md` : colorer le palier IA sans transformer les trajectoires en mécanisme de déblocage, et donner plus de relief au palier 5.
 
 ## Prochaine action recommandée
 
-Lire et valider humainement l'audit de progression IA avant toute nouvelle implémentation : priorité possible à une coloration narrative du résumé des paliers dans l'interface Influence, sans modification mécanique.
+Playtest manuel de 12 à 16 tours centré sur l'onglet Influence pour vérifier que l'auto-amélioration reste un choix stratégique, pas une action obligatoire.
 
 ## Hors périmètre actuel
 

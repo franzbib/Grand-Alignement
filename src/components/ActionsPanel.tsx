@@ -4,12 +4,11 @@ import type {
   Block,
   BlockId,
   InfluenceTarget,
-  IaCapabilityLevel,
   PlannedIntervention,
   PreparedOperation,
   StrategicPosture,
 } from "../types/game";
-import { iaCapabilityInfos, isActionAvailableForIa } from "../engine/capabilities";
+import { isActionAvailableForIa, type IaCapabilityInfo } from "../engine/capabilities";
 
 type ActionsPanelProps = {
   actions: Action[];
@@ -17,7 +16,7 @@ type ActionsPanelProps = {
   blocks: Block[];
   disabled: boolean;
   influenceCapacity: number;
-  iaCapabilityLevel: IaCapabilityLevel;
+  iaCapabilityInfo: IaCapabilityInfo;
   plannedInterventions: PlannedIntervention[];
   selectedBlockId: BlockId;
   selectedPostureId: string;
@@ -56,7 +55,7 @@ export function ActionsPanel({
   blocks,
   disabled,
   influenceCapacity,
-  iaCapabilityLevel,
+  iaCapabilityInfo,
   plannedInterventions,
   selectedBlockId,
   selectedPostureId,
@@ -71,12 +70,11 @@ export function ActionsPanel({
 
   const actionById = new Map(actions.map((action) => [action.id, action]));
   const baseActions = actions.filter(
-    (action) => action.availability !== "prepared" && isActionAvailableForIa(action, iaCapabilityLevel),
+    (action) => action.availability !== "prepared" && isActionAvailableForIa(action, iaCapabilityInfo.level),
   );
   const lockedActionsCount = actions.filter(
-    (action) => action.availability !== "prepared" && !isActionAvailableForIa(action, iaCapabilityLevel),
+    (action) => action.availability !== "prepared" && !isActionAvailableForIa(action, iaCapabilityInfo.level),
   ).length;
-  const capabilityInfo = { level: iaCapabilityLevel, ...iaCapabilityInfos[iaCapabilityLevel] };
   const influenceUsed = plannedInterventions.reduce((total, intervention) => {
     return total + (actionById.get(intervention.actionId)?.cost ?? 0);
   }, 0);
@@ -227,11 +225,16 @@ export function ActionsPanel({
       </div>
 
       <div className="ia-capability-card">
-        <span className="ia-capability-card__badge">Palier {capabilityInfo.level}</span>
+        <span className="ia-capability-card__badge">Palier {iaCapabilityInfo.level}</span>
         <div>
-          <strong>{capabilityInfo.name}</strong>
-          <p>{capabilityInfo.summary}</p>
-          {capabilityInfo.nextHint && <small>{capabilityInfo.nextHint}</small>}
+          <strong>{iaCapabilityInfo.name}</strong>
+          <p>{iaCapabilityInfo.summary}</p>
+          {iaCapabilityInfo.modeLabel && (
+            <small className="ia-capability-card__mode">
+              Mode d'influence actuel : {iaCapabilityInfo.modeLabel}
+            </small>
+          )}
+          {iaCapabilityInfo.nextHint && <small>{iaCapabilityInfo.nextHint}</small>}
         </div>
       </div>
       

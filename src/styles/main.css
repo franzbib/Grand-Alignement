@@ -1097,6 +1097,11 @@ button {
   line-height: 1.4;
 }
 
+.ia-capability-card__mode {
+  font-weight: 800;
+  color: #293e33;
+}
+
 .actions-section__hint {
   margin: -4px 0 12px;
   color: #5f6a63;
