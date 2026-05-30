@@ -141,6 +141,8 @@ export type InfluenceTarget = "global" | "all-blocks" | BlockId;
 
 export type ActionAvailability = "base" | "prepared";
 
+export type IaCapabilityLevel = 1 | 2 | 3 | 4 | 5;
+
 export type Action = {
   id: string;
   name: string;
@@ -154,6 +156,7 @@ export type Action = {
   targetRequired: boolean;
   suspicionEffect: number;
   availability?: ActionAvailability;
+  requiredIaLevel?: IaCapabilityLevel;
   recommendedPostures?: string[];
   preparesActionIds?: string[];
   preparationTurns?: number;

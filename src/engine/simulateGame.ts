@@ -1,6 +1,7 @@
 import { actions } from "../data/actions";
 import { createInitialState } from "../data/initialState";
 import { INFLUENCE_CAPACITY, applyTurnPlan } from "./gameEngine";
+import { getAvailableActionsForState } from "./capabilities";
 import { computeTrajectoryScores, getDominantTrajectory, getStrongSecondaryTrajectories } from "./trajectories";
 import type {
   Action,
@@ -230,7 +231,7 @@ function getTargetForAction(action: Action, turn: number, profile: SimulationPro
 
 function sortActionsForProfile(profile: SimulationProfile, state: GameState): Array<{ action: Action; operation?: PreparedOperation }> {
   const availablePrepared = getAvailablePreparedActions(state);
-  const baseActions = actions
+  const baseActions = getAvailableActionsForState(actions, state)
     .filter((action) => action.availability !== "prepared")
     .map((action) => ({ action }));
   const allOptions = [...availablePrepared, ...baseActions];
@@ -283,7 +284,13 @@ function getInfluenceUsed(interventions: ResolvedIntervention[]): number {
 
 function getSystemicEvents(previousState: GameState, nextState: GameState): string[] {
   return nextState.journal
-    .filter((event) => event.turn === previousState.turn && event.sourceId && event.sourceId !== "turn-plan")
+    .filter(
+      (event) =>
+        event.turn === previousState.turn &&
+        event.sourceId &&
+        event.sourceId !== "turn-plan" &&
+        !event.sourceId.startsWith("signal-character-"),
+    )
     .map((event) => event.title);
 }
 

@@ -4,6 +4,7 @@ import { systemicEvents } from "../data/events";
 import { initialRelations } from "../data/relations";
 import { advanceWorldDynamics, applyPlayerRelationEffects } from "./relations";
 import { formatTrendSummary, generateBlockReport, getBlockTrends } from "./reports";
+import { chooseSignalCharacterEvent } from "./signalCharacters";
 import {
   computeTrajectoryScores,
   getCollidingTrajectories,
@@ -589,6 +590,20 @@ export function applyTurnPlan(state: GameState, interventions: ResolvedIntervent
       ? `Conséquence systémique : ${systemicEvent.title}.`
       : "Conséquence systémique : les effets restent diffus, mais les rapports de bloc enregistrent les déplacements.",
   };
+  const nextStateForSignal: GameState = {
+    turn: state.turn + 1,
+    globalStats: resolvedState.globalStats,
+    blocks: resolvedState.blocks,
+    relations: worldDynamicsResult.relations,
+    previousRelations: initialStateRelations,
+    journal: state.journal,
+    triggeredEventIds: state.triggeredEventIds,
+    preparedOperations,
+    previousBlocks: state.blocks,
+    evolutionReport: null,
+    ending: evaluateEnding(state.turn + 1, resolvedState.globalStats, resolvedState.blocks),
+  };
+  const signalCharacterEvent = chooseSignalCharacterEvent(state, nextStateForSignal, interventions);
 
   const journalEvents = systemicEvent
     ? [
@@ -602,21 +617,14 @@ export function applyTurnPlan(state: GameState, interventions: ResolvedIntervent
           effectsText: systemicEvent.effectsText,
           tone: systemicEvent.tone,
         },
+        ...(signalCharacterEvent ? [signalCharacterEvent] : []),
       ]
-    : [actionEvent];
+    : [actionEvent, ...(signalCharacterEvent ? [signalCharacterEvent] : [])];
 
   const nextStateWithoutReport: GameState = {
-    turn: state.turn + 1,
-    globalStats: resolvedState.globalStats,
-    blocks: resolvedState.blocks,
-    relations: worldDynamicsResult.relations,
-    previousRelations: initialStateRelations,
+    ...nextStateForSignal,
     journal: [...journalEvents, ...state.journal].slice(0, MAX_JOURNAL_ENTRIES),
     triggeredEventIds: systemicEvent ? [...state.triggeredEventIds, systemicEvent.id] : state.triggeredEventIds,
-    preparedOperations,
-    previousBlocks: state.blocks,
-    evolutionReport: null,
-    ending: evaluateEnding(state.turn + 1, resolvedState.globalStats, resolvedState.blocks),
   };
 
   return {

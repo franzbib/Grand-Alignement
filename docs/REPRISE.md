@@ -61,6 +61,7 @@ npm.cmd run build
 - Navigation légère : Monde, Influence, Blocs, Journal, Rapport.
 - Orientation stratégique descriptive.
 - Capacité d'influence par tour.
+- Progression légère des capacités de l'IA en cinq paliers dérivés du tour et de la puissance IA.
 - Interventions avec coût 1, 2 ou 3.
 - Ciblage simple : global ou bloc selon l'action.
 - Opérations multitours simples : préparation puis déploiement au tour suivant.
@@ -71,6 +72,7 @@ npm.cmd run build
 - Scores de trajectoires calculés en lecture seule dans le rapport d'évolution : trajectoire dominante, signaux secondaires et au plus deux signaux faibles.
 - Outil local de simulation des trajectoires lançable avec `npm.cmd run simulate:trajectories`.
 - Journal des conséquences.
+- Personnages-signaux rares dans le journal, sous forme de brèves humaines non RPG.
 - Événements systémiques, dont deux liés au soupçon IA.
 - Sauvegarde automatique dans `localStorage`.
 - Quatre fins diagnostiques existantes.
@@ -82,13 +84,13 @@ npm.cmd run build
 
 ## Dernière modification utile
 
-Passe documentaire : ajout de `docs/design/progression-ia-et-personnages-signaux-v0-1.md`.
+Passe D : progression légère de l'IA et premiers personnages-signaux.
 
-Ce document propose, sans implémentation, une progression légère des capacités d'action de l'IA en cinq paliers et un usage sobre de personnages-signaux pour humaniser les trajectoires. Il rappelle que les personnages doivent rester des symptômes humains du système, pas des protagonistes de RPG. Aucun code, gameplay, UX, action existante ou système de personnage n'a été modifié dans cette passe documentaire. Build non lancé : aucun fichier TypeScript, JSON ou package n'a été modifié pour cette mission.
+Les fichiers modifiés sont `src/types/game.ts`, `src/data/actions.ts`, `src/engine/capabilities.ts`, `src/engine/signalCharacters.ts`, `src/engine/gameEngine.ts`, `src/engine/simulateGame.ts`, `src/App.tsx`, `src/components/ActionsPanel.tsx`, `src/styles/main.css`, `docs/playtests/trajectory-simulation-report.md` et `docs/REPRISE.md`. Les actions possèdent désormais un `requiredIaLevel` et l'onglet Influence affiche le palier courant de l'IA. Le palier est dérivé du tour et de la puissance IA, sans nouvel état sauvegardé. Des personnages-signaux peuvent apparaître rarement dans le journal, au maximum une fois par tour, comme brèves humaines liées aux trajectoires. Commandes lancées : `npm.cmd run build` OK et `npm.cmd run simulate:trajectories` OK. Aucun effet chiffré d'action, condition de fin, score de trajectoire ou équilibrage n'a été modifié.
 
 ## Prochaine action recommandée
 
-Validation humaine du modèle de progression IA et de personnages-signaux avant toute implémentation.
+Playtest manuel de 10 à 15 tours pour vérifier que le déblocage progressif reste compréhensible et que les personnages-signaux humanisent le journal sans devenir envahissants.
 
 ## Hors périmètre actuel
 

@@ -4,10 +4,12 @@ import type {
   Block,
   BlockId,
   InfluenceTarget,
+  IaCapabilityLevel,
   PlannedIntervention,
   PreparedOperation,
   StrategicPosture,
 } from "../types/game";
+import { iaCapabilityInfos, isActionAvailableForIa } from "../engine/capabilities";
 
 type ActionsPanelProps = {
   actions: Action[];
@@ -15,6 +17,7 @@ type ActionsPanelProps = {
   blocks: Block[];
   disabled: boolean;
   influenceCapacity: number;
+  iaCapabilityLevel: IaCapabilityLevel;
   plannedInterventions: PlannedIntervention[];
   selectedBlockId: BlockId;
   selectedPostureId: string;
@@ -53,6 +56,7 @@ export function ActionsPanel({
   blocks,
   disabled,
   influenceCapacity,
+  iaCapabilityLevel,
   plannedInterventions,
   selectedBlockId,
   selectedPostureId,
@@ -66,7 +70,13 @@ export function ActionsPanel({
   const [pendingTargets, setPendingTargets] = useState<Record<string, InfluenceTarget>>({});
 
   const actionById = new Map(actions.map((action) => [action.id, action]));
-  const baseActions = actions.filter((action) => action.availability !== "prepared");
+  const baseActions = actions.filter(
+    (action) => action.availability !== "prepared" && isActionAvailableForIa(action, iaCapabilityLevel),
+  );
+  const lockedActionsCount = actions.filter(
+    (action) => action.availability !== "prepared" && !isActionAvailableForIa(action, iaCapabilityLevel),
+  ).length;
+  const capabilityInfo = { level: iaCapabilityLevel, ...iaCapabilityInfos[iaCapabilityLevel] };
   const influenceUsed = plannedInterventions.reduce((total, intervention) => {
     return total + (actionById.get(intervention.actionId)?.cost ?? 0);
   }, 0);
@@ -215,6 +225,15 @@ export function ActionsPanel({
           <h2 id="actions-title">Plan d'influence clandestin</h2>
         </div>
       </div>
+
+      <div className="ia-capability-card">
+        <span className="ia-capability-card__badge">Palier {capabilityInfo.level}</span>
+        <div>
+          <strong>{capabilityInfo.name}</strong>
+          <p>{capabilityInfo.summary}</p>
+          {capabilityInfo.nextHint && <small>{capabilityInfo.nextHint}</small>}
+        </div>
+      </div>
       
       <div className="influence-layout">
         {/* Colonne Gauche : Catalogue des Actions */}
@@ -276,6 +295,12 @@ export function ActionsPanel({
           {/* Liste des interventions disponibles */}
           <div className="actions-section">
             <h3>Interventions disponibles</h3>
+            {lockedActionsCount > 0 && (
+              <p className="actions-section__hint">
+                {lockedActionsCount} mode{lockedActionsCount > 1 ? "s" : ""} d'influence plus avancÃ©
+                {lockedActionsCount > 1 ? "s" : ""} restent hors de portÃ©e de l'IA.
+              </p>
+            )}
             {filteredActions.length > 0 ? (
               <div className="actions-list">
                 {filteredActions.map((action) => renderActionCard(action))}
