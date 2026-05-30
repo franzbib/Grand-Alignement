@@ -1,4 +1,5 @@
 import { getRelationStatus } from "../engine/relations";
+import { getSituatedVoiceForRelation } from "../engine/situatedVoices";
 import type { Block, InterBlockRelation } from "../types/game";
 import { StatGauge } from "./StatGauge";
 
@@ -67,6 +68,7 @@ export function RelationsPanel({ blocks, relations }: RelationsPanelProps) {
 
   const globalSynthesis = getGlobalDiplomaticSynthesis(relations);
   const diplomaticNote = getDecorativeDiplomaticNote(relations);
+  const situatedVoice = getSituatedVoiceForRelation(mainTension, blocks);
 
   return (
     <section className="panel relations-panel" aria-labelledby="relations-title">
@@ -155,6 +157,15 @@ export function RelationsPanel({ blocks, relations }: RelationsPanelProps) {
 
       {diplomaticNote && (
         <p className="relations-diplomatic-note">{diplomaticNote}</p>
+      )}
+
+      {situatedVoice && (
+        <aside className="situated-voice" aria-label="Voix située">
+          <span>{situatedVoice.context}</span>
+          <p>
+            {situatedVoice.speaker} : « {situatedVoice.quote} »
+          </p>
+        </aside>
       )}
     </section>
   );

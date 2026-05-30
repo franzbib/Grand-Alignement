@@ -1,6 +1,7 @@
 import { generateBlockNarrativeSummary } from "../engine/blockNarrative";
 import { generateBlockReport } from "../engine/reports";
 import { getRelationStatus } from "../engine/relations";
+import { getSituatedVoiceForBlock } from "../engine/situatedVoices";
 import type { Block, BlockId, BlockTrend, InterBlockRelation } from "../types/game";
 import { StatGauge } from "./StatGauge";
 
@@ -42,6 +43,7 @@ export function BlockAnalysisPanel({ block, blocks, previousBlock, relations, ye
   const mostTenseRelation = [...relatedRelations].sort((left, right) => right.tension - left.tension)[0];
   const mostCooperativeRelation = [...relatedRelations].sort((left, right) => right.cooperation - left.cooperation)[0];
   const recentRelation = relatedRelations.find((relation) => relation.recentTrend);
+  const situatedVoice = getSituatedVoiceForBlock(block, relations, year);
 
   return (
     <article className="block-analysis" aria-labelledby="block-analysis-title">
@@ -56,6 +58,13 @@ export function BlockAnalysisPanel({ block, blocks, previousBlock, relations, ye
       </div>
 
       <p className="block-analysis__lead">{narrative.summary}</p>
+
+      <aside className="situated-voice situated-voice--block" aria-label="Voix située du bloc">
+        <span>{situatedVoice.context}</span>
+        <p>
+          {situatedVoice.speaker} : « {situatedVoice.quote} »
+        </p>
+      </aside>
 
       <div className="block-analysis__vitals" aria-label="Jauges synthétiques du bloc">
         <StatGauge label="Stabilité" value={block.stats.stabilite} />

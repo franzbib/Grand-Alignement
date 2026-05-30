@@ -73,6 +73,7 @@ npm.cmd run build
 - Outil local de simulation des trajectoires lançable avec `npm.cmd run simulate:trajectories`.
 - Journal des conséquences.
 - Personnages-signaux rares dans le journal, sous forme de brèves humaines non RPG.
+- Voix situées décoratives dans les blocs et relations, sans mémoire de personnage ni mécanique dédiée.
 - Événements systémiques, dont deux liés au soupçon IA.
 - Sauvegarde automatique dans `localStorage`.
 - Quatre fins diagnostiques existantes.
@@ -84,13 +85,13 @@ npm.cmd run build
 
 ## Dernière modification utile
 
-Passe D : progression légère de l'IA et premiers personnages-signaux.
+Passe E : voix situées et humanisation géopolitique légère.
 
-Les fichiers modifiés sont `src/types/game.ts`, `src/data/actions.ts`, `src/engine/capabilities.ts`, `src/engine/signalCharacters.ts`, `src/engine/gameEngine.ts`, `src/engine/simulateGame.ts`, `src/App.tsx`, `src/components/ActionsPanel.tsx`, `src/styles/main.css`, `docs/playtests/trajectory-simulation-report.md` et `docs/REPRISE.md`. Les actions possèdent désormais un `requiredIaLevel` et l'onglet Influence affiche le palier courant de l'IA. Le palier est dérivé du tour et de la puissance IA, sans nouvel état sauvegardé. Des personnages-signaux peuvent apparaître rarement dans le journal, au maximum une fois par tour, comme brèves humaines liées aux trajectoires. Commandes lancées : `npm.cmd run build` OK et `npm.cmd run simulate:trajectories` OK. Aucun effet chiffré d'action, condition de fin, score de trajectoire ou équilibrage n'a été modifié.
+Les fichiers modifiés sont `src/engine/situatedVoices.ts`, `src/components/RelationsPanel.tsx`, `src/components/BlockAnalysisPanel.tsx`, `src/styles/main.css`, `docs/playtests/trajectory-simulation-report.md` et `docs/REPRISE.md`. Une petite banque déterministe de voix situées ajoute désormais une citation locale dans l'onglet Relations et dans la synthèse du bloc sélectionné. Ces voix restent décoratives, non récurrentes et distinctes des personnages-signaux. Commandes lancées : `npm.cmd run build` OK et `npm.cmd run simulate:trajectories` OK. Aucun gameplay, effet chiffré, score de trajectoire, condition de fin, sauvegarde ou logique de progression IA n'a été modifié.
 
 ## Prochaine action recommandée
 
-Playtest manuel de 10 à 15 tours pour vérifier que le déblocage progressif reste compréhensible et que les personnages-signaux humanisent le journal sans devenir envahissants.
+Playtest manuel ciblé sur les onglets Blocs et Relations pour vérifier que les voix situées donnent de la couleur sans parasiter la lecture des jauges.
 
 ## Hors périmètre actuel
 

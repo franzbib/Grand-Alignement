@@ -783,6 +783,35 @@ button {
   line-height: 1.55;
 }
 
+.situated-voice {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid #ded8c9;
+  border-left: 3px solid #8f7d52;
+  border-radius: 8px;
+  background: #faf7ed;
+  color: #536158;
+}
+
+.situated-voice--block {
+  margin: -2px 0 14px;
+}
+
+.situated-voice span {
+  display: block;
+  color: #7c3626;
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.situated-voice p {
+  margin: 4px 0 0;
+  font-size: 0.88rem;
+  font-style: italic;
+  line-height: 1.45;
+}
+
 .block-analysis__vitals {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
