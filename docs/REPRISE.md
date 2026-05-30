@@ -24,6 +24,7 @@ La prémisse actuelle : le joueur incarne une IA émergente cachée. Le monde ne
 - `docs/design/traduction-trajectoires-proxys-v0-4.md`
 - `docs/design/audit-rythme-agentivite-trajectoires-v0-1.md`
 - `docs/design/progression-ia-et-personnages-signaux-v0-1.md`
+- `docs/design/audit-progression-ia-v0-1.md`
 - `docs/design/passe-litteraire-A-v0-1.md`
 - `docs/playtests/trajectory-simulation-report.md`
 - `docs/playtests/trajectory-simulation-analysis.md`
@@ -85,13 +86,13 @@ npm.cmd run build
 
 ## Dernière modification utile
 
-Passe E : voix situées et humanisation géopolitique légère.
+Passe documentaire : ajout de `docs/design/audit-progression-ia-v0-1.md`.
 
-Les fichiers modifiés sont `src/engine/situatedVoices.ts`, `src/components/RelationsPanel.tsx`, `src/components/BlockAnalysisPanel.tsx`, `src/styles/main.css`, `docs/playtests/trajectory-simulation-report.md` et `docs/REPRISE.md`. Une petite banque déterministe de voix situées ajoute désormais une citation locale dans l'onglet Relations et dans la synthèse du bloc sélectionné. Ces voix restent décoratives, non récurrentes et distinctes des personnages-signaux. Commandes lancées : `npm.cmd run build` OK et `npm.cmd run simulate:trajectories` OK. Aucun gameplay, effet chiffré, score de trajectoire, condition de fin, sauvegarde ou logique de progression IA n'a été modifié.
+Ce document audite la progression actuelle des capacités de l'IA-joueur. Il recommande de conserver le tronc commun chronologique, mais d'ajouter plus tard une coloration narrative du palier courant selon la trajectoire dominante, sans transformer les trajectoires en mécanisme de déblocage. Il signale aussi que le palier 5 de Souveraineté latente est encore trop creux et propose des garde-fous contre l'arbre technologique. Aucun code, gameplay, équilibrage, score, action, fin, sauvegarde ou logique de progression IA n'a été modifié.
 
 ## Prochaine action recommandée
 
-Playtest manuel ciblé sur les onglets Blocs et Relations pour vérifier que les voix situées donnent de la couleur sans parasiter la lecture des jauges.
+Lire et valider humainement l'audit de progression IA avant toute nouvelle implémentation : priorité possible à une coloration narrative du résumé des paliers dans l'interface Influence, sans modification mécanique.
 
 ## Hors périmètre actuel
 
