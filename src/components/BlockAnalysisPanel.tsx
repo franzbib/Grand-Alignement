@@ -1,13 +1,14 @@
+import { generateBlockNarrativeSummary } from "../engine/blockNarrative";
 import { generateBlockReport } from "../engine/reports";
 import { getRelationStatus } from "../engine/relations";
 import type { Block, BlockId, BlockTrend, InterBlockRelation } from "../types/game";
-import { StatGauge } from "./StatGauge";
 
 type BlockAnalysisPanelProps = {
   block: Block;
   blocks: Block[];
   previousBlock?: Block;
   relations: InterBlockRelation[];
+  year: number;
 };
 
 const relationDomainLabels: Record<InterBlockRelation["domain"], string> = {
@@ -33,8 +34,9 @@ function getOtherBlockName(relation: InterBlockRelation, blockId: BlockId, block
   return blocks.find((block) => block.id === otherBlockId)?.name ?? otherBlockId;
 }
 
-export function BlockAnalysisPanel({ block, blocks, previousBlock, relations }: BlockAnalysisPanelProps) {
+export function BlockAnalysisPanel({ block, blocks, previousBlock, relations, year }: BlockAnalysisPanelProps) {
   const report = generateBlockReport(block, previousBlock, relations);
+  const narrative = generateBlockNarrativeSummary(block, previousBlock, relations, year);
   const relatedRelations = getRelatedRelations(block.id, relations);
   const mostTenseRelation = [...relatedRelations].sort((left, right) => right.tension - left.tension)[0];
   const mostCooperativeRelation = [...relatedRelations].sort((left, right) => right.cooperation - left.cooperation)[0];
@@ -44,31 +46,37 @@ export function BlockAnalysisPanel({ block, blocks, previousBlock, relations }: 
     <article className="block-analysis" aria-labelledby="block-analysis-title">
       <div className="block-analysis__header">
         <div>
-          <p className="eyebrow">Analyse détaillée</p>
-          <h3 id="block-analysis-title">{block.name}</h3>
+          <p className="eyebrow">Synthèse du bloc</p>
+          <h3 id="block-analysis-title">
+            {block.name} — {narrative.year}
+          </h3>
         </div>
-        <span>{report.socialMood.mostAffectedGroup}</span>
+        <span>{narrative.direction}</span>
+      </div>
+
+      <p className="block-analysis__lead">{narrative.summary}</p>
+
+      <div className="block-indicators" aria-label="Indicateurs interprétatifs">
+        {narrative.indicators.map((indicator) => (
+          <div className="block-indicator" key={indicator.label}>
+            <span>{indicator.label}</span>
+            <strong>{indicator.value}</strong>
+          </div>
+        ))}
+      </div>
+
+      <div className="block-analysis__journal">
+        <h4>Brèves de bloc</h4>
+        <ul>
+          {narrative.briefs.map((brief) => (
+            <li key={brief.label}>
+              <strong>{brief.label} :</strong> {brief.text}
+            </li>
+          ))}
+        </ul>
       </div>
 
       <div className="block-analysis__grid">
-        <section>
-          <h4>Synthèse du bloc</h4>
-          <p>{report.generalSituation}</p>
-          <p>{report.strategicReading}</p>
-        </section>
-
-        <section>
-          <h4>Jauges principales</h4>
-          <div className="block-analysis__gauges">
-            <StatGauge label="Stabilité" value={block.stats.stabilite} />
-            <StatGauge label="Richesse" value={block.stats.richesse} />
-            <StatGauge label="Éducation" value={block.stats.education} />
-            <StatGauge label="Liberté" value={block.stats.liberte} />
-            <StatGauge label="Confiance IA" value={block.stats.confianceIA} />
-            <StatGauge label="Tension sociale" value={block.stats.tensionSociale} tone="danger" />
-          </div>
-        </section>
-
         <section>
           <h4>Tendances récentes</h4>
           {report.trends.length > 0 ? (
@@ -88,41 +96,35 @@ export function BlockAnalysisPanel({ block, blocks, previousBlock, relations }: 
           <h4>Groupes sociaux</h4>
           <p>Sous tension : {report.tenseGroups.join(", ")}.</p>
           <p>Favorables : {report.favorableGroups.join(", ")}.</p>
-          <p>{report.socialMood.summary}</p>
         </section>
 
         <section>
           <h4>Relations extérieures</h4>
-          <p>{report.relationsSummary}</p>
-          {mostTenseRelation && (
+          {mostTenseRelation ? (
             <p>
               Tension principale : {getOtherBlockName(mostTenseRelation, block.id, blocks)},{" "}
               {relationDomainLabels[mostTenseRelation.domain].toLowerCase()}, {getRelationStatus(mostTenseRelation)}.
             </p>
+          ) : (
+            <p>{report.relationsSummary}</p>
           )}
           {mostCooperativeRelation && (
             <p>
-              Coopération la plus lisible : {getOtherBlockName(mostCooperativeRelation, block.id, blocks)},{" "}
+              Coopération lisible : {getOtherBlockName(mostCooperativeRelation, block.id, blocks)},{" "}
               {mostCooperativeRelation.cooperation}.
             </p>
           )}
         </section>
 
         <section>
-          <h4>Vulnérabilités</h4>
+          <h4>Lecture stratégique</h4>
           <p>{report.mainRisk}</p>
-          <p>{report.strategicVulnerability}</p>
-        </section>
-
-        <section>
-          <h4>Leviers possibles</h4>
           <p>{report.possibleLeverage}</p>
         </section>
 
         <section>
-          <h4>Derniers signaux</h4>
-          <p>{recentRelation?.recentTrend ?? "Aucun changement relationnel récent dominant."}</p>
-          <p>{report.recentTrend}</p>
+          <h4>Dernier signal</h4>
+          <p>{recentRelation?.recentTrend ?? report.strategicVulnerability}</p>
         </section>
       </div>
     </article>

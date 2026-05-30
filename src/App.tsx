@@ -213,6 +213,7 @@ function App() {
           previousBlocks={gameState.previousBlocks}
           relations={gameState.relations}
           selectedBlockId={selectedBlockId}
+          turn={gameState.turn}
         />
       )}
 
