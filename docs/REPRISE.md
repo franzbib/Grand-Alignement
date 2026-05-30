@@ -22,6 +22,8 @@ La prémisse actuelle : le joueur incarne une IA émergente cachée. Le monde ne
 - `docs/design/fins-trajectoires-personnages-v0-2.md`
 - `docs/design/trajectoires-evolution-v0-3.md`
 - `docs/design/traduction-trajectoires-proxys-v0-4.md`
+- `docs/playtests/trajectory-simulation-report.md`
+- `docs/playtests/trajectory-simulation-analysis.md`
 
 ## Comment lancer le projet
 
@@ -76,9 +78,9 @@ npm.cmd run build
 
 ## Dernière modification utile
 
-Ajout d'un outil local de playtest automatique des trajectoires. Les fichiers modifiés ou créés sont `package.json`, `package-lock.json`, `scripts/simulate-trajectories.ts`, `src/engine/simulateGame.ts`, `docs/playtests/trajectory-simulation-report.md` et `docs/REPRISE.md`.
+Analyse du rapport de simulation des trajectoires. Les fichiers modifiés ou créés sont `docs/playtests/trajectory-simulation-analysis.md` et `docs/REPRISE.md`.
 
-La commande `npm.cmd run simulate:trajectories` simule huit profils de joueur aux horizons 5, 10, 30 et 50 tours, puis écrit un rapport synthétique dans `docs/playtests/trajectory-simulation-report.md`. L'outil observe les jauges, blocs, trajectoires dominantes, trajectoires secondaires et fins éventuelles sans modifier le gameplay public. Build vérifié avec `npm.cmd run build` : OK.
+Le diagnostic conclut que les profils produisent des trajectoires différentes, mais que `Capture privée` est probablement surpondérée par sa formule de score, car elle dépend d'extrêmes comme richesse maximale, dépendance technologique maximale et liberté minimale. Les saturations à 50 tours relèvent surtout du stress test long, mais certaines saturations à 10 tours méritent surveillance. Aucun équilibrage n'a été appliqué.
 
 ## Ce qui reste à faire
 
@@ -90,7 +92,7 @@ La commande `npm.cmd run simulate:trajectories` simule huit profils de joueur au
 
 ## Prochaine action recommandée
 
-Lire le rapport `docs/playtests/trajectory-simulation-report.md`, puis décider humainement s'il faut une passe d'équilibrage ciblée sur les saturations de jauges et la domination de certaines trajectoires.
+Micro-ajuster uniquement la lecture des scores de trajectoires, en priorité `Capture privée`, sans toucher aux actions ni aux fins.
 
 ## Hors périmètre actuel
 
