@@ -258,6 +258,30 @@ function chooseTurnPlan(state: GameState, profile: SimulationProfile): ResolvedI
   let influenceUsed = 0;
   const selectedActionIds = new Set<string>();
 
+  // Hygiène de soupçon minimale : depuis la passe "Le monde répond", le soupçon
+  // a des conséquences (vigilance, enquête, exposition). Un joueur réel, informé
+  // par l'interface, ralentit et efface ses traces quand le soupçon monte. Les
+  // profils simulés font de même, sinon toutes les simulations convergent vers
+  // la fin Exposition et ne mesurent plus la diversité des trajectoires.
+  // L'alternance effacement / tour discret évite la pénalité de motif répété.
+  if (state.globalStats.soupconIA >= 55) {
+    const availableActions = getAvailableActionsForState(actions, state);
+    const erasure = availableActions.find((action) => action.id === "correlation-erasure");
+    const erasedLastTurn = state.recentTurnActionIds.at(-1)?.includes("correlation-erasure") ?? false;
+
+    if (erasure && !erasedLastTurn) {
+      return [{ action: erasure, target: erasure.defaultTarget }];
+    }
+
+    const quietest = [...availableActions]
+      .filter((action) => action.availability !== "prepared")
+      .sort((left, right) => left.suspicionEffect - right.suspicionEffect)[0];
+
+    if (quietest) {
+      return [{ action: quietest, target: getTargetForAction(quietest, state.turn, profile) }];
+    }
+  }
+
   for (const option of sortActionsForProfile(profile, state)) {
     if (selectedActionIds.has(option.action.id)) {
       continue;
