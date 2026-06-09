@@ -19,6 +19,8 @@ export function createInitialState(): GameState {
     relations: structuredClone(initialRelations),
     previousRelations: null,
     triggeredEventIds: [],
+    eventCooldowns: {},
+    recentTurnActionIds: [],
     preparedOperations: [],
     previousBlocks: null,
     journal: [

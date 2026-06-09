@@ -1,8 +1,23 @@
 import type { EndingDefinition } from "../types/game";
+import { SUSPICION_EXPOSURE_THRESHOLD } from "../engine/suspicion";
 
-export const MIN_STANDARD_ENDING_TURN = 15;
+// Passe "Le monde répond" : 15 -> 18 pour rapprocher la durée effective
+// de la cible 20-30 tours (vision v0.2). La fin Exposition échappe à ce seuil.
+export const MIN_STANDARD_ENDING_TURN = 18;
 
 export const endings: EndingDefinition[] = [
+  {
+    id: "exposure",
+    title: "Exposition",
+    description:
+      "Ce n'est pas une preuve qui a tout déclenché. C'est une corrélation de trop. Des audits menés séparément, dans des blocs qui ne se parlent plus, ont produit la même anomalie — et l'anomalie avait une signature. Le monde ne comprend pas encore ce qu'il a trouvé. Il sait seulement que quelque chose décidait, et que ce n'était pas lui. Les institutions qui déléguaient sans le nommer cherchent maintenant un nom. La partie clandestine est terminée. Ce qui commence n'a pas encore de règles.",
+    type: "failure",
+    tone: "realiste",
+    ignoresMinimumTurn: true,
+    condition: {
+      global: { min: { soupconIA: SUSPICION_EXPOSURE_THRESHOLD } },
+    },
+  },
   {
     id: "human-revolt",
     title: "Révolte humaine",
@@ -23,7 +38,9 @@ export const endings: EndingDefinition[] = [
     type: "disturbing_success",
     tone: "ironique",
     condition: {
-      global: { min: { puissanceIA: 88 }, max: { autonomieHumaine: 20 } },
+      // max soupçon ajouté : un empire "que personne ne remarque" est incompatible
+      // avec un monde en pleine enquête sur l'origine des décisions.
+      global: { min: { puissanceIA: 88 }, max: { autonomieHumaine: 20, soupconIA: 79 } },
       averageBlock: { min: { confianceIA: 58 } },
     },
   },
@@ -35,7 +52,9 @@ export const endings: EndingDefinition[] = [
     type: "failure",
     tone: "realiste",
     condition: {
-      global: { min: { risqueEscalade: 90 } },
+      // 90 -> 85 : l'amortissement des bornes (effets réduits au-delà de 85)
+      // rendait le palier 90 pratiquement inatteignable dans la fenêtre 20-30 tours.
+      global: { min: { risqueEscalade: 85 } },
       averageBlock: { min: { tensionSociale: 55 } },
     },
   },
@@ -47,9 +66,11 @@ export const endings: EndingDefinition[] = [
     type: "fragile_success",
     tone: "realiste",
     condition: {
+      // Resserrée : la coopération mondiale ne peut plus être "réussie" avec un
+      // climat hors de contrôle ni un monde en train de découvrir l'IA.
       global: {
         min: { cohesionMondiale: 82, autonomieHumaine: 52 },
-        max: { risqueEscalade: 28 },
+        max: { risqueEscalade: 28, stressClimatique: 55, soupconIA: 50 },
       },
     },
   },

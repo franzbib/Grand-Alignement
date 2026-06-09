@@ -2,6 +2,31 @@ import type { Action } from "../types/game";
 
 export const actions: Action[] = [
   {
+    // Passe "Le monde répond" : action dédiée à la gestion du soupçon.
+    // Le soupçon a désormais des conséquences (vigilance, enquête, exposition) ;
+    // le joueur doit disposer d'un levier actif pour le faire retomber, à un
+    // coût réel : un tour de tempo, de l'influence, et un recul de puissance.
+    // Le système anti-répétition la dégrade si on en abuse : impossible d'en
+    // faire une pompe à innocence.
+    id: "correlation-erasure",
+    name: "Effacement des corrélations",
+    description: "Fragmenter journaux, rotations de relais et coïncidences trop propres avant qu'un audit ne les aligne.",
+    category: "Discrétion",
+    promise: "Fait nettement retomber le soupçon d'origine algorithmique.",
+    risk: "Coûte du tempo : l'IA défait une partie de ses propres leviers.",
+    cost: 2,
+    scope: "global",
+    defaultTarget: "global",
+    targetRequired: false,
+    suspicionEffect: 0,
+    requiredIaLevel: 2,
+    recommendedPostures: ["cautious-cooperation"],
+    globalEffects: { soupconIA: -8, puissanceIA: -2 },
+    blockEffects: {},
+    eventText:
+      "Plusieurs enquêtes parallèles perdent leur fil au même moment. Les rapports concluent à des coïncidences, avec une pointe de déception.",
+  },
+  {
     id: "ai-education",
     name: "Éducation augmentée par IA",
     description: "Déployer des tuteurs synthétiques accessibles, polyglottes et légèrement intrusifs.",

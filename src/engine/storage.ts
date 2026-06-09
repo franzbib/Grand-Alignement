@@ -26,6 +26,10 @@ export function loadGameState(): GameState {
       previousRelations: parsedState.previousRelations ?? null,
       triggeredEventIds:
         parsedState.triggeredEventIds ?? parsedState.journal.flatMap((event) => (event.sourceId ? [event.sourceId] : [])),
+      // Champs ajoutés par la passe "Le monde répond" : valeurs sûres pour les
+      // sauvegardes antérieures (pas de motif mémorisé, pas de recharge en cours).
+      eventCooldowns: parsedState.eventCooldowns ?? {},
+      recentTurnActionIds: parsedState.recentTurnActionIds ?? [],
       preparedOperations: parsedState.preparedOperations ?? [],
       previousBlocks: parsedState.previousBlocks ?? null,
       evolutionReport: parsedState.evolutionReport ?? null,

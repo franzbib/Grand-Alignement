@@ -203,12 +203,23 @@ export function advanceWorldDynamics(
       limit: 2,
     },
     {
-      condition: globalStats.soupconIA >= 45,
+      condition: globalStats.soupconIA >= 45 && globalStats.soupconIA < 78,
       predicate: (relation) => relation.domain === "technology" || relation.domain === "information",
       delta: { tension: 2, cooperation: -1 },
       reason: "Soupçon algorithmique latent",
       signal: "Les normes techniques et informationnelles deviennent moins compatibles.",
       limit: 2,
+    },
+    {
+      // Passe "Le monde répond" : en zone d'enquête, les blocs cherchent
+      // activement une origine commune aux anomalies. La pression relationnelle
+      // devient nettement plus lourde que le simple soupçon latent.
+      condition: globalStats.soupconIA >= 78,
+      predicate: (relation) => relation.domain === "technology" || relation.domain === "information",
+      delta: { tension: 4, cooperation: -2 },
+      reason: "Audits croisés sur l'origine des décisions",
+      signal: "Des audits coordonnés cherchent une origine commune aux anomalies. Les échanges techniques se ferment.",
+      limit: 3,
     },
     {
       condition: unstableBlockIds.length > 0,

@@ -1,4 +1,5 @@
 import { computeTrajectoryScores } from "./trajectories";
+import { isActionSuspendedBySuspicion } from "./suspicion";
 import type { Action, GameState, IaCapabilityLevel, TrajectoryScores } from "../types/game";
 
 export type IaCapabilityInfo = {
@@ -127,5 +128,11 @@ export function isActionAvailableForIa(action: Action, level: IaCapabilityLevel)
 
 export function getAvailableActionsForState(actions: Action[], state: Pick<GameState, "turn" | "globalStats">): Action[] {
   const level = getIaCapabilityLevel(state);
-  return actions.filter((action) => isActionAvailableForIa(action, level));
+
+  // Deux filtres : le palier de capacités (l'IA apprend) et la discrétion
+  // forcée (en zone d'enquête, les opérations à forte signature sont suspendues).
+  return actions.filter(
+    (action) =>
+      isActionAvailableForIa(action, level) && !isActionSuspendedBySuspicion(action, state.globalStats.soupconIA),
+  );
 }

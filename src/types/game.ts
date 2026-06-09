@@ -249,6 +249,10 @@ export type GameState = {
   previousRelations: InterBlockRelation[] | null;
   journal: Event[];
   triggeredEventIds: string[];
+  /** Tour du dernier déclenchement de chaque événement systémique répétable. */
+  eventCooldowns: Record<string, number>;
+  /** Actions jouées sur les derniers tours (fenêtre glissante), pour la détection de motifs. */
+  recentTurnActionIds: string[][];
   preparedOperations: PreparedOperation[];
   previousBlocks: Block[] | null;
   evolutionReport: EvolutionReport | null;
@@ -281,12 +285,16 @@ export type SystemicEvent = {
   text: string;
   tone: EventTone;
   condition: SystemicEventCondition;
+  /** Si vrai, l'événement peut se redéclencher après un temps de recharge (le monde répond plusieurs fois). */
+  repeatable?: boolean;
   globalEffects?: StatDelta<GlobalStats>;
   blockEffects?: StatDelta<BlockStats>;
   effectsText?: string;
 };
 
 export type EndingDefinition = Ending & {
+  /** Si vrai, la fin peut se déclencher avant le tour minimal standard (ex. Exposition). */
+  ignoresMinimumTurn?: boolean;
   condition: {
     global?: StatThresholds<GlobalStats>;
     averageBlock?: StatThresholds<BlockStats>;
