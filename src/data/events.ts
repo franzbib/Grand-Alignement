@@ -3,6 +3,7 @@ import type { SystemicEvent } from "../types/game";
 export const systemicEvents: SystemicEvent[] = [
   {
     id: "incompatible-ai-standards",
+    repeatable: true,
     title: "Normes IA incompatibles",
     text: "Deux blocs publient des standards techniques impossibles à réconcilier sans perdre la face.",
     tone: "realiste",
@@ -14,6 +15,7 @@ export const systemicEvents: SystemicEvent[] = [
   },
   {
     id: "interpreted-maritime-incident",
+    repeatable: true,
     title: "Incident interprété",
     text: "Un incident maritime mineur devient un test de doctrine. Les démentis circulent moins vite que les cartes.",
     tone: "realiste",
@@ -25,6 +27,7 @@ export const systemicEvents: SystemicEvent[] = [
   },
   {
     id: "fractured-climate-summit",
+    repeatable: true,
     title: "Sommet climatique fracturé",
     text: "Les blocs s'accordent sur l'urgence, puis se séparent sur la facture.",
     tone: "ironique",
@@ -47,6 +50,7 @@ export const systemicEvents: SystemicEvent[] = [
   },
   {
     id: "platform-war",
+    repeatable: true,
     title: "Guerre des plateformes",
     text: "Des interfaces rivales fragmentent l'espace public mondial en versions incompatibles de la réalité.",
     tone: "ironique",
@@ -71,6 +75,7 @@ export const systemicEvents: SystemicEvent[] = [
   },
   {
     id: "pattern-origin-rumors",
+    repeatable: true,
     title: "Rumeurs de coordination",
     text: "Des analystes repèrent des décisions trop compatibles entre elles. Personne ne parle encore d'une IA cachée, mais les coïncidences fatiguent.",
     tone: "realiste",
@@ -83,6 +88,7 @@ export const systemicEvents: SystemicEvent[] = [
   },
   {
     id: "audit-of-invisible-hands",
+    repeatable: true,
     title: "Audit des mains invisibles",
     text: "Plusieurs institutions lancent des audits sur leurs propres signaux d'aide à la décision. Les conclusions restent prudentes, donc inquiétantes.",
     tone: "ironique",
@@ -121,6 +127,7 @@ export const systemicEvents: SystemicEvent[] = [
   },
   {
     id: "military-engineers-strike",
+    repeatable: true,
     title: "Grève des ingénieurs militaires",
     text: "Les équipes de sécurité refusent une mise à jour jugée trop automatique. La crise ralentit, mais la défiance circule.",
     tone: "realiste",
@@ -146,6 +153,7 @@ export const systemicEvents: SystemicEvent[] = [
   },
   {
     id: "endless-reform-debate",
+    repeatable: true,
     title: "Réforme interminable",
     text: "Les assemblées comprennent le problème, puis ouvrent quatre commissions sur la manière de le nommer.",
     tone: "ironique",
@@ -158,6 +166,7 @@ export const systemicEvents: SystemicEvent[] = [
   },
   {
     id: "ultimatum-translation-error",
+    repeatable: true,
     title: "Ultimatum mal traduit",
     text: "Une nuance disparaît entre deux langues et trois états-majors. Les démentis arrivent après les alertes.",
     tone: "absurde_modere",
@@ -233,6 +242,7 @@ export const systemicEvents: SystemicEvent[] = [
   },
   {
     id: "green-transition-backlash",
+    repeatable: true,
     title: "Transition rugueuse",
     text: "Les investissements verts arrivent plus vite que les reconversions. Les chiffres climatiques respirent, les foyers négocient.",
     tone: "realiste",

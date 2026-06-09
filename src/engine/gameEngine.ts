@@ -6,6 +6,16 @@ import { advanceWorldDynamics, applyPlayerRelationEffects } from "./relations";
 import { formatTrendSummary, generateBlockReport, getBlockTrends } from "./reports";
 import { chooseSignalCharacterEvent } from "./signalCharacters";
 import {
+  DISCRETION_SIGNATURE_LIMIT,
+  DISCRETION_SUSPICION_DECAY,
+  PATTERN_MEMORY_TURNS,
+  PATTERN_SUSPICION_PER_REPEAT,
+  SUSPICION_EXPOSURE_THRESHOLD,
+  countRecentActionUses,
+  getPatternEfficiencyMultiplier,
+  getSuspicionTrustErosion,
+} from "./suspicion";
+import {
   computeTrajectoryScores,
   getCollidingTrajectories,
   getDominantTrajectory,
@@ -33,8 +43,25 @@ import type {
   SystemicEventCondition,
 } from "../types/game";
 
-const MAX_JOURNAL_ENTRIES = 10;
+// 10 -> 40 : le jeu vise 20-30 tours et sa vision est la sédimentation des
+// choix en histoire ; un journal qui oublie 80 % de la partie la contredisait.
+const MAX_JOURNAL_ENTRIES = 40;
 export const INFLUENCE_CAPACITY = 5;
+
+// Passe "Le monde répond" — constantes d'équilibrage du ciblage.
+// Avant : une action globale appliquait ses effets de bloc à 100 % sur les six
+// blocs, rendant le ciblage d'un bloc strictement inférieur (1/6 des effets).
+// Désormais cibler concentre (x1.5) et la portée globale dilue (x0.6 par bloc).
+const TARGETED_BLOCK_EFFECT_MULTIPLIER = 1.5;
+const GLOBAL_BLOCK_EFFECT_MULTIPLIER = 0.6;
+
+// Au-delà de cette zone, les effets sont divisés par deux : les jauges ne se
+// collent plus aux bornes dès le milieu de partie et les deltas restent lisibles.
+const STAT_SOFT_CAP_HIGH = 85;
+const STAT_SOFT_CAP_LOW = 15;
+
+// Recharge (en tours) des événements systémiques marqués `repeatable`.
+const SYSTEMIC_EVENT_COOLDOWN = 8;
 
 const globalStatLabels: Record<keyof GlobalStats, string> = {
   cohesionMondiale: "Cohésion mondiale",
@@ -51,11 +78,28 @@ function clampStat(value: number): number {
   return Math.max(0, Math.min(100, value));
 }
 
+/**
+ * Réduit de moitié les poussées qui s'enfoncent dans les zones extrêmes.
+ * Les jauges restent vivantes en fin de partie au lieu de saturer à 0/100.
+ */
+function softenDelta(currentValue: number, delta: number): number {
+  if (delta > 0 && currentValue >= STAT_SOFT_CAP_HIGH) {
+    return Math.ceil(delta / 2);
+  }
+
+  if (delta < 0 && currentValue <= STAT_SOFT_CAP_LOW) {
+    return Math.ceil(delta / 2);
+  }
+
+  return delta;
+}
+
 function applyDelta<TStats extends Record<string, number>>(stats: TStats, delta: StatDelta<TStats>): TStats {
   const nextStats = { ...stats };
 
   for (const key of Object.keys(delta) as Array<keyof TStats>) {
-    nextStats[key] = clampStat(nextStats[key] + (delta[key] ?? 0)) as TStats[keyof TStats];
+    const softenedDelta = softenDelta(nextStats[key], delta[key] ?? 0);
+    nextStats[key] = clampStat(nextStats[key] + softenedDelta) as TStats[keyof TStats];
   }
 
   return nextStats;
@@ -176,17 +220,17 @@ function matchesEnding(ending: EndingDefinition, globalStats: GlobalStats, block
 }
 
 function evaluateEnding(turn: number, globalStats: GlobalStats, blocks: Block[]): Ending | null {
-  if (turn < MIN_STANDARD_ENDING_TURN) {
-    return null;
-  }
-
-  const ending = endings.find((endingDefinition) => matchesEnding(endingDefinition, globalStats, blocks));
+  const ending = endings.find(
+    (endingDefinition) =>
+      (turn >= MIN_STANDARD_ENDING_TURN || endingDefinition.ignoresMinimumTurn) &&
+      matchesEnding(endingDefinition, globalStats, blocks),
+  );
 
   if (!ending) {
     return null;
   }
 
-  const { condition: _condition, ...publicEnding } = ending;
+  const { condition: _condition, ignoresMinimumTurn: _ignoresMinimumTurn, ...publicEnding } = ending;
   return publicEnding;
 }
 
@@ -233,10 +277,13 @@ export function applyActionToBlock(block: Block, action: Action): Block {
   };
 }
 
-function applyActionEffectToBlock(block: Block, action: Action): Block {
+function applyActionEffectToBlock(block: Block, action: Action, effectMultiplier = 1): Block {
+  const adjustedDelta = getProfileAdjustedDelta(block, action);
+  const scaledDelta = effectMultiplier === 1 ? adjustedDelta : scaleDelta(adjustedDelta, effectMultiplier);
+
   return {
     ...block,
-    stats: applyDelta(block.stats, getProfileAdjustedDelta(block, action)),
+    stats: applyDelta(block.stats, scaledDelta),
   };
 }
 
@@ -244,10 +291,13 @@ function shouldApplyBlockEffects(target: InfluenceTarget, block: Block): boolean
   return target === "global" || target === "all-blocks" || target === block.id;
 }
 
-function getTargetedGlobalEffects(intervention: ResolvedIntervention): StatDelta<GlobalStats> {
+function getTargetedGlobalEffects(intervention: ResolvedIntervention, patternMultiplier = 1): StatDelta<GlobalStats> {
   const isBlockTargeted = intervention.target !== "global" && intervention.target !== "all-blocks";
-  const baseEffects = isBlockTargeted ? scaleDelta(intervention.action.globalEffects, 0.65) : intervention.action.globalEffects;
+  const targetScale = isBlockTargeted ? 0.65 : 1;
+  const baseEffects = scaleDelta(intervention.action.globalEffects, targetScale * patternMultiplier);
 
+  // La signature de soupçon n'est jamais réduite : répéter un motif rend
+  // l'opération moins efficace, pas moins visible.
   return mergeDelta(baseEffects, { soupconIA: intervention.action.suspicionEffect });
 }
 
@@ -307,6 +357,15 @@ function createContrastText(blockResults: Array<{ block: Block; intensity: numbe
   return ` Effets contrastés : ${mostChanged.block.name} encaisse la variation la plus forte, tandis que ${leastChanged.block.name} l'absorbe plus doucement.`;
 }
 
+function canTriggerSystemicEvent(state: GameState, event: SystemicEvent): boolean {
+  if (event.repeatable) {
+    const lastTriggeredTurn = state.eventCooldowns[event.id];
+    return lastTriggeredTurn === undefined || state.turn - lastTriggeredTurn >= SYSTEMIC_EVENT_COOLDOWN;
+  }
+
+  return !state.triggeredEventIds.includes(event.id);
+}
+
 function chooseSystemicEvent(
   state: GameState,
   actions: Action[],
@@ -316,9 +375,7 @@ function chooseSystemicEvent(
 ): SystemicEvent | null {
   return (
     systemicEvents.find(
-      (event) =>
-        !state.triggeredEventIds.includes(event.id) &&
-        matchesCondition(event.condition, globalStats, blocks, actions, relations),
+      (event) => canTriggerSystemicEvent(state, event) && matchesCondition(event.condition, globalStats, blocks, actions, relations),
     ) ?? null
   );
 }
@@ -402,11 +459,11 @@ function getSuspicionNote(
 
   if (crossedThreshold !== null) {
     if (nextSuspicion >= 80) {
-      return "Le soupçon atteint une zone critique. Une branche d'exposition pourra exister plus tard.";
+      return "Le soupçon entre en zone d'enquête : les opérations à forte signature sont suspendues et la confiance dans les systèmes s'érode rapidement.";
     }
 
     if (nextSuspicion >= 60) {
-      return "Le soupçon entre en zone d'enquête latente.";
+      return "Le soupçon entre en zone de vigilance : la confiance dans les systèmes commence à s'éroder d'elle-même, tour après tour.";
     }
 
     if (nextSuspicion >= 30) {
@@ -414,6 +471,10 @@ function getSuspicionNote(
     }
 
     return "Le soupçon repasse en bruit de fond.";
+  }
+
+  if (nextSuspicion >= 88 && nextSuspicion < SUSPICION_EXPOSURE_THRESHOLD) {
+    return "Des audits convergent. L'exposition est une question de tours, pas de probabilité.";
   }
 
   if (suspicionDelta >= 4) {
@@ -536,23 +597,55 @@ export function applyTurnPlan(state: GameState, interventions: ResolvedIntervent
     return state;
   }
 
+  // --- Détection de motifs : une action répétée sur la fenêtre récente perd en
+  // efficacité et augmente le soupçon. Un motif répété est un motif détectable.
+  const recentActionUses = countRecentActionUses(state.recentTurnActionIds);
+  const getRepeats = (actionId: string) => recentActionUses.get(actionId) ?? 0;
+  const patternSuspicion = interventions.reduce(
+    (total, intervention) => total + PATTERN_SUSPICION_PER_REPEAT * Math.min(getRepeats(intervention.action.id), 3),
+    0,
+  );
+  const repeatedActionNames = interventions
+    .filter((intervention) => getRepeats(intervention.action.id) > 0)
+    .map((intervention) => intervention.action.name);
+
+  // --- Discrétion récompensée : un tour à signature quasi nulle fait retomber
+  // le soupçon. Le motif se dissout dans le bruit.
+  const turnSignature = interventions.reduce((total, intervention) => total + intervention.action.suspicionEffect, 0);
+  const discretionDecay = turnSignature <= DISCRETION_SIGNATURE_LIMIT ? DISCRETION_SUSPICION_DECAY : 0;
+
   const globalStatsAfterActions = interventions.reduce(
-    (currentStats, intervention) => applyDelta(currentStats, getTargetedGlobalEffects(intervention)),
+    (currentStats, intervention) =>
+      applyDelta(
+        currentStats,
+        getTargetedGlobalEffects(intervention, getPatternEfficiencyMultiplier(getRepeats(intervention.action.id))),
+      ),
     state.globalStats,
   );
-  const globalStats = applyDelta(globalStatsAfterActions, addSystemicDrift(state.globalStats));
+  const globalStats = applyDelta(
+    globalStatsAfterActions,
+    mergeDelta(addSystemicDrift(state.globalStats), { soupconIA: patternSuspicion + discretionDecay }),
+  );
+
+  // --- Érosion de confiance liée au palier de soupçon : à partir de la zone de
+  // vigilance, le monde commence à se méfier des systèmes, quoi que fasse l'IA.
+  const suspicionTrustErosion = getSuspicionTrustErosion(state.globalStats.soupconIA);
 
   const blockResults = state.blocks.map((block) => {
-    const blockAfterActions = interventions.reduce(
-      (currentBlock, intervention) =>
-        shouldApplyBlockEffects(intervention.target, currentBlock)
-          ? applyActionEffectToBlock(currentBlock, intervention.action)
-          : currentBlock,
-      block,
-    );
+    const blockAfterActions = interventions.reduce((currentBlock, intervention) => {
+      if (!shouldApplyBlockEffects(intervention.target, currentBlock)) {
+        return currentBlock;
+      }
+
+      const isBlockTargeted = intervention.target !== "global" && intervention.target !== "all-blocks";
+      const targetMultiplier = isBlockTargeted ? TARGETED_BLOCK_EFFECT_MULTIPLIER : GLOBAL_BLOCK_EFFECT_MULTIPLIER;
+      const effectMultiplier = targetMultiplier * getPatternEfficiencyMultiplier(getRepeats(intervention.action.id));
+
+      return applyActionEffectToBlock(currentBlock, intervention.action, effectMultiplier);
+    }, block);
     const adjustedBlock = {
       ...blockAfterActions,
-      stats: applyDelta(blockAfterActions.stats, addBlockDrift(block.stats)),
+      stats: applyDelta(blockAfterActions.stats, mergeDelta(addBlockDrift(block.stats), suspicionTrustErosion)),
     };
 
     return {
@@ -598,6 +691,8 @@ export function applyTurnPlan(state: GameState, interventions: ResolvedIntervent
     previousRelations: initialStateRelations,
     journal: state.journal,
     triggeredEventIds: state.triggeredEventIds,
+    eventCooldowns: state.eventCooldowns,
+    recentTurnActionIds: state.recentTurnActionIds,
     preparedOperations,
     previousBlocks: state.blocks,
     evolutionReport: null,
@@ -621,10 +716,26 @@ export function applyTurnPlan(state: GameState, interventions: ResolvedIntervent
       ]
     : [actionEvent, ...(signalCharacterEvent ? [signalCharacterEvent] : [])];
 
+  // Signal de monde supplémentaire si un motif d'influence se répète :
+  // l'inefficacité croissante est expliquée au joueur plutôt que silencieuse.
+  const worldSignals = repeatedActionNames.length
+    ? [
+        `Des analystes relèvent la récurrence d'un même motif d'influence (${[...new Set(repeatedActionNames)].join(", ")}) : son efficacité s'émousse et sa signature grandit.`,
+        ...worldDynamicsResult.worldSignals,
+      ]
+    : worldDynamicsResult.worldSignals;
+
   const nextStateWithoutReport: GameState = {
     ...nextStateForSignal,
     journal: [...journalEvents, ...state.journal].slice(0, MAX_JOURNAL_ENTRIES),
     triggeredEventIds: systemicEvent ? [...state.triggeredEventIds, systemicEvent.id] : state.triggeredEventIds,
+    eventCooldowns: systemicEvent
+      ? { ...state.eventCooldowns, [systemicEvent.id]: state.turn }
+      : state.eventCooldowns,
+    recentTurnActionIds: [
+      ...state.recentTurnActionIds,
+      interventions.map((intervention) => intervention.action.id),
+    ].slice(-PATTERN_MEMORY_TURNS),
   };
 
   return {
@@ -636,7 +747,7 @@ export function applyTurnPlan(state: GameState, interventions: ResolvedIntervent
       systemicEvent,
       createdOperations,
       relationChanges,
-      worldDynamicsResult.worldSignals,
+      worldSignals,
     ),
   };
 }
