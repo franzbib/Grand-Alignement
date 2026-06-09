@@ -52,13 +52,20 @@ npx vercel deploy --target preview
 
 Le projet est une app Vite statique : build `npm run build`, sortie `dist`.
 
+## Vérification de l'équilibrage
+
+```bash
+npm run simulate:strategies    # joueurs archétypaux directionnels (non-régression)
+npm run simulate:trajectories  # stress test long des profils diversifiés
+```
+
 ## Principes de v0.1
 
 - Univers riche, prototype volontairement simple.
 - Données locales TypeScript, sans backend, sans auth, sans IA générative temps réel.
-- Boucle de tour minimale : choisir une action, appliquer ses effets, lire une conséquence, sauvegarder la partie.
+- Boucle de tour : planifier des interventions sous contrainte d'influence, gérer la signature laissée au monde (le soupçon IA a des paliers à conséquences), lire le rapport d'évolution, sauvegarder la partie.
 - Sauvegarde locale via `localStorage`.
-- Deux fins provisoires : Empire algorithmique et Guerre mondiale.
+- Cinq fins : Confédération fragile, Empire algorithmique, Escalade stratégique, Révolte humaine, Exposition.
 
 ## Périmètre actuel
 

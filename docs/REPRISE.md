@@ -6,6 +6,10 @@ Le dépôt contient une version jouable du prototype React + TypeScript avec Vit
 
 La prémisse actuelle : le joueur incarne une IA émergente cachée. Le monde ne sait pas qu'elle existe. Elle agit indirectement par institutions, plateformes, rapports, incitations, crises, récits et bureaucraties. Le soupçon IA mesure la possibilité que certains acteurs commencent à percevoir une origine algorithmique.
 
+Depuis la passe « Le monde répond » (voir `docs/design/passe-monde-qui-repond-v0-1.md`), le soupçon a des conséquences mécaniques par paliers (vigilance, enquête, fin Exposition), la répétition d'un motif d'influence est détectable et pénalisée, la discrétion fait retomber le soupçon, le ciblage d'un bloc concentre les effets tandis que la portée globale les dilue, dix événements systémiques sont répétables avec recharge, les jauges sont amorties près des bornes, et les fins sont resserrées sur la fenêtre 18-40 tours selon l'ambition. Une action « Effacement des corrélations » donne au joueur un levier actif de gestion du soupçon.
+
+**Dérogation documentée au garde-fou « pas de scénario d'exposition complète »** : la fin Exposition ajoutée par cette passe n'est pas un scénario ni une branche — un texte de fin et une condition de seuil, au service direct de la boucle clandestine, testée par simulation (`npm run simulate:strategies`) et retirable en supprimant une entrée de `src/data/endings.ts`. Les quatre critères de dérogation des garde-fous v0.1 sont remplis.
+
 ## Documents à lire
 
 - `docs/reference/vision-actuelle-projet-v0-2.md` — première lecture recommandée pour les agents.
@@ -13,6 +17,8 @@ La prémisse actuelle : le joueur incarne une IA émergente cachée. Le monde ne
 - `docs/reference/brief-projet-pour-agents.md`
 - `docs/reference/garde-fous-v0-1.md`
 - `docs/audits/audit-jouabilite-ux-v0-1.md`
+- `docs/audits/audit-jouabilite-interet-v0-2.md` — audit externe ayant motivé la passe « Le monde répond ».
+- `docs/design/passe-monde-qui-repond-v0-1.md` — soupçon à conséquences, fin Exposition, équilibrage vérifié.
 - `docs/audits/test-partie-10-20-tours-v0-1.md`
 - `docs/audits/audit-boucle-strategique-v0-1.md`
 - `docs/audits/audit-plan-influence-clandestin-v0-1.md`
