@@ -9,6 +9,7 @@ import type {
   StrategicPosture,
 } from "../types/game";
 import { isActionAvailableForIa, type IaCapabilityInfo } from "../engine/capabilities";
+import { isActionSuspendedBySuspicion } from "../engine/suspicion";
 
 type ActionsPanelProps = {
   actions: Action[];
@@ -20,6 +21,7 @@ type ActionsPanelProps = {
   plannedInterventions: PlannedIntervention[];
   selectedBlockId: BlockId;
   selectedPostureId: string;
+  soupconIA: number;
   postures: StrategicPosture[];
   onPostureChange: (postureId: string) => void;
   onToggleAction: (action: Action, preparedOperation?: PreparedOperation) => void;
@@ -59,6 +61,7 @@ export function ActionsPanel({
   plannedInterventions,
   selectedBlockId,
   selectedPostureId,
+  soupconIA,
   postures,
   onPostureChange,
   onToggleAction,
@@ -70,10 +73,21 @@ export function ActionsPanel({
 
   const actionById = new Map(actions.map((action) => [action.id, action]));
   const baseActions = actions.filter(
-    (action) => action.availability !== "prepared" && isActionAvailableForIa(action, iaCapabilityInfo.level),
+    (action) =>
+      action.availability !== "prepared" &&
+      isActionAvailableForIa(action, iaCapabilityInfo.level) &&
+      !isActionSuspendedBySuspicion(action, soupconIA),
   );
   const lockedActionsCount = actions.filter(
     (action) => action.availability !== "prepared" && !isActionAvailableForIa(action, iaCapabilityInfo.level),
+  ).length;
+  // Opérations momentanément suspendues : en zone d'enquête, l'IA doit réduire
+  // sa signature. Elles redeviennent disponibles si le soupçon retombe.
+  const suspendedActionsCount = actions.filter(
+    (action) =>
+      action.availability !== "prepared" &&
+      isActionAvailableForIa(action, iaCapabilityInfo.level) &&
+      isActionSuspendedBySuspicion(action, soupconIA),
   ).length;
   const influenceUsed = plannedInterventions.reduce((total, intervention) => {
     return total + (actionById.get(intervention.actionId)?.cost ?? 0);
@@ -302,6 +316,13 @@ export function ActionsPanel({
               <p className="actions-section__hint">
                 {lockedActionsCount} mode{lockedActionsCount > 1 ? "s" : ""} d'influence plus avancÃ©
                 {lockedActionsCount > 1 ? "s" : ""} restent hors de portÃ©e de l'IA.
+              </p>
+            )}
+            {suspendedActionsCount > 0 && (
+              <p className="actions-section__hint actions-section__hint--warning">
+                Zone d'enquête : {suspendedActionsCount} opération{suspendedActionsCount > 1 ? "s" : ""} à forte
+                signature {suspendedActionsCount > 1 ? "sont suspendues" : "est suspendue"}. Elles redeviendront
+                disponibles si le soupçon retombe sous 80.
               </p>
             )}
             {filteredActions.length > 0 ? (

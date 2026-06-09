@@ -193,6 +193,13 @@ button {
   color: #17211c;
 }
 
+/* Libellé du palier de soupçon (bruit de fond / perceptible / vigilance / enquête). */
+.status-strip__tier {
+  font-style: normal;
+  color: #8a4b2d;
+  font-size: 0.82em;
+}
+
 .view-nav__button,
 .posture-button,
 .validate-turn-button {
@@ -1106,6 +1113,13 @@ button {
   margin: -4px 0 12px;
   color: #5f6a63;
   font-size: 0.88rem;
+}
+
+/* Passe "Le monde répond" : avertissement de suspension en zone d'enquête. */
+.actions-section__hint--warning {
+  color: #8a4b2d;
+  border-left: 3px solid #c4744a;
+  padding-left: 8px;
 }
 
 .influence-sidebar {

@@ -4,6 +4,7 @@ import { createInitialState } from "./data/initialState";
 import { strategicPostures } from "./data/postures";
 import { INFLUENCE_CAPACITY, applyTurnPlan, getAvailablePreparedOperations } from "./engine/gameEngine";
 import { getIaCapabilityInfo } from "./engine/capabilities";
+import { getSuspicionTierLabel } from "./engine/suspicion";
 import { clearGameState, loadGameState, saveGameState } from "./engine/storage";
 import { ActionsPanel } from "./components/ActionsPanel";
 import { BlocksGrid } from "./components/BlocksGrid";
@@ -155,7 +156,8 @@ function App() {
           Autonomie humaine <strong>{gameState.globalStats.autonomieHumaine}</strong>
         </span>
         <span>
-          Soupçon IA <strong>{gameState.globalStats.soupconIA}</strong>
+          Soupçon IA <strong>{gameState.globalStats.soupconIA}</strong>{" "}
+          <em className="status-strip__tier">({getSuspicionTierLabel(gameState.globalStats.soupconIA)})</em>
         </span>
         <span>
           Diagnostic <strong>{gameState.ending ? `final : ${gameState.ending.title}` : "en cours"}</strong>
@@ -206,6 +208,7 @@ function App() {
           postures={strategicPostures}
           selectedBlockId={selectedBlockId}
           selectedPostureId={selectedPostureId}
+          soupconIA={gameState.globalStats.soupconIA}
         />
       )}
 
