@@ -200,6 +200,154 @@ button {
   font-size: 0.82em;
 }
 
+/* ----- Passe "Crises et bilan" ----- */
+
+/* Bandeau de crise à échéance : l'ultimatum doit être impossible à manquer. */
+.crisis-banner {
+  border: 1px solid #c4744a;
+  border-left: 6px solid #c4744a;
+  background: #fdf3ec;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 14px;
+}
+
+.crisis-banner--urgent {
+  border-color: #a33d2a;
+  border-left-color: #a33d2a;
+  background: #fbeae4;
+}
+
+.crisis-banner h2 {
+  margin: 2px 0 6px;
+  font-size: 1.15rem;
+  color: #6e3a22;
+}
+
+.crisis-banner__requirement {
+  margin: 0 0 4px;
+  color: #4a3a30;
+}
+
+.crisis-banner__countdown {
+  margin: 0;
+  font-weight: 600;
+  color: #8a4b2d;
+}
+
+.crisis-banner--urgent .crisis-banner__countdown {
+  color: #a33d2a;
+}
+
+/* Bilan de fin de partie : trajectoires et moments clés. */
+.ending-recap {
+  margin: 18px 0 6px;
+  display: grid;
+  gap: 18px;
+  text-align: left;
+}
+
+.ending-recap__section h3 {
+  margin: 0 0 8px;
+  font-size: 1.02rem;
+}
+
+.ending-recap__dominant {
+  margin: 0 0 10px;
+  color: #4a4f4b;
+}
+
+.trajectory-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.trajectory-list__item {
+  display: grid;
+  grid-template-columns: minmax(160px, 220px) 1fr 34px;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: #4a4f4b;
+}
+
+.trajectory-list__item--dominant {
+  color: #17211c;
+  font-weight: 600;
+}
+
+.trajectory-list__bar {
+  display: block;
+  height: 8px;
+  border-radius: 4px;
+  background: #e7ebe7;
+  overflow: hidden;
+}
+
+.trajectory-list__fill {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: #7d9b87;
+}
+
+.trajectory-list__item--dominant .trajectory-list__fill {
+  background: #3f6e52;
+}
+
+.trajectory-list__score {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.key-moments {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.key-moments__item {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+.key-moments__turn {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #5f6a63;
+  white-space: nowrap;
+  padding-top: 2px;
+}
+
+.key-moments__title {
+  margin: 0 0 2px;
+  font-weight: 600;
+  color: #17211c;
+}
+
+.key-moments__text {
+  margin: 0;
+  color: #4a4f4b;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 720px) {
+  .trajectory-list__item {
+    grid-template-columns: 1fr 60px 30px;
+  }
+
+  .trajectory-list__label {
+    grid-column: 1 / -1;
+  }
+}
+
 .view-nav__button,
 .posture-button,
 .validate-turn-button {

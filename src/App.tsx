@@ -5,6 +5,8 @@ import { strategicPostures } from "./data/postures";
 import { INFLUENCE_CAPACITY, applyTurnPlan, getAvailablePreparedOperations } from "./engine/gameEngine";
 import { getIaCapabilityInfo } from "./engine/capabilities";
 import { getSuspicionTierLabel } from "./engine/suspicion";
+import { CrisisBanner } from "./components/CrisisBanner";
+import { EndingRecap } from "./components/EndingRecap";
 import { clearGameState, loadGameState, saveGameState } from "./engine/storage";
 import { ActionsPanel } from "./components/ActionsPanel";
 import { BlocksGrid } from "./components/BlocksGrid";
@@ -134,6 +136,7 @@ function App() {
             Partie terminée : le diagnostic verrouille les opérations d'influence. Consultez le rapport final ou
             réinitialisez la partie pour explorer une autre trajectoire.
           </p>
+          <EndingRecap gameState={gameState} />
           <div className="ending-banner__actions">
             <button onClick={() => setActiveView("report")} type="button">
               Consulter le rapport final
@@ -143,6 +146,10 @@ function App() {
             </button>
           </div>
         </section>
+      )}
+
+      {gameState.activeCrisis && !gameState.ending && (
+        <CrisisBanner activeCrisis={gameState.activeCrisis} globalStats={gameState.globalStats} turn={gameState.turn} />
       )}
 
       <section className="status-strip" aria-label="État synthétique de la partie">
