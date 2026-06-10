@@ -400,14 +400,21 @@ export function ActionsPanel({
             </div>
           </div>
 
-          {/* Bouton de validation */}
+          {/* Bouton de validation : déploiement, ou observation si le plan est vide */}
+          {plannedInterventions.length === 0 && !disabled && (
+            <p className="observe-hint">
+              Aucune intervention planifiée : valider fera passer un tour d'observation. L'IA se tait, le monde
+              continue, le soupçon retombe nettement — mais les crises courent et les fenêtres d'opérations
+              préparées vieillissent.
+            </p>
+          )}
           <button
-            className="validate-turn-button"
-            disabled={disabled || plannedInterventions.length === 0}
+            className={`validate-turn-button${plannedInterventions.length === 0 ? " validate-turn-button--observe" : ""}`}
+            disabled={disabled}
             onClick={onValidateTurn}
             type="button"
           >
-            Déployer l'opération
+            {plannedInterventions.length === 0 ? "Observer ce tour" : "Déployer l'opération"}
           </button>
         </aside>
       </div>

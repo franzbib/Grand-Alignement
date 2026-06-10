@@ -239,6 +239,23 @@ button {
   color: #a33d2a;
 }
 
+/* Tour d'observation : indice et variante calme du bouton de validation. */
+.observe-hint {
+  margin: 0 0 8px;
+  font-size: 0.84rem;
+  color: #5f6a63;
+  border-left: 3px solid #9bb3a3;
+  padding-left: 8px;
+}
+
+.validate-turn-button--observe {
+  background: #5e7d6b;
+}
+
+.validate-turn-button--observe:hover:not(:disabled) {
+  background: #4d6a59;
+}
+
 /* Bilan de fin de partie : trajectoires et moments clés. */
 .ending-recap {
   margin: 18px 0 6px;

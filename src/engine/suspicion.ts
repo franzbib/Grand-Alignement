@@ -33,6 +33,14 @@ export const HIGH_SIGNATURE_THRESHOLD = 4;
 export const DISCRETION_SIGNATURE_LIMIT = 2;
 export const DISCRETION_SUSPICION_DECAY = -3;
 
+/**
+ * Tour d'observation : l'IA ne déploie rien, le monde continue sans elle.
+ * Le silence total fait retomber le soupçon plus vite que la discrétion —
+ * mais coûte un tour entier de tempo, fait vieillir les fenêtres des
+ * opérations préparées, et laisse les crises courir vers leur échéance.
+ */
+export const OBSERVATION_SUSPICION_DECAY = -4;
+
 /** Fenêtre (en tours) sur laquelle un motif répété reste détectable. */
 export const PATTERN_MEMORY_TURNS = 2;
 /** Soupçon ajouté par répétition récente d'une même action. */

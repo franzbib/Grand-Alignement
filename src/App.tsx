@@ -94,9 +94,8 @@ function App() {
       return action ? [{ action, target: intervention.target }] : [];
     });
 
-    if (resolvedInterventions.length === 0) {
-      return;
-    }
+    // Plan vide = tour d'observation : l'IA se tait, le monde continue,
+    // le soupçon retombe (voir OBSERVATION_SUSPICION_DECAY).
 
     setGameState((currentState) => applyTurnPlan(currentState, resolvedInterventions));
     setPlannedInterventions([]);

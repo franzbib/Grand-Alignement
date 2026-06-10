@@ -4,11 +4,13 @@ import { systemicEvents } from "../data/events";
 import { initialRelations } from "../data/relations";
 import { advanceWorldDynamics, applyPlayerRelationEffects } from "./relations";
 import { advanceCrises } from "./crises";
+import { seededPick } from "./random";
 import { formatTrendSummary, generateBlockReport, getBlockTrends } from "./reports";
 import { chooseSignalCharacterEvent } from "./signalCharacters";
 import {
   DISCRETION_SIGNATURE_LIMIT,
   DISCRETION_SUSPICION_DECAY,
+  OBSERVATION_SUSPICION_DECAY,
   PATTERN_MEMORY_TURNS,
   PATTERN_SUSPICION_PER_REPEAT,
   SUSPICION_EXPOSURE_THRESHOLD,
@@ -374,11 +376,15 @@ function chooseSystemicEvent(
   blocks: Block[],
   relations: InterBlockRelation[],
 ): SystemicEvent | null {
-  return (
-    systemicEvents.find(
-      (event) => canTriggerSystemicEvent(state, event) && matchesCondition(event.condition, globalStats, blocks, actions, relations),
-    ) ?? null
+  // Variance contrôlée : parmi les événements dont les conditions sont
+  // réunies, le seed de partie choisit lequel s'exprime ce tour-ci. La liste
+  // des éligibles reste strictement déterminée par l'état ; seul l'ordre
+  // d'apparition narratif varie d'une partie à l'autre.
+  const eligibleEvents = systemicEvents.filter(
+    (event) => canTriggerSystemicEvent(state, event) && matchesCondition(event.condition, globalStats, blocks, actions, relations),
   );
+
+  return seededPick(eligibleEvents, state.seed, state.turn * 7);
 }
 
 function applySystemicEvent(
@@ -594,9 +600,14 @@ export function generateEvolutionReport(
 }
 
 export function applyTurnPlan(state: GameState, interventions: ResolvedIntervention[]): GameState {
-  if (state.ending || interventions.length === 0) {
+  if (state.ending) {
     return state;
   }
+
+  // Tour d'observation (plan vide) : l'IA se tait, le monde continue. La
+  // dérive, les événements, les relations et les crises avancent normalement ;
+  // le soupçon retombe plus vite qu'en simple discrétion (voir suspicion.ts).
+  const isObservationTurn = interventions.length === 0;
 
   // --- Détection de motifs : une action répétée sur la fenêtre récente perd en
   // efficacité et augmente le soupçon. Un motif répété est un motif détectable.
@@ -613,7 +624,11 @@ export function applyTurnPlan(state: GameState, interventions: ResolvedIntervent
   // --- Discrétion récompensée : un tour à signature quasi nulle fait retomber
   // le soupçon. Le motif se dissout dans le bruit.
   const turnSignature = interventions.reduce((total, intervention) => total + intervention.action.suspicionEffect, 0);
-  const discretionDecay = turnSignature <= DISCRETION_SIGNATURE_LIMIT ? DISCRETION_SUSPICION_DECAY : 0;
+  const discretionDecay = isObservationTurn
+    ? OBSERVATION_SUSPICION_DECAY
+    : turnSignature <= DISCRETION_SIGNATURE_LIMIT
+      ? DISCRETION_SUSPICION_DECAY
+      : 0;
 
   const globalStatsAfterActions = interventions.reduce(
     (currentStats, intervention) =>
@@ -686,18 +701,30 @@ export function applyTurnPlan(state: GameState, interventions: ResolvedIntervent
   const preparedOperations = resolvePreparedOperations(state, interventions, createdOperations);
 
   const operationSummary = getOperationSummary(interventions, state.blocks);
-  const actionEvent = {
-    id: `turn-plan-${state.turn}-${Date.now()}`,
-    sourceId: "turn-plan",
-    turn: state.turn,
-    title: "Opération clandestine déployée",
-    text: `Influence indirecte : ${operationSummary}. Le monde n'en connaît pas l'origine.${contrastText ?? ""}`,
-    effectsText: systemicEvent
-      ? `Conséquence systémique : ${systemicEvent.title}.`
-      : "Conséquence systémique : les effets restent diffus, mais les rapports de bloc enregistrent les déplacements.",
-  };
+  const actionEvent = isObservationTurn
+    ? {
+        id: `turn-plan-${state.turn}-${Date.now()}`,
+        sourceId: "turn-plan",
+        turn: state.turn,
+        title: "Silence calculé",
+        text: "Aucune opération ce tour-ci. Les flux continuent sans impulsion nouvelle, et quelque part, des analystes constatent que les anomalies se sont tues. Certains y verront une preuve d'absence. C'est le but.",
+        effectsText: systemicEvent
+          ? `Conséquence systémique : ${systemicEvent.title}.`
+          : "Le monde poursuit sa dérive propre. Le soupçon retombe.",
+      }
+    : {
+        id: `turn-plan-${state.turn}-${Date.now()}`,
+        sourceId: "turn-plan",
+        turn: state.turn,
+        title: "Opération clandestine déployée",
+        text: `Influence indirecte : ${operationSummary}. Le monde n'en connaît pas l'origine.${contrastText ?? ""}`,
+        effectsText: systemicEvent
+          ? `Conséquence systémique : ${systemicEvent.title}.`
+          : "Conséquence systémique : les effets restent diffus, mais les rapports de bloc enregistrent les déplacements.",
+      };
   const nextStateForSignal: GameState = {
     turn: state.turn + 1,
+    seed: state.seed,
     globalStats: finalGlobalStats,
     blocks: finalBlocks,
     relations: worldDynamicsResult.relations,
