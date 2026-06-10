@@ -251,6 +251,10 @@ export type GameState = {
   triggeredEventIds: string[];
   /** Tour du dernier déclenchement de chaque événement systémique répétable. */
   eventCooldowns: Record<string, number>;
+  /** Crise à échéance en cours (une seule à la fois, pour rester lisible). */
+  activeCrisis: ActiveCrisis | null;
+  /** Tour du dernier déclenchement de chaque crise, pour la recharge. */
+  crisisCooldowns: Record<string, number>;
   /** Actions jouées sur les derniers tours (fenêtre glissante), pour la détection de motifs. */
   recentTurnActionIds: string[][];
   preparedOperations: PreparedOperation[];
@@ -277,6 +281,50 @@ export type SystemicEventCondition = {
     maxCooperation?: number;
     minDependence?: number;
   };
+};
+
+/**
+ * Crises à échéance — passe "Crises et bilan".
+ *
+ * Une crise se déclenche quand le monde atteint un état critique que le joueur
+ * a laissé s'installer. Elle nomme une jauge, une cible et une échéance : si la
+ * jauge n'a pas atteint la cible avant l'échéance, les effets d'échec tombent.
+ * C'est la seule structure du jeu qui impose un tour que le joueur n'a pas
+ * choisi — un seul gabarit réutilisable, conformément aux garde-fous.
+ */
+export type CrisisDefinition = {
+  id: string;
+  title: string;
+  /** Narration au déclenchement. */
+  text: string;
+  /** Jauge globale surveillée par la crise. */
+  stat: keyof GlobalStats;
+  /** Sens attendu de la correction. */
+  direction: "decrease" | "increase";
+  /** Amplitude de correction exigée par rapport à la valeur au déclenchement. */
+  requiredShift: number;
+  /** Nombre de tours accordés pour répondre. */
+  deadlineTurns: number;
+  /** Conditions de déclenchement (réutilise le gabarit des événements). */
+  condition: SystemicEventCondition;
+  /** Tours de recharge avant qu'une même crise puisse revenir. */
+  cooldownTurns: number;
+  resolutionText: string;
+  failureText: string;
+  failureGlobalEffects?: StatDelta<GlobalStats>;
+  failureBlockEffects?: StatDelta<BlockStats>;
+  successGlobalEffects?: StatDelta<GlobalStats>;
+};
+
+export type ActiveCrisis = {
+  definitionId: string;
+  triggeredTurn: number;
+  /** Dernier tour (inclus) où la résolution est encore possible. */
+  deadlineTurn: number;
+  /** Valeur de la jauge au déclenchement. */
+  baselineValue: number;
+  /** Valeur à atteindre pour résoudre la crise. */
+  targetValue: number;
 };
 
 export type SystemicEvent = {

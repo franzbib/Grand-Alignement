@@ -38,9 +38,12 @@ export const endings: EndingDefinition[] = [
     type: "disturbing_success",
     tone: "ironique",
     condition: {
-      // max soupçon ajouté : un empire "que personne ne remarque" est incompatible
+      // max soupçon : un empire "que personne ne remarque" est incompatible
       // avec un monde en pleine enquête sur l'origine des décisions.
-      global: { min: { puissanceIA: 88 }, max: { autonomieHumaine: 20, soupconIA: 79 } },
+      // autonomie 20 -> 25 (passe "Crises et bilan") : la taxe de tempo des
+      // crises allonge la partie, et l'horloge du soupçon rend l'ancienne
+      // profondeur de grind incompatible avec la fenêtre de clandestinité.
+      global: { min: { puissanceIA: 88 }, max: { autonomieHumaine: 25, soupconIA: 79 } },
       averageBlock: { min: { confianceIA: 58 } },
     },
   },

@@ -29,6 +29,8 @@ export function loadGameState(): GameState {
       // Champs ajoutés par la passe "Le monde répond" : valeurs sûres pour les
       // sauvegardes antérieures (pas de motif mémorisé, pas de recharge en cours).
       eventCooldowns: parsedState.eventCooldowns ?? {},
+      activeCrisis: parsedState.activeCrisis ?? null,
+      crisisCooldowns: parsedState.crisisCooldowns ?? {},
       recentTurnActionIds: parsedState.recentTurnActionIds ?? [],
       preparedOperations: parsedState.preparedOperations ?? [],
       previousBlocks: parsedState.previousBlocks ?? null,

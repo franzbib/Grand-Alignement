@@ -3,6 +3,7 @@ import { MIN_STANDARD_ENDING_TURN, endings } from "../data/endings";
 import { systemicEvents } from "../data/events";
 import { initialRelations } from "../data/relations";
 import { advanceWorldDynamics, applyPlayerRelationEffects } from "./relations";
+import { advanceCrises } from "./crises";
 import { formatTrendSummary, generateBlockReport, getBlockTrends } from "./reports";
 import { chooseSignalCharacterEvent } from "./signalCharacters";
 import {
@@ -669,6 +670,18 @@ export function applyTurnPlan(state: GameState, interventions: ResolvedIntervent
     worldDynamicsResult.relations,
   );
   const resolvedState = applySystemicEvent(systemicEvent, globalStats, actionAdjustedBlocks);
+
+  // --- Crises à échéance : résolution, échec ou déclenchement, après que
+  // toutes les autres forces du tour se sont exprimées. Les effets d'échec
+  // tombent immédiatement et comptent pour l'évaluation de fin du même tour.
+  const crisisUpdate = advanceCrises(state, resolvedState.globalStats, state.turn + 1, (definition) =>
+    matchesCondition(definition.condition, resolvedState.globalStats, resolvedState.blocks, selectedActions, worldDynamicsResult.relations),
+  );
+  const finalGlobalStats = applyDelta(resolvedState.globalStats, crisisUpdate.globalEffects);
+  const finalBlocks = Object.keys(crisisUpdate.blockEffects).length
+    ? resolvedState.blocks.map((block) => ({ ...block, stats: applyDelta(block.stats, crisisUpdate.blockEffects) }))
+    : resolvedState.blocks;
+
   const createdOperations = createPreparedOperations(state, interventions);
   const preparedOperations = resolvePreparedOperations(state, interventions, createdOperations);
 
@@ -685,18 +698,20 @@ export function applyTurnPlan(state: GameState, interventions: ResolvedIntervent
   };
   const nextStateForSignal: GameState = {
     turn: state.turn + 1,
-    globalStats: resolvedState.globalStats,
-    blocks: resolvedState.blocks,
+    globalStats: finalGlobalStats,
+    blocks: finalBlocks,
     relations: worldDynamicsResult.relations,
     previousRelations: initialStateRelations,
     journal: state.journal,
     triggeredEventIds: state.triggeredEventIds,
     eventCooldowns: state.eventCooldowns,
+    activeCrisis: crisisUpdate.activeCrisis,
+    crisisCooldowns: crisisUpdate.crisisCooldowns,
     recentTurnActionIds: state.recentTurnActionIds,
     preparedOperations,
     previousBlocks: state.blocks,
     evolutionReport: null,
-    ending: evaluateEnding(state.turn + 1, resolvedState.globalStats, resolvedState.blocks),
+    ending: evaluateEnding(state.turn + 1, finalGlobalStats, finalBlocks),
   };
   const signalCharacterEvent = chooseSignalCharacterEvent(state, nextStateForSignal, interventions);
 
@@ -712,18 +727,20 @@ export function applyTurnPlan(state: GameState, interventions: ResolvedIntervent
           effectsText: systemicEvent.effectsText,
           tone: systemicEvent.tone,
         },
+        ...crisisUpdate.journalEvents,
         ...(signalCharacterEvent ? [signalCharacterEvent] : []),
       ]
-    : [actionEvent, ...(signalCharacterEvent ? [signalCharacterEvent] : [])];
+    : [actionEvent, ...crisisUpdate.journalEvents, ...(signalCharacterEvent ? [signalCharacterEvent] : [])];
 
   // Signal de monde supplémentaire si un motif d'influence se répète :
   // l'inefficacité croissante est expliquée au joueur plutôt que silencieuse.
-  const worldSignals = repeatedActionNames.length
+  const baseWorldSignals = repeatedActionNames.length
     ? [
         `Des analystes relèvent la récurrence d'un même motif d'influence (${[...new Set(repeatedActionNames)].join(", ")}) : son efficacité s'émousse et sa signature grandit.`,
         ...worldDynamicsResult.worldSignals,
       ]
     : worldDynamicsResult.worldSignals;
+  const worldSignals = [...crisisUpdate.worldSignals, ...baseWorldSignals];
 
   const nextStateWithoutReport: GameState = {
     ...nextStateForSignal,

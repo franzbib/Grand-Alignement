@@ -20,6 +20,8 @@ export function createInitialState(): GameState {
     previousRelations: null,
     triggeredEventIds: [],
     eventCooldowns: {},
+    activeCrisis: null,
+    crisisCooldowns: {},
     recentTurnActionIds: [],
     preparedOperations: [],
     previousBlocks: null,
