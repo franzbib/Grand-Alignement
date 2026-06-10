@@ -4,6 +4,19 @@ type EvolutionReportPanelProps = {
   report: EvolutionReport | null;
 };
 
+/**
+ * Rapport d'évolution — passe "Rapport lisible".
+ *
+ * L'ancien rapport étalait quatorze rubriques (~280 mots) à chaque tour.
+ * Nouvelle règle : l'essentiel d'abord, le détail à un clic.
+ *
+ * - Toujours visibles : le tour et l'opération, la synthèse, la note de
+ *   soupçon (remontée du pied de page : elle est stratégique), l'alerte
+ *   d'événement systémique et les signaux du monde (crises, motifs).
+ * - Le reste vit dans quatre tiroirs <details> dont l'intitulé porte déjà
+ *   l'information clé (compteurs, trajectoire dominante) : le rapport fermé
+ *   renseigne, le rapport ouvert détaille. Aucune information n'est perdue.
+ */
 export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
   if (!report) {
     return (
@@ -18,6 +31,7 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
   const immediateInterventions = report.immediateInterventions ?? [];
   const preparedOperations = report.preparedOperations ?? [];
   const unlockedOperations = report.unlockedOperations ?? [];
+  const globalChanges = report.globalChanges ?? [];
   const affectedBlocks = report.affectedBlocks ?? [];
   const socialSignals = report.socialSignals ?? [];
   const worldSignals = report.worldSignals ?? [];
@@ -26,241 +40,161 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
   const secondaryTrajectories = report.secondaryTrajectories ?? [];
   const collidingTrajectories = report.collidingTrajectories ?? [];
   const trajectorySignals = [...collidingTrajectories, ...secondaryTrajectories].slice(0, 2);
-  const hasTrajectoryInsight = Boolean(report.dominantTrajectory) || trajectorySignals.length > 0;
 
-  // Filter out neutral values to avoid noise
-  const mostAffectedBlock = report.mostAffectedBlock && report.mostAffectedBlock !== "Aucun bloc nettement affecté"
-    ? report.mostAffectedBlock
-    : null;
-
-  const mainTension = report.mainTension && report.mainTension !== "Aucune tension principale détectée."
-    ? report.mainTension
-    : null;
-
-  // Filter social signals: show only for blocks that had actual changes
-  const filteredSocialSignals = socialSignals.filter(signal => {
+  // Filtres anti-bruit (inchangés) : valeurs neutres et signaux par défaut.
+  const mostAffectedBlock =
+    report.mostAffectedBlock && report.mostAffectedBlock !== "Aucun bloc nettement affecté"
+      ? report.mostAffectedBlock
+      : null;
+  const mainTension =
+    report.mainTension && report.mainTension !== "Aucune tension principale détectée." ? report.mainTension : null;
+  const filteredSocialSignals = socialSignals.filter((signal) => {
     const parts = signal.split(" : ");
     if (parts.length < 2) return true;
-    const blockName = parts[0];
-    return affectedBlocks.some(affected => affected.startsWith(blockName));
+    return affectedBlocks.some((affected) => affected.startsWith(parts[0]));
   });
+  const filteredWeakSignals = weakSignals.filter((signal) => !signal.includes("Équilibre encore lisible"));
 
-  // Filter weak signals: hide default neutral risks
-  const filteredWeakSignals = weakSignals.filter(
-    (signal) => !signal.includes("Équilibre encore lisible")
-  );
+  const operationCount = immediateInterventions.length;
+  const worldItemCount = globalChanges.length + affectedBlocks.length + filteredSocialSignals.length;
+  const relationCount = relationChanges.length;
 
-  // Determine section visibility based on actual changes
-  const hasEvent = Boolean(report.systemicEventTitle);
-
-  const hasEffetsMajeurs = immediateInterventions.length > 0 || 
-                           report.globalChanges.length > 0 || 
-                           worldSignals.length > 0;
-
-  const hasBlocsAffectes = affectedBlocks.length > 0 || 
-                           filteredSocialSignals.length > 0 || 
-                           Boolean(mostAffectedBlock);
-
-  const hasRelations = relationChanges.length > 0 || 
-                       Boolean(mainTension);
-
-  const hasPlanification = preparedOperations.length > 0 || 
-                           unlockedOperations.length > 0;
-
+  const hasOperations = operationCount > 0 || preparedOperations.length > 0 || unlockedOperations.length > 0;
+  const hasWorldDetail = worldItemCount > 0 || Boolean(mostAffectedBlock);
+  const hasRelations = relationCount > 0 || Boolean(mainTension);
+  const hasTrajectoryInsight = Boolean(report.dominantTrajectory) || trajectorySignals.length > 0;
   const hasWeakSignals = filteredWeakSignals.length > 0;
-
-  const hasAnyNotableChange = hasEffetsMajeurs || 
-                              hasBlocsAffectes || 
-                              hasRelations || 
-                              hasPlanification || 
-                              hasEvent || 
-                              hasWeakSignals ||
-                              hasTrajectoryInsight;
+  const hasEvent = Boolean(report.systemicEventTitle);
+  const hasAnythingNotable =
+    hasOperations || hasWorldDetail || hasRelations || hasTrajectoryInsight || hasWeakSignals || hasEvent || worldSignals.length > 0;
 
   return (
     <section className="panel evolution-report" aria-labelledby="evolution-report-title">
       <p className="eyebrow">Après déploiement</p>
       <h2 id="evolution-report-title">Rapport d'évolution</h2>
 
+      {/* --- L'essentiel, toujours visible --- */}
       <p className="report-summary">
         <strong>Tour {report.turn} ·</strong> {report.operationSummary}
       </p>
       <p className="report-synthesis">{report.synthesis ?? "Synthèse indisponible pour ce tour."}</p>
 
-      <div className="report-grid">
-        {hasEffetsMajeurs && (
-          <div>
-            <h3>Effets immédiats</h3>
-            
-            {immediateInterventions.length > 0 && (
-              <div className="report-sub-section">
-                <h4>Interventions</h4>
-                <ul>
-                  {immediateInterventions.map((item, idx) => (
-                    <li key={idx}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            
-            {report.globalChanges.length > 0 && (
-              <div className="report-sub-section">
-                <h4>Jauges globales</h4>
-                <ul>
-                  {report.globalChanges.map((item, idx) => (
-                    <li key={idx}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            
-            {worldSignals.length > 0 && (
-              <div className="report-sub-section">
-                <h4>Signaux du monde</h4>
-                <ul>
-                  {worldSignals.map((item, idx) => (
-                    <li key={idx}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
+      {report.suspicionNote && <p className="report-suspicion">{report.suspicionNote}</p>}
+
+      {hasEvent && (
+        <div className="report-event-alert" aria-live="polite">
+          <span className="eyebrow">Événement systémique</span>
+          <h3>{report.systemicEventTitle}</h3>
+          <p>Le journal et les blocs concernés en mesurent la portée.</p>
+        </div>
+      )}
+
+      {worldSignals.length > 0 && (
+        <ul className="report-world-signals">
+          {worldSignals.slice(0, 3).map((item, idx) => (
+            <li key={idx}>{item}</li>
+          ))}
+        </ul>
+      )}
+
+      {/* --- Le détail, replié : l'intitulé porte déjà l'information clé --- */}
+      <div className="report-folds">
+        {hasOperations && (
+          <details className="report-fold" open={unlockedOperations.length > 0}>
+            <summary>
+              Vos opérations
+              <span className="report-fold__meta">
+                {operationCount > 0 && `${operationCount} immédiate${operationCount > 1 ? "s" : ""}`}
+                {preparedOperations.length > 0 && ` · ${preparedOperations.length} en préparation`}
+                {unlockedOperations.length > 0 && ` · ${unlockedOperations.length} débloquée${unlockedOperations.length > 1 ? "s" : ""}`}
+              </span>
+            </summary>
+            {immediateInterventions.length > 0 && <ReportList title="Interventions" items={immediateInterventions} />}
+            {preparedOperations.length > 0 && <ReportList title="En préparation" items={preparedOperations} />}
+            {unlockedOperations.length > 0 && <ReportList title="Nouvelles opérations disponibles" items={unlockedOperations} />}
+          </details>
         )}
 
-        {hasBlocsAffectes && (
-          <div>
-            <h3>Évolution des blocs</h3>
-            
-            {affectedBlocks.length > 0 && (
-              <div className="report-sub-section">
-                <h4>Évolutions locales</h4>
-                <ul>
-                  {affectedBlocks.map((item, idx) => (
-                    <li key={idx}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            
-            {filteredSocialSignals.length > 0 && (
-              <div className="report-sub-section">
-                <h4>Climat social</h4>
-                <ul>
-                  {filteredSocialSignals.map((item, idx) => (
-                    <li key={idx}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            
-            {mostAffectedBlock && (
-              <div className="report-sub-section">
-                <h4>Bloc en premier plan</h4>
-                <p>{mostAffectedBlock}</p>
-              </div>
-            )}
-          </div>
+        {hasWorldDetail && (
+          <details className="report-fold">
+            <summary>
+              Jauges et blocs
+              <span className="report-fold__meta">
+                {globalChanges.length > 0 && `${globalChanges.length} jauge${globalChanges.length > 1 ? "s" : ""}`}
+                {affectedBlocks.length > 0 && ` · ${affectedBlocks.length} bloc${affectedBlocks.length > 1 ? "s" : ""}`}
+                {mostAffectedBlock && ` · ${mostAffectedBlock}`}
+              </span>
+            </summary>
+            {globalChanges.length > 0 && <ReportList title="Jauges globales" items={globalChanges} />}
+            {affectedBlocks.length > 0 && <ReportList title="Évolutions locales" items={affectedBlocks} />}
+            {filteredSocialSignals.length > 0 && <ReportList title="Climat social" items={filteredSocialSignals} />}
+          </details>
         )}
 
         {hasRelations && (
-          <div>
-            <h3>Mouvements diplomatiques</h3>
-            
-            {relationChanges.length > 0 && (
-              <div className="report-sub-section">
-                <h4>Ce qui a bougé ce tour</h4>
-                <ul>
-                  {relationChanges.map((item, idx) => (
-                    <li key={idx}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            
+          <details className="report-fold">
+            <summary>
+              Relations entre blocs
+              <span className="report-fold__meta">
+                {relationCount > 0 && `${relationCount} mouvement${relationCount > 1 ? "s" : ""}`}
+                {mainTension && relationCount > 0 && " · tension en tête"}
+              </span>
+            </summary>
+            {relationChanges.length > 0 && <ReportList title="Ce qui a bougé" items={relationChanges} />}
             {mainTension && (
               <div className="report-sub-section">
                 <h4>Tension principale</h4>
                 <p>{mainTension}</p>
               </div>
             )}
-          </div>
+          </details>
         )}
 
         {hasTrajectoryInsight && (
-          <div className="trajectory-diagnostic">
-            <h3>Lecture historique</h3>
-            <p className="report-muted">Indication provisoire — à confronter à la carte et aux blocs avant d\'agir.</p>
-            {report.dominantTrajectory && <p>Dominante : {report.dominantTrajectory}</p>}
-            {trajectorySignals.length > 0 && (
-              <div className="report-sub-section">
-                <h4>Orientations secondaires</h4>
-                <ul>
-                  {trajectorySignals.map((item, idx) => (
-                    <li key={idx}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        )}
-
-        {hasPlanification && (
-          <div>
-            <h3>Opérations préparées</h3>
-            
-            {preparedOperations.length > 0 && (
-              <div className="report-sub-section">
-                <h4>En cours</h4>
-                <ul>
-                  {preparedOperations.map((item, idx) => (
-                    <li key={idx}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            
-            {unlockedOperations.length > 0 && (
-              <div className="report-sub-section">
-                <h4>Nouvelles opérations disponibles</h4>
-                <ul>
-                  {unlockedOperations.map((item, idx) => (
-                    <li key={idx}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        )}
-
-        {hasEvent && (
-          <div className="report-event-alert" aria-live="polite" style={{ gridColumn: "1 / -1" }}>
-            <span className="eyebrow">Événement systémique</span>
-            <h3>{report.systemicEventTitle}</h3>
-            <p>Une réaction majeure a affecté les équilibres. Consultez le journal et les blocs concernés pour en mesurer la portée.</p>
-          </div>
+          <details className="report-fold">
+            <summary>
+              Lecture historique
+              {report.dominantTrajectory && <span className="report-fold__meta">{report.dominantTrajectory}</span>}
+            </summary>
+            <p className="report-muted">Indication provisoire — à confronter à la carte et aux blocs avant d'agir.</p>
+            {trajectorySignals.length > 0 && <ReportList title="Orientations secondaires" items={trajectorySignals} />}
+          </details>
         )}
 
         {hasWeakSignals && (
-          <div>
-            <h3>Signaux faibles</h3>
-            <p className="report-muted">Ces signaux ne déclenchent rien encore. Ils indiquent ce qui commence à se déplacer.</p>
+          <details className="report-fold">
+            <summary>
+              Signaux faibles
+              <span className="report-fold__meta">{filteredWeakSignals.length}</span>
+            </summary>
+            <p className="report-muted">Rien ne se déclenche encore. Ceci commence à se déplacer.</p>
             <ul>
               {filteredWeakSignals.map((item, idx) => (
                 <li key={idx}>{item}</li>
               ))}
             </ul>
-          </div>
-        )}
-
-        {!hasAnyNotableChange && (
-          <div style={{ gridColumn: "1 / -1" }}>
-            <h3>Situation générale</h3>
-            <p>Aucun mouvement notable ce tour. Le monde maintient son inertie — ce qui n'est ni une garantie ni un repos. Les effets des opérations précédentes continuent de se diffuser sans produire de signal net.</p>
-          </div>
+          </details>
         )}
       </div>
 
-      {report.suspicionNote && <p className="report-suspicion">{report.suspicionNote}</p>}
+      {!hasAnythingNotable && (
+        <p className="report-muted">
+          Aucun mouvement notable ce tour. Le monde maintient son inertie — ce qui n'est ni une garantie ni un repos.
+        </p>
+      )}
     </section>
+  );
+}
+
+function ReportList({ title, items }: { title: string; items: string[] }) {
+  return (
+    <div className="report-sub-section">
+      <h4>{title}</h4>
+      <ul>
+        {items.map((item, idx) => (
+          <li key={idx}>{item}</li>
+        ))}
+      </ul>
+    </div>
   );
 }

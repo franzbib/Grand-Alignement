@@ -1621,38 +1621,83 @@ button {
   line-height: 1.5;
 }
 
-.report-grid {
+/* Passe "Rapport lisible" : l'essentiel visible, le détail en tiroirs.
+   Les <summary> portent déjà l'information clé (compteurs, dominante). */
+.report-folds {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  gap: 8px;
+  margin-top: 14px;
 }
 
-.report-grid > div {
-  padding: 14px;
+.report-fold {
   border: 1px solid #ded8c9;
   border-radius: 8px;
   background: #f8f6ef;
 }
 
-.report-grid h3 {
-  margin: 0 0 8px;
+.report-fold summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 10px 14px;
   font-size: 0.92rem;
+  font-weight: 700;
+  color: #17211c;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
-.report-grid p,
-.report-grid ul {
+.report-fold summary::-webkit-details-marker {
+  display: none;
+}
+
+.report-fold summary::before {
+  content: "▸";
+  color: #7c8a80;
+  font-size: 0.8em;
+}
+
+.report-fold[open] summary::before {
+  content: "▾";
+}
+
+.report-fold__meta {
+  font-weight: 500;
+  color: #5f6a63;
+  font-size: 0.85em;
+}
+
+.report-fold > :not(summary) {
+  padding: 0 14px;
+}
+
+.report-fold > :last-child:not(summary) {
+  padding-bottom: 14px;
+}
+
+.report-fold p,
+.report-fold ul {
   margin: 0;
   color: #536158;
   font-size: 0.9rem;
   line-height: 1.45;
 }
 
-.report-grid ul {
+.report-fold ul {
+  padding-left: 32px;
+}
+
+.report-world-signals {
+  margin: 10px 0 0;
   padding-left: 18px;
+  color: #6e3a22;
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
 
 .report-sub-section {
-  margin-top: 14px;
+  margin-top: 10px;
 }
 
 .report-sub-section h4 {
@@ -1662,10 +1707,6 @@ button {
   text-transform: uppercase;
   color: #7c3626;
   letter-spacing: 0.5px;
-}
-
-.trajectory-diagnostic {
-  border-left: 4px solid #52645a;
 }
 
 .report-muted {
@@ -1748,12 +1789,12 @@ button {
 }
 
 .report-suspicion {
-  margin-top: 14px !important;
+  margin: 10px 0 0 !important;
   padding: 10px;
   border-left: 3px solid #7c3626;
   background: #fff8ed;
   color: #17211c !important;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 /* === Relations inter-blocs — Passe C === */

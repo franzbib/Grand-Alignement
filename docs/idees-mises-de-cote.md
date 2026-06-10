@@ -34,4 +34,4 @@ Ces idées peuvent être intéressantes plus tard, mais elles ne doivent pas êt
 - ~~Tour d'observation explicite~~ — réalisé par la passe « Rythme et variance » (`docs/design/passe-rythme-et-variance-v0-1.md`).
 - ~~Variance contrôlée par seed de partie~~ — réalisé par la passe « Rythme et variance », sous contrat strict (choix narratifs seulement).
 
-- Rapport d'évolution : alléger la structure (quatorze rubriques, ~280 mots par tour). Regrouper les rubriques voisines, replier le détail par défaut, ne déplier que ce qui a bougé. Sujet d'architecture d'interface identifié par la passe « Textes digestes ».
+- ~~Rapport d'évolution : alléger la structure~~ — réalisé par la passe « Rapport lisible » (`docs/design/passe-rapport-lisible-v0-1.md`).
