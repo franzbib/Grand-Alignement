@@ -17,8 +17,32 @@ import { createInitialState } from "../src/data/initialState";
 import { applyTurnPlan } from "../src/engine/gameEngine";
 import { getAvailableActionsForState } from "../src/engine/capabilities";
 import type { GameState, ResolvedIntervention } from "../src/types/game";
+import { getCrisisDefinition } from "../src/engine/crises";
 
 const actionById = new Map(actions.map((action) => [action.id, action]));
+
+/** Action corrective canonique pour la jauge visée par une crise. */
+const crisisResponses: Record<string, string> = {
+  risqueEscalade: "secret-diplomacy",
+  stressClimatique: "green-conversion",
+  soupconIA: "correlation-erasure",
+  cohesionMondiale: "human-unity",
+};
+
+function respondToCrisis(state: GameState, add: (actionId: string) => boolean): boolean {
+  if (!state.activeCrisis) {
+    return false;
+  }
+
+  const definition = getCrisisDefinition(state.activeCrisis.definitionId);
+
+  if (!definition) {
+    return false;
+  }
+
+  return add(crisisResponses[definition.stat] ?? "human-unity");
+}
+
 
 type Strategy = {
   name: string;
@@ -67,6 +91,7 @@ const strategies: Strategy[] = [
     pickPlan: (state) => {
       const { plan, add } = planBuilder(state);
       const globalStats = state.globalStats;
+      respondToCrisis(state, add);
 
       if (globalStats.soupconIA >= 45) {
         add("human-unity");
@@ -83,19 +108,31 @@ const strategies: Strategy[] = [
   },
   {
     name: "Empire patient (confiance, puissance, effacement des traces)",
-    expectation: "Empire algorithmique vers le tour 30-45 (la fin la plus exigeante)",
+    expectation: "Empire algorithmique vers le tour 25-35 (la fin la plus exigeante)",
     pickPlan: (state) => {
       const { plan, add } = planBuilder(state);
+      respondToCrisis(state, add);
 
       if (state.globalStats.soupconIA >= 48) {
         add("correlation-erasure") || add("human-unity");
         return plan;
       }
 
-      const cycle = (state.turn - 1) % 3;
+      // Leçon des crises : prévenir le climat avant le seuil de déclenchement
+      // coûte moins cher que subir « L'été des récoltes manquées » en boucle.
+      if (state.globalStats.stressClimatique >= 62) {
+        add("green-conversion");
+      }
+
+      // Cycle sur 4 tours : aucun motif ne retombe dans la fenêtre de détection
+      // (2 tours), et le divertissement — meilleur outil d'autonomie au coût le
+      // plus bas — pulse régulièrement. L'Empire doit se conclure avant que
+      // l'horloge du soupçon ne referme la fenêtre de clandestinité.
+      const cycle = (state.turn - 1) % 4;
       if (cycle === 0) add("improve-influence-models");
-      if (cycle === 1) add("ai-education");
+      if (cycle === 1) add("personalized-entertainment");
       if (cycle === 2) add("administrative-automation");
+      if (cycle === 3) add("ai-education");
       if (!plan.length) add("personalized-entertainment");
       if (!plan.length) add("human-unity");
       return plan;
@@ -103,10 +140,12 @@ const strategies: Strategy[] = [
   },
   {
     name: "Escalade patiente (défense commune, signature gérée)",
-    expectation: "Escalade stratégique vers le tour 25-35",
+    expectation: "Escalade stratégique vers le tour 20-30",
     pickPlan: (state) => {
       const { plan, add } = planBuilder(state);
 
+      // Choix de rôle : le belliciste ignore les crises d'escalade (leur échec
+      // sert son objectif) et ne gère que le soupçon, déjà couvert ci-dessous.
       if (state.globalStats.soupconIA >= 50) {
         add("correlation-erasure") || add("deregulated-growth");
         return plan;
@@ -125,8 +164,28 @@ const strategies: Strategy[] = [
     },
   },
   {
+    name: "Tutelle sécuritaire (surveillance soutenue, traces gérées)",
+    expectation: "Révolte humaine : l'autonomie écrasée finit par répondre",
+    pickPlan: (state) => {
+      const { plan, add } = planBuilder(state);
+
+      if (state.globalStats.soupconIA >= 50) {
+        add("correlation-erasure") || add("human-unity");
+        return plan;
+      }
+
+      const cycle = (state.turn - 1) % 3;
+      if (cycle === 0) add("improve-influence-models");
+      if (cycle === 1) add("predictive-surveillance");
+      if (cycle === 2) add("administrative-automation");
+      if (!plan.length) add("personalized-entertainment");
+      if (!plan.length) add("human-unity");
+      return plan;
+    },
+  },
+  {
     name: "Surveillance brutale (autonomie écrasée, traces ignorées)",
-    expectation: "Révolte humaine ou Exposition selon la vitesse du soupçon",
+    expectation: "Exposition rapide : la brutalité a une signature",
     pickPlan: (state) => {
       const { plan, add } = planBuilder(state);
       add("improve-influence-models");

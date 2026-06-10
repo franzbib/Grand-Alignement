@@ -2,6 +2,7 @@ import { actions } from "../data/actions";
 import { createInitialState } from "../data/initialState";
 import { INFLUENCE_CAPACITY, applyTurnPlan } from "./gameEngine";
 import { getAvailableActionsForState } from "./capabilities";
+import { getCrisisDefinition } from "./crises";
 import { computeTrajectoryScores, getDominantTrajectory, getStrongSecondaryTrajectories } from "./trajectories";
 import type {
   Action,
@@ -253,10 +254,34 @@ function sortActionsForProfile(profile: SimulationProfile, state: GameState): Ar
   });
 }
 
+const crisisResponseByStat: Partial<Record<string, string>> = {
+  risqueEscalade: "secret-diplomacy",
+  stressClimatique: "green-conversion",
+  soupconIA: "correlation-erasure",
+  cohesionMondiale: "human-unity",
+};
+
 function chooseTurnPlan(state: GameState, profile: SimulationProfile): ResolvedIntervention[] {
   const selected: ResolvedIntervention[] = [];
   let influenceUsed = 0;
   const selectedActionIds = new Set<string>();
+
+  // Réponse aux crises à échéance : un joueur réel, alerté par le bandeau de
+  // crise, consacre une partie de son tour à la correction demandée. Même
+  // philosophie que l'hygiène de soupçon ci-dessous.
+  if (state.activeCrisis) {
+    const definition = getCrisisDefinition(state.activeCrisis.definitionId);
+    const responseId = definition ? crisisResponseByStat[definition.stat] : undefined;
+    const response = responseId
+      ? getAvailableActionsForState(actions, state).find((action) => action.id === responseId)
+      : undefined;
+
+    if (response) {
+      selected.push({ action: response, target: response.defaultTarget });
+      selectedActionIds.add(response.id);
+      influenceUsed += response.cost;
+    }
+  }
 
   // Hygiène de soupçon minimale : depuis la passe "Le monde répond", le soupçon
   // a des conséquences (vigilance, enquête, exposition). Un joueur réel, informé

@@ -66,6 +66,8 @@ npm run simulate:trajectories  # stress test long des profils diversifiés
 - Boucle de tour : planifier des interventions sous contrainte d'influence, gérer la signature laissée au monde (le soupçon IA a des paliers à conséquences), lire le rapport d'évolution, sauvegarder la partie.
 - Sauvegarde locale via `localStorage`.
 - Cinq fins : Confédération fragile, Empire algorithmique, Escalade stratégique, Révolte humaine, Exposition.
+- Crises à échéance : le monde exige parfois une correction chiffrée sous quelques tours, sous peine d'effets d'échec.
+- Bilan de fin de partie : les huit lectures politiques du monde construit et les moments clés relus en ordre chronologique.
 
 ## Périmètre actuel
 
