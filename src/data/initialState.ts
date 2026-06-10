@@ -1,4 +1,5 @@
 import { initialBlocks } from "./blocks";
+import { generateGameSeed } from "../engine/random";
 import { initialRelations } from "./relations";
 import type { GameState, GlobalStats } from "../types/game";
 
@@ -11,9 +12,10 @@ export const initialGlobalStats: GlobalStats = {
   soupconIA: 12,
 };
 
-export function createInitialState(): GameState {
+export function createInitialState(seed: number = generateGameSeed()): GameState {
   return {
     turn: 1,
+    seed,
     globalStats: { ...initialGlobalStats },
     blocks: structuredClone(initialBlocks),
     relations: structuredClone(initialRelations),

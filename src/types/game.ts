@@ -243,6 +243,8 @@ export type Ending = {
 
 export type GameState = {
   turn: number;
+  /** Seed de partie : pilote la variance narrative contrôlée (jamais les amplitudes). */
+  seed: number;
   globalStats: GlobalStats;
   blocks: Block[];
   relations: InterBlockRelation[];

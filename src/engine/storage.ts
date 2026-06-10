@@ -28,6 +28,7 @@ export function loadGameState(): GameState {
         parsedState.triggeredEventIds ?? parsedState.journal.flatMap((event) => (event.sourceId ? [event.sourceId] : [])),
       // Champs ajoutés par la passe "Le monde répond" : valeurs sûres pour les
       // sauvegardes antérieures (pas de motif mémorisé, pas de recharge en cours).
+      seed: parsedState.seed ?? 1,
       eventCooldowns: parsedState.eventCooldowns ?? {},
       activeCrisis: parsedState.activeCrisis ?? null,
       crisisCooldowns: parsedState.crisisCooldowns ?? {},

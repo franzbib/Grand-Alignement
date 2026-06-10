@@ -1,4 +1,5 @@
 import { getIaCapabilityLevel } from "./capabilities";
+import { seededPick } from "./random";
 import { computeTrajectoryScores } from "./trajectories";
 import type { Block, Event, GameState, ResolvedIntervention } from "../types/game";
 
@@ -134,7 +135,12 @@ export function chooseSignalCharacterEvent(
     .filter((candidate) => !hasRecentCharacterSignal(previousState, candidate.id))
     .sort((left, right) => right.weight - left.weight);
 
-  const strongest = eligibleCandidates[0];
+  // Variance contrôlée : parmi les voix dont le poids est proche du maximum
+  // (>= 85 %), le seed de partie choisit laquelle s'exprime. L'éligibilité et
+  // la porte de déclenchement restent strictement déterministes.
+  const topWeight = eligibleCandidates[0]?.weight ?? 0;
+  const contenders = eligibleCandidates.filter((candidate) => candidate.weight >= topWeight * 0.85);
+  const strongest = seededPick(contenders, previousState.seed, previousState.turn * 13) ?? eligibleCandidates[0];
   if (!strongest || hasRecentCharacterSignal(previousState) || !deterministicGate(previousState, level, strongest.weight)) {
     return null;
   }
