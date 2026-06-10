@@ -10,6 +10,8 @@ Depuis la passe « Le monde répond » (voir `docs/design/passe-monde-qui-repond
 
 La passe « Crises et bilan » (voir `docs/design/passe-crises-et-bilan-v0-1.md`) ajoute les crises à échéance — quatre crises sur un gabarit unique, une seule active à la fois, qui exigent une correction chiffrée sous quelques tours sous peine d'effets d'échec — et l'écran de bilan de fin de partie, qui montre pour la première fois au joueur les huit scores de trajectoires (dominante et collisions incluses) et relit les moments clés de la partie en ordre chronologique. Propriété structurelle assumée depuis cette passe : la « fenêtre de clandestinité » — au-delà d'environ 45 tours, l'horloge du soupçon gagne toujours ; les grandes ambitions doivent se conclure avant que le monde ne comprenne.
 
+La passe « Rythme et variance » (voir `docs/design/passe-rythme-et-variance-v0-1.md`) clôt les neuf recommandations de l'audit : tour d'observation (un plan vide est légal — l'IA se tait, le monde continue, le soupçon retombe de 4, les crises courent) et variance contrôlée par seed de partie, sous contrat strict : la variance ne porte que sur des choix narratifs entre options éligibles (quel événement, quelle voix), jamais sur des amplitudes — même seed et mêmes choix donnent une partie identique, et l'enveloppe d'équilibrage est vérifiée stable sur quatre seeds.
+
 **Dérogation documentée au garde-fou « pas de scénario d'exposition complète »** : la fin Exposition ajoutée par cette passe n'est pas un scénario ni une branche — un texte de fin et une condition de seuil, au service direct de la boucle clandestine, testée par simulation (`npm run simulate:strategies`) et retirable en supprimant une entrée de `src/data/endings.ts`. Les quatre critères de dérogation des garde-fous v0.1 sont remplis.
 
 ## Documents à lire
@@ -22,6 +24,7 @@ La passe « Crises et bilan » (voir `docs/design/passe-crises-et-bilan-v0-1.md`
 - `docs/audits/audit-jouabilite-interet-v0-2.md` — audit externe ayant motivé la passe « Le monde répond ».
 - `docs/design/passe-monde-qui-repond-v0-1.md` — soupçon à conséquences, fin Exposition, équilibrage vérifié.
 - `docs/design/passe-crises-et-bilan-v0-1.md` — crises à échéance, écran de bilan de fin, fenêtre de clandestinité.
+- `docs/design/passe-rythme-et-variance-v0-1.md` — tour d'observation, variance contrôlée par seed, audit clos.
 - `docs/audits/test-partie-10-20-tours-v0-1.md`
 - `docs/audits/audit-boucle-strategique-v0-1.md`
 - `docs/audits/audit-plan-influence-clandestin-v0-1.md`

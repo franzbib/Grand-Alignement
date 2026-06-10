@@ -3,6 +3,9 @@ import { createInitialState } from "../data/initialState";
 import { INFLUENCE_CAPACITY, applyTurnPlan } from "./gameEngine";
 import { getAvailableActionsForState } from "./capabilities";
 import { getCrisisDefinition } from "./crises";
+
+/** Seed fixe : le rapport committé reste reproductible commande après commande. */
+const SIMULATION_SEED = 20260610;
 import { computeTrajectoryScores, getDominantTrajectory, getStrongSecondaryTrajectories } from "./trajectories";
 import type {
   Action,
@@ -397,7 +400,7 @@ function makeSnapshot(state: GameState, horizon: number): SimulationSnapshot {
 }
 
 export function simulateProfile(profile: SimulationProfile, maxTurns = 50): SimulationResult {
-  let state = createInitialState();
+  let state = createInitialState(SIMULATION_SEED);
   const turns: SimulationTurn[] = [];
   const snapshots: SimulationSnapshot[] = [];
   const systemicEvents: string[] = [];

@@ -31,5 +31,5 @@ Ces idées peuvent être intéressantes plus tard, mais elles ne doivent pas êt
 - ~~Crises à échéance~~ — réalisé par la passe « Crises et bilan » (`docs/design/passe-crises-et-bilan-v0-1.md`).
 - ~~Écran de bilan de fin de partie~~ — réalisé par la passe « Crises et bilan ».
 - Crises à résolution sombre : des crises dont la *résolution* (et non l'échec) sert des objectifs impériaux ou bellicistes, pour offrir des dilemmes symétriques de ceux du joueur coopératif. Piste née de la vérification de la passe « Crises et bilan ».
-- Tour d'observation explicite : passer un tour sans action contre une décrue de soupçon. La discrétion récompensée couvre déjà la texture ; à reconsidérer seulement si les playtests montrent un besoin de rythme.
-- Variance contrôlée par seed de partie : différencier deux parties aux mêmes choix sans sacrifier la testabilité. À reconsidérer après stabilisation de l'équilibrage déterministe.
+- ~~Tour d'observation explicite~~ — réalisé par la passe « Rythme et variance » (`docs/design/passe-rythme-et-variance-v0-1.md`).
+- ~~Variance contrôlée par seed de partie~~ — réalisé par la passe « Rythme et variance », sous contrat strict (choix narratifs seulement).

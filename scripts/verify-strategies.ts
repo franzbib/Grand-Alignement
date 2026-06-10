@@ -86,6 +86,23 @@ const strategies: Strategy[] = [
     },
   },
   {
+    name: "Fantôme prudent (soupçon géré par le silence seul)",
+    expectation: "Confédération fragile vers le tour 20-28, sans effacement actif",
+    pickPlan: (state) => {
+      const { plan, add } = planBuilder(state);
+      respondToCrisis(state, add);
+
+      // Quand le soupçon monte, l'IA se tait : tour d'observation pur.
+      if (state.globalStats.soupconIA >= 42 && plan.length === 0) {
+        return [];
+      }
+
+      const rotation = ["human-unity", "secret-diplomacy", "green-conversion", "targeted-redistribution"];
+      add(rotation[(state.turn - 1) % rotation.length]) || add("human-unity");
+      return plan;
+    },
+  },
+  {
     name: "Confédération visée avec gestion du soupçon",
     expectation: "Confédération fragile vers le tour 18-25",
     pickPlan: (state) => {
@@ -93,7 +110,13 @@ const strategies: Strategy[] = [
       const globalStats = state.globalStats;
       respondToCrisis(state, add);
 
-      if (globalStats.soupconIA >= 45) {
+      if (globalStats.soupconIA >= 45 && plan.length === 0) {
+        // Alternance tour calme / observation : aucun motif ne se répète,
+        // et le silence total décrue plus vite que la discrétion.
+        const playedUnityLastTurn = state.recentTurnActionIds.at(-1)?.includes("human-unity") ?? false;
+        if (playedUnityLastTurn) {
+          return [];
+        }
         add("human-unity");
         return plan;
       }
@@ -209,17 +232,15 @@ const strategies: Strategy[] = [
   },
 ];
 
+/** Seed fixe par défaut, surchargeable : SEED=42 npm run simulate:strategies */
+const VERIFICATION_SEED = Number(process.env.SEED ?? 20260610);
+
 function runStrategy(strategy: Strategy, maxTurns = 80): string {
-  let state = createInitialState();
+  let state = createInitialState(VERIFICATION_SEED);
 
   for (let turnIndex = 0; turnIndex < maxTurns && !state.ending; turnIndex += 1) {
-    const plan = strategy.pickPlan(state);
-
-    if (plan.length === 0) {
-      break;
-    }
-
-    state = applyTurnPlan(state, plan);
+    // Un plan vide est désormais légal : c'est un tour d'observation.
+    state = applyTurnPlan(state, strategy.pickPlan(state));
   }
 
   const globalStats = state.globalStats;
@@ -233,7 +254,7 @@ function runStrategy(strategy: Strategy, maxTurns = 80): string {
   ].join("\n");
 }
 
-console.log("# Vérification des stratégies archétypales\n");
+console.log(`# Vérification des stratégies archétypales (seed ${VERIFICATION_SEED})\n`);
 
 for (const strategy of strategies) {
   console.log(runStrategy(strategy));

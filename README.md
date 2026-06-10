@@ -68,6 +68,8 @@ npm run simulate:trajectories  # stress test long des profils diversifiés
 - Cinq fins : Confédération fragile, Empire algorithmique, Escalade stratégique, Révolte humaine, Exposition.
 - Crises à échéance : le monde exige parfois une correction chiffrée sous quelques tours, sous peine d'effets d'échec.
 - Bilan de fin de partie : les huit lectures politiques du monde construit et les moments clés relus en ordre chronologique.
+- Tour d'observation : valider un plan vide fait taire l'IA — le soupçon retombe, le monde et les crises continuent.
+- Variance contrôlée : chaque partie a un seed qui différencie les récits (événements, voix) sans jamais toucher à l'équilibrage.
 
 ## Périmètre actuel
 
