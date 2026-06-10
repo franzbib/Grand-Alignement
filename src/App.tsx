@@ -154,12 +154,15 @@ function App() {
         </span>
         <span>
           Risque d'escalade <strong>{gameState.globalStats.risqueEscalade}</strong>
+          <StatDeltaTag current={gameState.globalStats.risqueEscalade} previous={gameState.previousGlobalStats?.risqueEscalade} />
         </span>
         <span>
           Autonomie humaine <strong>{gameState.globalStats.autonomieHumaine}</strong>
+          <StatDeltaTag current={gameState.globalStats.autonomieHumaine} previous={gameState.previousGlobalStats?.autonomieHumaine} />
         </span>
         <span>
-          Soupçon IA <strong>{gameState.globalStats.soupconIA}</strong>{" "}
+          Soupçon IA <strong>{gameState.globalStats.soupconIA}</strong>
+          <StatDeltaTag current={gameState.globalStats.soupconIA} previous={gameState.previousGlobalStats?.soupconIA} />{" "}
           <em className="status-strip__tier">({getSuspicionTierLabel(gameState.globalStats.soupconIA)})</em>
         </span>
         <span>
@@ -236,3 +239,13 @@ function App() {
 }
 
 export default App;
+
+/** Variation du dernier tour, en trois caractères. Passe "Cause et effet". */
+function StatDeltaTag({ current, previous }: { current: number; previous: number | undefined }) {
+  if (previous === undefined || previous === current) {
+    return null;
+  }
+
+  const delta = current - previous;
+  return <span className="status-delta">{delta > 0 ? `▲${delta}` : `▼${Math.abs(delta)}`}</span>;
+}

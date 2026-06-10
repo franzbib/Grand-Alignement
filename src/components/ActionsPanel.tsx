@@ -10,6 +10,15 @@ import type {
 } from "../types/game";
 import { isActionAvailableForIa, type IaCapabilityInfo } from "../engine/capabilities";
 import { isActionSuspendedBySuspicion } from "../engine/suspicion";
+import {
+  GLOBAL_LABELS,
+  actionTouchesGauge,
+  getBlockEffectBadges,
+  getGlobalEffectBadges,
+  getNetSuspicionEffect,
+  type EffectBadge,
+} from "../engine/actionEffects";
+import type { GlobalStats } from "../types/game";
 
 type ActionsPanelProps = {
   actions: Action[];
@@ -69,6 +78,7 @@ export function ActionsPanel({
   onValidateTurn,
 }: ActionsPanelProps) {
   const [activeFilter, setActiveFilter] = useState<"all" | "recommended" | "immediate" | "prepared">("all");
+  const [intentGauge, setIntentGauge] = useState<keyof GlobalStats | null>(null);
   const [pendingTargets, setPendingTargets] = useState<Record<string, InfluenceTarget>>({});
 
   const actionById = new Map(actions.map((action) => [action.id, action]));
@@ -135,6 +145,11 @@ export function ActionsPanel({
 
   // Filter base actions
   const filteredActions = baseActions.filter((action) => {
+    // Filtre d'intention "Agir sur" : ne garder que les leviers qui touchent
+    // la jauge visée ; les pastilles de la carte indiquent dans quel sens.
+    if (intentGauge && !actionTouchesGauge(action, intentGauge)) {
+      return false;
+    }
     if (activeFilter === "recommended") {
       return action.recommendedPostures?.includes(selectedPostureId);
     }
@@ -146,6 +161,15 @@ export function ActionsPanel({
     }
     return true;
   });
+
+  const intentChips: Array<{ gauge: keyof GlobalStats; label: string }> = [
+    { gauge: "cohesionMondiale", label: GLOBAL_LABELS.cohesionMondiale },
+    { gauge: "risqueEscalade", label: GLOBAL_LABELS.risqueEscalade },
+    { gauge: "autonomieHumaine", label: GLOBAL_LABELS.autonomieHumaine },
+    { gauge: "stressClimatique", label: GLOBAL_LABELS.stressClimatique },
+    { gauge: "puissanceIA", label: GLOBAL_LABELS.puissanceIA },
+    { gauge: "soupconIA", label: "Soupçon ↓" },
+  ];
 
   const showReadyOperations = availablePreparedOperations.length > 0 && 
     (activeFilter === "all" || activeFilter === "prepared" || activeFilter === "recommended");
@@ -188,6 +212,7 @@ export function ActionsPanel({
 
           <div className="action-card__details">
             <p className="action-card__description">{action.description}</p>
+            <EffectBadgesLine action={action} />
             <p className="action-card__promise">
               <strong>Impact :</strong> {action.promise}
             </p>
@@ -312,6 +337,26 @@ export function ActionsPanel({
           {/* Liste des interventions disponibles */}
           <div className="actions-section">
             <h3>Interventions disponibles</h3>
+            <div className="intent-filter" role="group" aria-label="Agir sur une jauge">
+              <span className="intent-filter__label">Agir sur :</span>
+              <button
+                className={`intent-chip${intentGauge === null ? " intent-chip--active" : ""}`}
+                onClick={() => setIntentGauge(null)}
+                type="button"
+              >
+                Tout
+              </button>
+              {intentChips.map((chip) => (
+                <button
+                  className={`intent-chip${intentGauge === chip.gauge ? " intent-chip--active" : ""}`}
+                  key={chip.gauge}
+                  onClick={() => setIntentGauge(intentGauge === chip.gauge ? null : chip.gauge)}
+                  type="button"
+                >
+                  {chip.label}
+                </button>
+              ))}
+            </div>
             {lockedActionsCount > 0 && (
               <p className="actions-section__hint">
                 {lockedActionsCount} mode{lockedActionsCount > 1 ? "s" : ""} d'influence plus avancÃ©
@@ -417,5 +462,43 @@ export function ActionsPanel({
         </aside>
       </div>
     </section>
+  );
+}
+
+/**
+ * Pastilles d'effets — passe "Cause et effet".
+ * La direction, jamais l'amplitude : le joueur sait ce qu'il tente,
+ * il découvre ce que le monde en fait. Le soupçon, ressource de survie,
+ * est seul affiché en valeur nette exacte.
+ */
+function EffectBadgesLine({ action }: { action: Action }) {
+  const globalBadges = getGlobalEffectBadges(action);
+  const blockBadges = getBlockEffectBadges(action);
+  const netSuspicion = getNetSuspicionEffect(action);
+
+  if (globalBadges.length === 0 && blockBadges.length === 0 && netSuspicion === 0) {
+    return null;
+  }
+
+  const arrow = (badge: EffectBadge) => (badge.direction === "up" ? (badge.strong ? "↑↑" : "↑") : badge.strong ? "↓↓" : "↓");
+
+  return (
+    <p className="effect-badges">
+      {globalBadges.map((badge) => (
+        <span className="effect-badge" key={badge.label}>
+          {badge.label} {arrow(badge)}
+        </span>
+      ))}
+      {blockBadges.map((badge) => (
+        <span className="effect-badge effect-badge--block" key={badge.label}>
+          {badge.label} {arrow(badge)}
+        </span>
+      ))}
+      {netSuspicion !== 0 && (
+        <span className={`effect-badge ${netSuspicion > 0 ? "effect-badge--suspicion" : "effect-badge--suspicion-down"}`}>
+          Soupçon {netSuspicion > 0 ? `+${netSuspicion}` : netSuspicion}
+        </span>
+      )}
+    </p>
   );
 }

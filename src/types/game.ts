@@ -215,6 +215,10 @@ export type EvolutionReport = {
   preparedOperations: string[];
   unlockedOperations: string[];
   globalChanges: string[];
+  /** Attribution : ce que VOS opérations ont déplacé ce tour. */
+  playerGlobalChanges?: string[];
+  /** Attribution : ce que le monde a fait seul (dérive, érosion, événement, crise). */
+  worldGlobalChanges?: string[];
   affectedBlocks: string[];
   socialSignals: string[];
   worldSignals: string[];
@@ -261,6 +265,8 @@ export type GameState = {
   recentTurnActionIds: string[][];
   preparedOperations: PreparedOperation[];
   previousBlocks: Block[] | null;
+  /** Jauges globales du tour précédent, pour afficher les deltas du bandeau. */
+  previousGlobalStats: GlobalStats | null;
   evolutionReport: EvolutionReport | null;
   ending: Ending | null;
 };

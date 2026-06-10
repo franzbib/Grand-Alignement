@@ -239,6 +239,94 @@ button {
   color: #a33d2a;
 }
 
+/* ----- Passe "Cause et effet" ----- */
+
+/* Pastilles d'effets : la direction, jamais l'amplitude. */
+.effect-badges {
+  margin: 6px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.effect-badge {
+  font-size: 0.74rem;
+  padding: 1px 7px;
+  border-radius: 999px;
+  border: 1px solid #cfd8cf;
+  background: #f1f4ef;
+  color: #3c4a41;
+  white-space: nowrap;
+}
+
+.effect-badge--block {
+  border-style: dashed;
+  color: #5f6a63;
+  background: transparent;
+}
+
+.effect-badge--suspicion {
+  border-color: #c4744a;
+  background: #fdf3ec;
+  color: #8a4b2d;
+  font-weight: 600;
+}
+
+.effect-badge--suspicion-down {
+  border-color: #6f8f7c;
+  background: #eef4ef;
+  color: #3f6e52;
+  font-weight: 600;
+}
+
+/* Filtre d'intention « Agir sur » : la réciproque — du but vers les leviers. */
+.intent-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: -2px 0 12px;
+}
+
+.intent-filter__label {
+  font-size: 0.82rem;
+  color: #5f6a63;
+}
+
+.intent-chip {
+  font-size: 0.8rem;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid #cfd8cf;
+  background: #fff;
+  color: #3c4a41;
+  cursor: pointer;
+}
+
+.intent-chip--active {
+  background: #3f6e52;
+  border-color: #3f6e52;
+  color: #fff;
+}
+
+/* Attribution vous / le monde : la leçon du tour, en une ligne. */
+.report-attribution {
+  margin: 8px 0 0;
+  padding: 8px 10px;
+  border-left: 3px solid #52645a;
+  background: #f1f4ef;
+  color: #3c4a41;
+  font-size: 0.9rem;
+}
+
+/* Delta du dernier tour dans le bandeau d'état. */
+.status-delta {
+  margin-left: 4px;
+  font-size: 0.78em;
+  font-weight: 700;
+  color: #52645a;
+}
+
 /* Tour d'observation : indice et variante calme du bouton de validation. */
 .observe-hint {
   margin: 0 0 8px;

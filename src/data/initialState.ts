@@ -27,6 +27,7 @@ export function createInitialState(seed: number = generateGameSeed()): GameState
     recentTurnActionIds: [],
     preparedOperations: [],
     previousBlocks: null,
+    previousGlobalStats: null,
     journal: [
       {
         id: "opening",

@@ -55,6 +55,10 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
   });
   const filteredWeakSignals = weakSignals.filter((signal) => !signal.includes("Équilibre encore lisible"));
 
+  const playerGlobalChanges = report.playerGlobalChanges ?? [];
+  const worldGlobalChanges = report.worldGlobalChanges ?? [];
+  const hasAttribution = playerGlobalChanges.length > 0 || worldGlobalChanges.length > 0;
+
   const operationCount = immediateInterventions.length;
   const worldItemCount = globalChanges.length + affectedBlocks.length + filteredSocialSignals.length;
   const relationCount = relationChanges.length;
@@ -78,6 +82,14 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
         <strong>Tour {report.turn} ·</strong> {report.operationSummary}
       </p>
       <p className="report-synthesis">{report.synthesis ?? "Synthèse indisponible pour ce tour."}</p>
+
+      {hasAttribution && (
+        <p className="report-attribution">
+          <strong>Vous :</strong> {playerGlobalChanges.length > 0 ? playerGlobalChanges.slice(0, 3).join(" · ") : "silence"}
+          {"  —  "}
+          <strong>Le monde :</strong> {worldGlobalChanges.length > 0 ? worldGlobalChanges.slice(0, 3).join(" · ") : "rien de notable"}
+        </p>
+      )}
 
       {report.suspicionNote && <p className="report-suspicion">{report.suspicionNote}</p>}
 
@@ -125,7 +137,9 @@ export function EvolutionReportPanel({ report }: EvolutionReportPanelProps) {
                 {mostAffectedBlock && ` · ${mostAffectedBlock}`}
               </span>
             </summary>
-            {globalChanges.length > 0 && <ReportList title="Jauges globales" items={globalChanges} />}
+            {playerGlobalChanges.length > 0 && <ReportList title="Vos opérations" items={playerGlobalChanges} />}
+            {worldGlobalChanges.length > 0 && <ReportList title="Le monde seul" items={worldGlobalChanges} />}
+            {!hasAttribution && globalChanges.length > 0 && <ReportList title="Jauges globales" items={globalChanges} />}
             {affectedBlocks.length > 0 && <ReportList title="Évolutions locales" items={affectedBlocks} />}
             {filteredSocialSignals.length > 0 && <ReportList title="Climat social" items={filteredSocialSignals} />}
           </details>

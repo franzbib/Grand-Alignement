@@ -27,6 +27,7 @@ La passe « Rythme et variance » (voir `docs/design/passe-rythme-et-variance-v0
 - `docs/design/passe-rythme-et-variance-v0-1.md` — tour d'observation, variance contrôlée par seed, audit clos.
 - `docs/design/passe-textes-digestes-v0-1.md` — passe littéraire : budgets de mots, fins -30 %, crises -26 %, relevé par `npm run extract:texts`.
 - `docs/design/passe-rapport-lisible-v0-1.md` — rapport d'évolution en deux étages : ~54 mots visibles par tour (était ~280), détail en tiroirs.
+- `docs/design/passe-cause-et-effet-v0-1.md` — lisibilité stratégique : pastilles de direction sur les cartes, attribution « Vous / Le monde », filtre « Agir sur », deltas du bandeau. Doctrine : le flou porte sur le second ordre, jamais sur le premier.
 - `docs/audits/test-partie-10-20-tours-v0-1.md`
 - `docs/audits/audit-boucle-strategique-v0-1.md`
 - `docs/audits/audit-plan-influence-clandestin-v0-1.md`

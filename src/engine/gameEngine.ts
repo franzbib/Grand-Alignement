@@ -426,6 +426,23 @@ function getInterventionLabels(interventions: ResolvedIntervention[], blocks: Bl
   return interventions.map((intervention) => getOperationSummary([intervention], blocks));
 }
 
+function formatGlobalDeltas(previousStats: GlobalStats, nextStats: GlobalStats): string[] {
+  const labels: Record<keyof GlobalStats, string> = {
+    cohesionMondiale: "cohésion",
+    risqueEscalade: "escalade",
+    autonomieHumaine: "autonomie",
+    stressClimatique: "climat",
+    puissanceIA: "puissance IA",
+    soupconIA: "soupçon",
+  };
+
+  return (Object.keys(labels) as Array<keyof GlobalStats>)
+    .map((key) => ({ key, delta: nextStats[key] - previousStats[key] }))
+    .filter(({ delta }) => delta !== 0)
+    .sort((left, right) => Math.abs(right.delta) - Math.abs(left.delta))
+    .map(({ key, delta }) => `${labels[key]} ${delta > 0 ? "+" : ""}${delta}`);
+}
+
 function getTopGlobalChanges(previousStats: GlobalStats, nextStats: GlobalStats): string[] {
   return (Object.keys(previousStats) as Array<keyof GlobalStats>)
     .map((key) => ({
@@ -509,6 +526,7 @@ function formatRelationChange(change: RelationChange): string {
 export function generateEvolutionReport(
   previousState: GameState,
   nextState: GameState,
+  statsAfterPlayerActions: GlobalStats,
   interventions: ResolvedIntervention[],
   systemicEvent: SystemicEvent | null,
   createdOperations: PreparedOperation[],
@@ -574,6 +592,10 @@ export function generateEvolutionReport(
     ),
     unlockedOperations: createdOperations.map((operation) => operation.readyText),
     globalChanges: getTopGlobalChanges(previousState.globalStats, nextState.globalStats),
+    // Attribution "Cause et effet" : le réalisé de vos opérations, puis ce que
+    // le monde a fait seul (dérive, érosion, événement systémique, crise).
+    playerGlobalChanges: formatGlobalDeltas(previousState.globalStats, statsAfterPlayerActions),
+    worldGlobalChanges: formatGlobalDeltas(statsAfterPlayerActions, nextState.globalStats),
     affectedBlocks,
     socialSignals,
     worldSignals: worldSignals.slice(0, 3),
@@ -737,6 +759,7 @@ export function applyTurnPlan(state: GameState, interventions: ResolvedIntervent
     recentTurnActionIds: state.recentTurnActionIds,
     preparedOperations,
     previousBlocks: state.blocks,
+    previousGlobalStats: state.globalStats,
     evolutionReport: null,
     ending: evaluateEnding(state.turn + 1, finalGlobalStats, finalBlocks),
   };
@@ -787,6 +810,7 @@ export function applyTurnPlan(state: GameState, interventions: ResolvedIntervent
     evolutionReport: generateEvolutionReport(
       state,
       nextStateWithoutReport,
+      globalStatsAfterActions,
       interventions,
       systemicEvent,
       createdOperations,
