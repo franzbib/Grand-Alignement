@@ -466,11 +466,11 @@ function getSuspicionNote(
 
   if (crossedThreshold !== null) {
     if (nextSuspicion >= 80) {
-      return "Le soupçon entre en zone d'enquête : les opérations à forte signature sont suspendues et la confiance dans les systèmes s'érode rapidement.";
+      return "Zone d'enquête : les opérations à forte signature sont suspendues, la confiance s'érode.";
     }
 
     if (nextSuspicion >= 60) {
-      return "Le soupçon entre en zone de vigilance : la confiance dans les systèmes commence à s'éroder d'elle-même, tour après tour.";
+      return "Zone de vigilance : la confiance dans les systèmes s'érode désormais d'elle-même.";
     }
 
     if (nextSuspicion >= 30) {
@@ -481,7 +481,7 @@ function getSuspicionNote(
   }
 
   if (nextSuspicion >= 88 && nextSuspicion < SUSPICION_EXPOSURE_THRESHOLD) {
-    return "Des audits convergent. L'exposition est une question de tours, pas de probabilité.";
+    return "Des audits convergent. L'exposition n'est plus une probabilité, c'est un délai.";
   }
 
   if (suspicionDelta >= 4) {
@@ -707,7 +707,7 @@ export function applyTurnPlan(state: GameState, interventions: ResolvedIntervent
         sourceId: "turn-plan",
         turn: state.turn,
         title: "Silence calculé",
-        text: "Aucune opération ce tour-ci. Les flux continuent sans impulsion nouvelle, et quelque part, des analystes constatent que les anomalies se sont tues. Certains y verront une preuve d'absence. C'est le but.",
+        text: "Aucune opération ce tour-ci. Les anomalies se taisent ; des analystes y verront une preuve d'absence. C'est le but.",
         effectsText: systemicEvent
           ? `Conséquence systémique : ${systemicEvent.title}.`
           : "Le monde poursuit sa dérive propre. Le soupçon retombe.",
@@ -763,7 +763,7 @@ export function applyTurnPlan(state: GameState, interventions: ResolvedIntervent
   // l'inefficacité croissante est expliquée au joueur plutôt que silencieuse.
   const baseWorldSignals = repeatedActionNames.length
     ? [
-        `Des analystes relèvent la récurrence d'un même motif d'influence (${[...new Set(repeatedActionNames)].join(", ")}) : son efficacité s'émousse et sa signature grandit.`,
+        `Motif répété (${[...new Set(repeatedActionNames)].join(", ")}) : son efficacité s'émousse, sa signature grandit.`,
         ...worldDynamicsResult.worldSignals,
       ]
     : worldDynamicsResult.worldSignals;

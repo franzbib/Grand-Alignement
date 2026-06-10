@@ -131,10 +131,7 @@ function App() {
           <p className="eyebrow">Diagnostic final</p>
           <h2>{gameState.ending.title}</h2>
           <p>{gameState.ending.description}</p>
-          <p>
-            Partie terminée : le diagnostic verrouille les opérations d'influence. Consultez le rapport final ou
-            réinitialisez la partie pour explorer une autre trajectoire.
-          </p>
+          <p>Le diagnostic verrouille les opérations. Rapport final, ou nouvelle partie pour une autre trajectoire.</p>
           <EndingRecap gameState={gameState} />
           <div className="ending-banner__actions">
             <button onClick={() => setActiveView("report")} type="button">

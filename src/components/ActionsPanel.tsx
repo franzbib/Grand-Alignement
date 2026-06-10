@@ -321,8 +321,7 @@ export function ActionsPanel({
             {suspendedActionsCount > 0 && (
               <p className="actions-section__hint actions-section__hint--warning">
                 Zone d'enquête : {suspendedActionsCount} opération{suspendedActionsCount > 1 ? "s" : ""} à forte
-                signature {suspendedActionsCount > 1 ? "sont suspendues" : "est suspendue"}. Elles redeviendront
-                disponibles si le soupçon retombe sous 80.
+                signature suspendue{suspendedActionsCount > 1 ? "s" : ""}. Retour sous 80 de soupçon.
               </p>
             )}
             {filteredActions.length > 0 ? (
@@ -403,9 +402,8 @@ export function ActionsPanel({
           {/* Bouton de validation : déploiement, ou observation si le plan est vide */}
           {plannedInterventions.length === 0 && !disabled && (
             <p className="observe-hint">
-              Aucune intervention planifiée : valider fera passer un tour d'observation. L'IA se tait, le monde
-              continue, le soupçon retombe nettement — mais les crises courent et les fenêtres d'opérations
-              préparées vieillissent.
+              Plan vide : valider fera observer. L'IA se tait, le soupçon retombe nettement — mais les crises
+              courent et les opérations préparées vieillissent.
             </p>
           )}
           <button

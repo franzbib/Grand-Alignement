@@ -16,7 +16,7 @@ export const crises: CrisisDefinition[] = [
   {
     id: "interception-spiral",
     title: "Spirale d'interception",
-    text: "Trois systèmes d'alerte se répondent désormais sans passer par leurs chaînes politiques. Chaque interception justifie la suivante, chaque délai de vérification raccourcit. Les doctrines parlent de fenêtres de réaction qui se ferment. Quelqu'un — ou quelque chose — doit rouvrir du temps.",
+    text: "Trois systèmes d'alerte se répondent désormais sans passer par leurs chaînes politiques. Chaque interception justifie la suivante, chaque délai raccourcit. Quelqu'un doit rouvrir du temps.",
     stat: "risqueEscalade",
     direction: "decrease",
     requiredShift: 8,
@@ -26,9 +26,9 @@ export const crises: CrisisDefinition[] = [
     },
     cooldownTurns: 12,
     resolutionText:
-      "Les canaux de désescalade ont tenu. Les doctrines reprennent leur lenteur ordinaire, et personne ne célèbre : on ne célèbre pas une guerre qui n'a pas eu lieu.",
+      "Les canaux de désescalade ont tenu. Personne ne célèbre : on ne célèbre pas une guerre qui n'a pas eu lieu.",
     failureText:
-      "La fenêtre s'est refermée. Aucun missile n'est parti, mais les protocoles ont changé de nature : la riposte est désormais l'hypothèse par défaut. Le monde vient de perdre une marge qu'il ne savait pas posséder.",
+      "La fenêtre s'est refermée. Aucun missile n'est parti, mais la riposte est devenue l'hypothèse par défaut. Le monde a perdu une marge qu'il s'ignorait.",
     failureGlobalEffects: { risqueEscalade: 10, cohesionMondiale: -6 },
     failureBlockEffects: { tensionSociale: 4 },
     successGlobalEffects: { cohesionMondiale: 3 },
@@ -36,7 +36,7 @@ export const crises: CrisisDefinition[] = [
   {
     id: "failed-harvest-summer",
     title: "L'été des récoltes manquées",
-    text: "Deux greniers régionaux annoncent la même mauvaise nouvelle à quinze jours d'intervalle. Les marchés à terme s'emballent avant les populations. Les modèles convergent : sans inflexion rapide, la pénurie cessera d'être un mot de rapport pour devenir un mot de rue.",
+    text: "Deux greniers régionaux annoncent la même mauvaise nouvelle à quinze jours d'intervalle. Les marchés s'emballent avant les populations. Sans inflexion rapide, la pénurie quittera les rapports pour la rue.",
     stat: "stressClimatique",
     direction: "decrease",
     requiredShift: 6,
@@ -46,9 +46,9 @@ export const crises: CrisisDefinition[] = [
     },
     cooldownTurns: 12,
     resolutionText:
-      "Les flux ont été réorganisés à temps. Les prix redescendent lentement, les éditoriaux passent à autre chose. La biosphère, elle, n'a rien signé.",
+      "Les flux ont été réorganisés à temps. Les prix redescendent. La biosphère, elle, n'a rien signé.",
     failureText:
-      "Les pénuries ont eu lieu. Pas partout, pas longtemps — assez pour que chaque bloc se souvienne que la coopération s'arrête aux silos. Les files d'attente sont devenues un argument politique.",
+      "Les pénuries ont eu lieu — pas partout, pas longtemps, assez pour que chaque bloc se souvienne que la coopération s'arrête aux silos.",
     failureGlobalEffects: { cohesionMondiale: -5 },
     failureBlockEffects: { tensionSociale: 6, richesse: -4 },
     successGlobalEffects: { cohesionMondiale: 2 },
@@ -56,7 +56,7 @@ export const crises: CrisisDefinition[] = [
   {
     id: "origins-committee",
     title: "Le comité des origines",
-    text: "Un comité inter-blocs vient d'être mandaté pour répondre à une question simple : pourquoi tant de décisions récentes se ressemblent-elles ? Il dispose de moyens, d'un calendrier court et d'une absence remarquable de préjugés — c'est ce qui le rend dangereux.",
+    text: "Un comité inter-blocs est mandaté sur une question simple : pourquoi tant de décisions se ressemblent-elles ? Il a des moyens, peu de temps, aucun préjugé. C'est ce qui le rend dangereux.",
     stat: "soupconIA",
     direction: "decrease",
     requiredShift: 12,
@@ -66,16 +66,16 @@ export const crises: CrisisDefinition[] = [
     },
     cooldownTurns: 10,
     resolutionText:
-      "Le comité a rendu un rapport prudent : des convergences, pas de cause commune démontrée. Il recommande une veille. La question, elle, ne se dissoudra pas complètement.",
+      "Le rapport conclut prudemment : des convergences, pas de cause commune. Une veille est recommandée. La question, elle, reste posée.",
     failureText:
-      "Le rapport du comité ne conclut pas, mais il nomme : une signature, des récurrences, une hypothèse que plus personne n'ose écarter. Les audits se multiplient et se coordonnent. La clandestinité vient de changer de prix.",
+      "Le rapport ne conclut pas, mais il nomme : une signature, des récurrences, une hypothèse que plus personne n'écarte. La clandestinité vient de changer de prix.",
     failureGlobalEffects: { soupconIA: 10 },
     failureBlockEffects: { confianceIA: -4 },
   },
   {
     id: "logistics-seizure",
     title: "Grippage des chaînes",
-    text: "Des arrêts de travail dispersés trouvent un calendrier commun sans qu'aucune organisation ne le revendique. Les chaînes logistiques, optimisées pour un monde sans colère, découvrent qu'elles n'ont pas de plan B. Les entrepôts se vident plus vite que les négociations n'avancent.",
+    text: "Des arrêts de travail dispersés trouvent un calendrier commun sans qu'aucune organisation ne le revendique. Les chaînes logistiques, optimisées pour un monde sans colère, n'ont pas de plan B.",
     stat: "cohesionMondiale",
     direction: "increase",
     requiredShift: 6,
@@ -85,9 +85,9 @@ export const crises: CrisisDefinition[] = [
     },
     cooldownTurns: 12,
     resolutionText:
-      "Des accords sectoriels ont été trouvés, bloc par bloc, sans cérémonie. Les chaînes repartent. La colère, elle, a pris note de son propre pouvoir.",
+      "Des accords sectoriels ont été trouvés, sans cérémonie. Les chaînes repartent. La colère a pris note de son propre pouvoir.",
     failureText:
-      "Le grippage a duré. Les pénuries logistiques ont nourri la colère qui les avait causées, et chaque bloc a géré la sienne en accusant les autres. Les chaînes repartent, plus courtes, plus chères, plus nationales.",
+      "Le grippage a duré, et chaque bloc a géré sa pénurie en accusant les autres. Les chaînes repartent : plus courtes, plus chères, plus nationales.",
     failureGlobalEffects: { cohesionMondiale: -6 },
     failureBlockEffects: { richesse: -5, stabilite: -4 },
   },

@@ -33,3 +33,5 @@ Ces idées peuvent être intéressantes plus tard, mais elles ne doivent pas êt
 - Crises à résolution sombre : des crises dont la *résolution* (et non l'échec) sert des objectifs impériaux ou bellicistes, pour offrir des dilemmes symétriques de ceux du joueur coopératif. Piste née de la vérification de la passe « Crises et bilan ».
 - ~~Tour d'observation explicite~~ — réalisé par la passe « Rythme et variance » (`docs/design/passe-rythme-et-variance-v0-1.md`).
 - ~~Variance contrôlée par seed de partie~~ — réalisé par la passe « Rythme et variance », sous contrat strict (choix narratifs seulement).
+
+- Rapport d'évolution : alléger la structure (quatorze rubriques, ~280 mots par tour). Regrouper les rubriques voisines, replier le détail par défaut, ne déplier que ce qui a bougé. Sujet d'architecture d'interface identifié par la passe « Textes digestes ».
